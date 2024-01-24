@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from './routes/page-not-found/page-not-found.component';
-import { GameComponent } from './routes/entities/game/game.component';
+import { LeagueComponent } from './routes/entities/league/league.component';
 import { LoginComponent } from './routes/entities/login/login.component';
 import { AuthGuardService } from './services/auth-guard-service';
 
@@ -11,8 +11,8 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
     children: [
       {
-        path: 'game',
-        component: GameComponent,
+        path: 'league',
+        component: LeagueComponent,
       },
       {
         path: 'login',

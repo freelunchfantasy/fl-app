@@ -6,19 +6,18 @@ import { FormsModule } from '@angular/forms';
 // third party
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // ngrx
 import { EffectsModule } from '@ngrx/effects';
-import { GameEffects } from './state/game-effects';
+import { LeagueEffects } from './state/league-effects';
 import { StoreModule } from '@ngrx/store';
-import { reducers } from '@app/routes/entities/game/state/reducer';
-import * as fromGame from './state/reducer';
+import { reducers } from '@app/routes/entities/league/state/reducer';
+import * as fromLeague from './state/reducer';
 
 // custom
-import { GameComponent } from './game.component';
-import { GameSkeletonComponent } from './game-skeleton/game-skeleton.component';
+import { LeagueComponent } from './league.component';
 import { CommonComponentModule } from '@app/components/components.module';
-import { GameEndModal } from './game-end-modal/game-end-modal.component';
 
 @NgModule({
   imports: [
@@ -27,10 +26,11 @@ import { GameEndModal } from './game-end-modal/game-end-modal.component';
     CommonComponentModule,
     NgxDatatableModule,
     NgxSkeletonLoaderModule,
-    StoreModule.forFeature('game', reducers),
-    EffectsModule.forFeature([GameEffects]),
+    MatProgressSpinnerModule,
+    StoreModule.forFeature('league', reducers),
+    EffectsModule.forFeature([LeagueEffects]),
   ],
-  declarations: [GameComponent, GameSkeletonComponent, GameEndModal],
-  exports: [GameComponent, GameSkeletonComponent],
+  declarations: [LeagueComponent],
+  exports: [LeagueComponent],
 })
-export class GameModule {}
+export class LeagueModule {}

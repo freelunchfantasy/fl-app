@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
 import { HttpClientModule } from '@angular/common/http';
 import { EffectsModule } from '@ngrx/effects';
-import { GameModule } from './routes/entities/game/game.module';
+import { LeagueModule } from './routes/entities/league/league.module';
 import { LoginModule } from './routes/entities/login/login.module';
 
 import { CommonComponentModule } from './components/components.module';
@@ -37,18 +37,13 @@ const baseHrefProvider = {
     StoreModule.forRoot(reducers),
     EffectsModule.forRoot([ApplicationEffects]),
     CommonComponentModule,
-    GameModule,
+    LeagueModule,
     LoginModule,
     AppRoutingModule,
     HttpClientModule,
     NgxSkeletonLoaderModule,
   ],
-  providers: [
-    BackendService,
-    RouterService,
-    ComparisonClassService,
-    baseHrefProvider,
-  ],
+  providers: [BackendService, RouterService, ComparisonClassService, baseHrefProvider],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

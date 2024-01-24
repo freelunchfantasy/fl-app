@@ -1,0 +1,9 @@
+<div class="login">
+  <h1>YOUR LEAGUE</h1>
+  <div *ngIf="!(leagueDataIsLoading$() | async)" class="welcome-container">
+    <h1 class="display-4">{{ league.settings.name }}</h1>
+  </div>
+  <div *ngIf="leagueDataIsLoading$() | async">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>

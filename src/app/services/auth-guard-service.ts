@@ -36,6 +36,7 @@ export class AuthGuardService implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | boolean {
+    return true;
     // Get url route information
     const baseRoute = '/';
     const navUrl = (state.url || '').trim();

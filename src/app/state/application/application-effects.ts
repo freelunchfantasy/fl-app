@@ -23,49 +23,6 @@ export class ApplicationEffects {
     { dispatch: false }
   );
 
-  getAuthUser$: Observable<Action> = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ApplicationActions.GET_AUTH_USER_DATA),
-      switchMap((action: ApplicationActions.GetAuthUserData) => {
-        return this.backendService.getAuthUserData().pipe(
-          switchMap((result) => [
-            new ApplicationActions.GetAuthUserDataSuccess(result),
-          ]),
-          catchError((err) =>
-            of(
-              new ApplicationActions.GetAuthUserDataFailure({
-                ...err,
-              })
-            )
-          )
-        );
-      })
-    )
-  );
-
-  getUser$: Observable<Action> = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ApplicationActions.GET_GAME_USER_DATA),
-      map((action: ApplicationActions.GetGameUserData) => action.payload),
-      switchMap((payload) => {
-        return this.backendService
-          .getGameUserData(payload.authUserId, payload.email)
-          .pipe(
-            switchMap((result) => [
-              new ApplicationActions.GetGameUserDataSuccess(result),
-            ]),
-            catchError((err) =>
-              of(
-                new ApplicationActions.HandleBackendError({
-                  ...err,
-                })
-              )
-            )
-          );
-      })
-    )
-  );
-
   logout$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -84,7 +41,7 @@ export class ApplicationEffects {
         ofType(ApplicationActions.NAVIGATE_TO_HOME),
         withLatestFrom(this.store$),
         map(([action, state]) => {
-          const homeRoute = '/game';
+          const homeRoute = '/league';
           this.routerService.redirectTo(homeRoute);
         })
       ),
