@@ -1,0 +1,32 @@
+.header-bar {
+  width: 100vw;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid black;
+
+  .game-title {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    margin-left: 0;
+
+    .title {
+      font-size: 16pt;
+      margin-left: 10pt;
+    }
+
+    .logo {
+      max-width: 60px;
+    }
+  }
+
+  .logout {
+    position: absolute;
+    right: 20px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+}

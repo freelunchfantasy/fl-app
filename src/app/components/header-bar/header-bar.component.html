@@ -1,0 +1,9 @@
+<div class="header-bar">
+  <div class="game-title">
+    <div><img src="../../../favicon.ico" class="logo" /></div>
+    <div class="title">Dictionordle</div>
+  </div>
+  <div *ngIf="sessionCookie$() | async" class="logout" (click)="handleLogout()">
+    Log out
+  </div>
+</div>

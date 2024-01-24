@@ -1,0 +1,57 @@
+<div class="game-container">
+  <!-- Column headers -->
+  <div class="guess">
+    <div class="guess-column-field">Word</div>
+    <div class="guess-column-field semi-wide">Matching Letters</div>
+    <div class="guess-column-field semi-wide">Alphabetical</div>
+    <div class="guess-column-field">Letters</div>
+    <div class="guess-column-field">Syllables</div>
+    <div class="guess-column-field">First Used</div>
+    <div class="guess-column-field wide">Definition Hint</div>
+  </div>
+
+  <div>
+    <div *ngFor="let row of totalRows" class="guess">
+      <div class="guess-result-field word">
+        <input
+          class="new-guess-input"
+          #word
+          type="text"
+          autocomplete="off"
+          [(ngModel)]="newGuess"
+          (keyup.enter)="handleSubmitNewGuess()"
+        />
+        <span class="field-value"></span>
+      </div>
+      <div class="guess-result-field semi-wide matching-letters">
+        <span class="field-value"></span>
+      </div>
+      <div class="guess-result-field semi-wide alphabetical">
+        <span class="field-value"></span>
+      </div>
+      <div class="guess-result-field letters">
+        <span class="field-value"></span>
+      </div>
+      <div class="guess-result-field syllables">
+        <span class="field-value"></span>
+      </div>
+      <div class="guess-result-field first-used">
+        <span class="field-value"></span>
+      </div>
+      <div class="guess-result-field wide definition-hint">
+        <span class="field-value"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game end modal -->
+  <game-end-modal
+    *ngIf="showGameEndModal"
+    [modalTitle]="gameEndModalTitle"
+    [modalSubtitle]="gameEndModalSubtitle"
+    [gameEndInfo]="this.gameEndInfo"
+    [gameOutcome]="this.gameOutcome"
+    [showCloseIcon]="false"
+    (dismissModal)="closeGameEndModal()"
+  ></game-end-modal>
+</div>

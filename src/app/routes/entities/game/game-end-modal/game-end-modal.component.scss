@@ -1,0 +1,62 @@
+.game-end-modal {
+  .game-end-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__item {
+      margin-top: 15px;
+    }
+
+    &__outcome-message {
+      font-size: 24pt;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .todays-word {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 18pt;
+      &__word {
+        font-weight: bold;
+        font-size: 22pt;
+      }
+    }
+
+    .todays-word-definition {
+      font-size: 14pt;
+      text-align: center;
+    }
+
+    .streak-info {
+      display: flex;
+      width: 100%;
+      justify-content: space-around;
+      margin-top: 25px;
+      font-weight: bold;
+
+      .streak-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &__title {
+          font-size: 14pt;
+        }
+
+        &__value {
+          font-size: 28pt;
+        }
+      }
+    }
+  }
+  .won {
+    color: green;
+  }
+  .lost {
+    color: red;
+  }
+}
