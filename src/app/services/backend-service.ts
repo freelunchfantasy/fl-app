@@ -4,13 +4,14 @@ import { Observable, of } from 'rxjs';
 
 // Models
 import { CookieService } from 'ngx-cookie-service';
+import { League } from '@app/lib/models/league';
 
 @Injectable()
 export class BackendService {
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
-  getLeagueData(leagueId: number): Observable<any> {
-    return this.http.post<any>(`${this.getApiUrl()}/app/league`, { id: leagueId });
+  getLeagueData(leagueId: number): Observable<League> {
+    return this.http.post<League>(`${this.getApiUrl()}/app/league`, { id: leagueId });
   }
 
   getApiUrl() {

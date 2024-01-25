@@ -5,6 +5,7 @@
 !**/*.js
 !**/*.ts
 !**/*.html
+!**/*.scss
 
 # Check subdirectories too
 !*/

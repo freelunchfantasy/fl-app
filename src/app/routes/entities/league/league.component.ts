@@ -6,6 +6,9 @@ import * as ApplicationActions from '@app/state/application/application-actions'
 import * as fromLeagueRoot from '@app/routes/entities/league/state/reducer';
 import * as LeagueActions from '@app/routes/entities/league/state/league-actions';
 import { Observable, Subscription, combineLatest } from 'rxjs';
+import { League, Player, Team } from '@app/lib/models/league';
+import { Position } from '@app/lib/constants/position.constants';
+import { constructActiveRoster } from '@app/services/active-roster-service';
 
 @Component({
   selector: 'league',
@@ -15,7 +18,15 @@ import { Observable, Subscription, combineLatest } from 'rxjs';
 export class LeagueComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
 
-  league: any;
+  league: League;
+  userTeam: Team;
+
+  // TODO: REPLACE WITH ACTUAL LOGIN AND USER INFO
+  leagueId: number = 49454731;
+  userTeamId: number = 1;
+
+  activeRoster: Player[] = [];
+  bench: Player[] = [];
 
   constructor(
     public appStore: Store<fromApplicationRoot.State>,
@@ -32,13 +43,12 @@ export class LeagueComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const leagueId = 49454731;
-    this.leagueStore.dispatch(new LeagueActions.GetLeagueData(leagueId));
+    this.leagueStore.dispatch(new LeagueActions.GetLeagueData(this.leagueId));
 
     const leagueDataSubscriptions = combineLatest([this.leagueData$(), this.leagueDataIsLoading$()]).subscribe(
       ([leagueData, isLoading]) => {
         if (!isLoading) {
-          this.league = leagueData;
+          this.processLeagueData(leagueData);
         }
       }
     );
@@ -47,5 +57,39 @@ export class LeagueComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  processLeagueData(leagueData: League) {
+    this.league = leagueData;
+    this.userTeam = leagueData.teams.find(team => team.id == this.userTeamId);
+    this.activeRoster = constructActiveRoster(this.userTeam.roster);
+    this.bench = this.userTeam.roster.filter(player => !this.activeRoster.map(p => p.id).includes(player.id));
+  }
+
+  getPlayerCssClasses(player: Player) {
+    let classes = 'roster-container__player';
+    switch (player.position) {
+      case Position.Quarterback:
+        classes = `${classes} quarterback`;
+        break;
+      case Position.RunningBack:
+        classes = `${classes} runningback`;
+        break;
+      case Position.WideReceiver:
+        classes = `${classes} widereceiver`;
+        break;
+      case Position.TightEnd:
+        classes = `${classes} tightend`;
+        break;
+      case Position.Defense:
+        classes = `${classes} defense`;
+        break;
+      case Position.Kicker:
+        classes = `${classes} kicker`;
+        break;
+      default:
+        break;
+    }
+    return classes;
   }
 }

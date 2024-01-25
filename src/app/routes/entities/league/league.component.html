@@ -1,9 +1,25 @@
-<div class="login">
-  <h1>YOUR LEAGUE</h1>
-  <div *ngIf="!(leagueDataIsLoading$() | async)" class="welcome-container">
-    <h1 class="display-4">{{ league.settings.name }}</h1>
+<div class="league">
+  <div *ngIf="!(leagueDataIsLoading$() | async)" class="container">
+    <div class="roster-container">
+      <div class="display-3">{{ userTeam.teamName }}</div>
+      <div class="display-4">Active Roster</div>
+      <div style="display: flex; align-items: center" *ngFor="let player of activeRoster">
+        <span style="min-width: 25px">{{ player.position }}</span>
+        <div [class]="getPlayerCssClasses(player)">
+          {{ player.name }}
+        </div>
+      </div>
+      <div class="display-4" style="margin-top: 10px">Bench</div>
+      <div style="display: flex; align-items: center" *ngFor="let player of bench">
+        <span style="min-width: 25px">{{ player.position }}</span>
+        <div [class]="getPlayerCssClasses(player)">
+          {{ player.name }}
+        </div>
+      </div>
+    </div>
   </div>
   <div *ngIf="leagueDataIsLoading$() | async">
     <mat-spinner></mat-spinner>
+    <div class="display-4">Loading league...</div>
   </div>
 </div>

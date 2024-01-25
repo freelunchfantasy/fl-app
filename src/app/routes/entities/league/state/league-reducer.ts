@@ -1,8 +1,9 @@
 import { AsyncStatus } from '@app/lib/enums/async-status';
 import * as LeagueActions from './league-actions';
+import { League } from '@app/lib/models/league';
 
 export interface State {
-  leagueData: any;
+  leagueData: League;
   leagueDataStatus: AsyncStatus;
 }
 

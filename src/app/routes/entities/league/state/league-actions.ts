@@ -1,3 +1,4 @@
+import { League } from '@app/lib/models/league';
 import { Action } from '@ngrx/store';
 
 export const GET_LEAGUE_DATA = '[League] Getting league data';
@@ -12,7 +13,7 @@ export class GetLeagueData implements Action {
 export class GetLeagueDataSuccess implements Action {
   readonly type = GET_LEAGUE_DATA_SUCCESS;
 
-  constructor(public payload: any) {}
+  constructor(public payload: League) {}
 }
 
 export class GetLeagueDataFailure implements Action {

@@ -1,16 +1,47 @@
-.login {
+.league {
   margin: 50px;
   min-height: 500px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
 
-  .welcome-container {
+  .container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    .roster-container {
+      display: flex;
+      flex-direction: column;
+
+      &__player {
+        padding: 10px;
+        border-radius: 20px;
+        border: 1px solid black;
+        margin-left: 15px;
+        margin-top: 5px;
+      }
+      .quarterback {
+        background-color: lightblue;
+      }
+      .runningback {
+        background-color: lightgreen;
+      }
+      .widereceiver {
+        background-color: lightcoral;
+      }
+      .tightend {
+        background-color: plum;
+      }
+      .defense {
+        background-color: burlywood;
+      }
+      .kicker {
+        background-color: lightgray;
+      }
+    }
   }
 
   ::ng-deep mat-spinner circle {
