@@ -1,9 +1,7 @@
 <div class="header-bar">
   <div class="game-title">
-    <div><img src="../../../favicon.ico" class="logo" /></div>
-    <div class="title">Dictionordle</div>
+    <div><img src="../../../assets/logo.png" class="logo" (click)="redirectToHome()" /></div>
+    <nav-option *ngFor="let option of navOptions" [navOption]="option"></nav-option>
   </div>
-  <div *ngIf="sessionCookie$() | async" class="logout" (click)="handleLogout()">
-    Log out
-  </div>
+  <div *ngIf="sessionCookie$() | async" class="logout" (click)="handleLogout()">Log out</div>
 </div>
