@@ -145,4 +145,32 @@ export class RosterService {
 
     return startingPositions;
   }
+
+  findEligibleBenchPlayers(bench: Player[], starterSlot: string): Player[] {
+    if (starterSlot == Position.Flex) {
+      return bench.filter(p => [Position.RunningBack, Position.WideReceiver, Position.TightEnd].includes(p.position));
+    } else if (starterSlot == Position.Superflex) {
+      return bench.filter(p =>
+        [Position.Quarterback, Position.RunningBack, Position.WideReceiver, Position.TightEnd].includes(p.position)
+      );
+    }
+    return bench.filter(p => p.position == starterSlot);
+  }
+
+  findEligibleSlots(player: Player, startingSlots: string[]): boolean[] {
+    let eligibleSlots: boolean[] = [];
+    let eligiblePositions = [player.position];
+    eligiblePositions.push(
+      [Position.RunningBack, Position.WideReceiver, Position.TightEnd].includes(player.position) && Position.Flex
+    );
+    eligiblePositions.push(
+      [Position.Quarterback, Position.RunningBack, Position.WideReceiver, Position.TightEnd].includes(
+        player.position
+      ) && Position.Superflex
+    );
+    startingSlots.forEach(slot => {
+      eligibleSlots.push(eligiblePositions.includes(slot));
+    });
+    return eligibleSlots;
+  }
 }

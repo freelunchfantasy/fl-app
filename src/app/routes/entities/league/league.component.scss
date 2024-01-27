@@ -1,6 +1,7 @@
 .league {
-  margin: 25px;
-  min-height: 500px;
+  background-color: rgb(253, 255, 230);
+  padding: 25px;
+  min-height: 800px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -83,6 +84,7 @@
       padding: 10px;
       border-radius: 10px;
       border: 1px solid black;
+      background-color: rgb(238, 218, 255);
 
       &-starters {
         width: 50%;
@@ -116,6 +118,10 @@
           display: flex;
           justify-content: space-between;
           align-items: center;
+          transition: opacity 0.5s;
+          &:hover {
+            cursor: pointer;
+          }
 
           &__profile {
             display: flex;
@@ -152,6 +158,9 @@
         }
         .kicker {
           background-color: lightgray;
+        }
+        .invalid {
+          opacity: 0.5;
         }
       }
     }

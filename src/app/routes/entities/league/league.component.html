@@ -24,7 +24,7 @@
         <div class="display-5 roster-column">Starters</div>
         <div class="player-row" *ngFor="let player of starters; index as i">
           <div class="roster-pos">{{ startingPositions[i] }}</div>
-          <div [class]="getPlayerCssClasses(player)">
+          <div [class]="getPlayerCssClasses(player, i, true)" (click)="handlePlayerClick(player, i)">
             <div class="player__profile">
               <img src="../../../../assets/anonymous.jpg" class="player__profile-pic" />
               <div class="player__profile-name">{{ player.name }}</div>
@@ -35,8 +35,8 @@
       </div>
       <div class="league-container__roster-bench">
         <div class="display-5 roster-column">Bench</div>
-        <div class="player-row" *ngFor="let player of bench">
-          <div [class]="getPlayerCssClasses(player)">
+        <div class="player-row" *ngFor="let player of bench; index as i">
+          <div [class]="getPlayerCssClasses(player, i, false)" (click)="handlePlayerClick(player)">
             <div class="player__profile">
               <img src="../../../../assets/anonymous.jpg" class="player__profile-pic" />
               <div class="player__profile-name">{{ player.name }}</div>
