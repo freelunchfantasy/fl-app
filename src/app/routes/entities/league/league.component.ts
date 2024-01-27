@@ -8,7 +8,8 @@ import * as LeagueActions from '@app/routes/entities/league/state/league-actions
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { League, Player, Team } from '@app/lib/models/league';
 import { Position } from '@app/lib/constants/position.constants';
-import { constructActiveRoster } from '@app/services/active-roster-service';
+import { RosterService } from '@app/services/roster-service';
+import { StandingsService } from '@app/services/standings-service';
 
 @Component({
   selector: 'league',
@@ -19,19 +20,36 @@ export class LeagueComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
 
   league: League;
+  standings: Team[] = [];
   userTeam: Team;
 
   // TODO: REPLACE WITH ACTUAL LOGIN AND USER INFO
   leagueId: number = 49454731;
   userTeamId: number = 1;
 
-  activeRoster: Player[] = [];
+  DEFAULT_ACTIVE_ROSTER: any = {
+    QB: 1,
+    RB: 2,
+    WR: 2,
+    TE: 1,
+    FLEX: 1,
+    OP: 0,
+    'D/ST': 1,
+    K: 1,
+  };
+  startingPositions: string[] = [];
+
+  starters: Player[] = [];
   bench: Player[] = [];
+
+  simulating: boolean = false;
 
   constructor(
     public appStore: Store<fromApplicationRoot.State>,
     private cookieService: CookieService,
-    private leagueStore: Store<fromLeagueRoot.State>
+    private leagueStore: Store<fromLeagueRoot.State>,
+    private standingsService: StandingsService,
+    private rosterService: RosterService
   ) {}
 
   leagueData$(): Observable<any> {
@@ -60,14 +78,17 @@ export class LeagueComponent implements OnInit, OnDestroy {
   }
 
   processLeagueData(leagueData: League) {
+    console.log(leagueData);
     this.league = leagueData;
     this.userTeam = leagueData.teams.find(team => team.id == this.userTeamId);
-    this.activeRoster = constructActiveRoster(this.userTeam.roster);
-    this.bench = this.userTeam.roster.filter(player => !this.activeRoster.map(p => p.id).includes(player.id));
+    this.starters = this.rosterService.constructStarters(this.userTeam.roster, this.DEFAULT_ACTIVE_ROSTER);
+    this.bench = this.userTeam.roster.filter(player => !this.starters.map(p => p.id).includes(player.id));
+    this.startingPositions = this.rosterService.constructStartingPositions(this.DEFAULT_ACTIVE_ROSTER);
+    this.standings = this.standingsService.constructStandings(this.league.teams);
   }
 
   getPlayerCssClasses(player: Player) {
-    let classes = 'roster-container__player';
+    let classes = 'player';
     switch (player.position) {
       case Position.Quarterback:
         classes = `${classes} quarterback`;
@@ -91,5 +112,12 @@ export class LeagueComponent implements OnInit, OnDestroy {
         break;
     }
     return classes;
+  }
+
+  simulateSeason() {
+    this.simulating = true;
+    setTimeout(() => {
+      this.simulating = false;
+    }, 2000);
   }
 }

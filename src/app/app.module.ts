@@ -15,6 +15,8 @@ import { PageNotFoundComponent } from './routes/page-not-found/page-not-found.co
 import { BackendService } from './services/backend-service';
 import { RouterService } from './services/router-service';
 import { ComparisonClassService } from './services/comparison-class-service';
+import { StandingsService } from './services/standings-service';
+import { RosterService } from './services/roster-service';
 import { ApplicationEffects } from './state/application/application-effects';
 import { reducers } from './state/reducers';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -43,7 +45,7 @@ const baseHrefProvider = {
     HttpClientModule,
     NgxSkeletonLoaderModule,
   ],
-  providers: [BackendService, RouterService, ComparisonClassService, baseHrefProvider],
+  providers: [BackendService, RouterService, ComparisonClassService, StandingsService, RosterService, baseHrefProvider],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

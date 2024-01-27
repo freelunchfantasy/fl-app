@@ -3,6 +3,8 @@ export const Position = {
   RunningBack: 'RB',
   WideReceiver: 'WR',
   TightEnd: 'TE',
+  Flex: 'FLEX',
+  Superflex: 'OP',
   Defense: 'D/ST',
   Kicker: 'K',
 };

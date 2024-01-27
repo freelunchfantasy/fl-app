@@ -1,50 +1,159 @@
 .league {
-  margin: 50px;
+  margin: 25px;
   min-height: 500px;
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: space-between;
   align-items: center;
 
-  .container {
+  &-container {
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-around;
+    align-items: start;
 
-    .roster-container {
+    &__standings {
+      width: 35%;
       display: flex;
       flex-direction: column;
+      align-items: center;
 
-      &__player {
+      .league-name {
+        font-size: 18pt;
+      }
+
+      .league-list {
+        width: 100%;
         padding: 10px;
-        border-radius: 20px;
+        border-radius: 10px;
         border: 1px solid black;
-        margin-left: 15px;
-        margin-top: 5px;
+        margin: 10px 0px 10px 0px;
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        background-color: #e0ffff;
+        .team-row {
+          width: 100%;
+          display: flex;
+          padding: 4px;
+          font-size: 11pt;
+          cursor: pointer;
+          &:hover {
+            background-color: #adebeb;
+          }
+
+          &__team-name {
+            width: 60%;
+          }
+
+          &__team-record {
+            width: 20%;
+            text-align: center;
+          }
+
+          &__team-proj-record {
+            width: 20%;
+            text-align: center;
+          }
+        }
+
+        .col-header {
+          font-weight: bold;
+          cursor: default;
+          &:hover {
+            background-color: #e0ffff;
+          }
+        }
       }
-      .quarterback {
-        background-color: lightblue;
-      }
-      .runningback {
-        background-color: lightgreen;
-      }
-      .widereceiver {
-        background-color: lightcoral;
-      }
-      .tightend {
-        background-color: plum;
-      }
-      .defense {
-        background-color: burlywood;
-      }
-      .kicker {
-        background-color: lightgray;
+
+      .sim-btn-container {
+        ::ng-deep mat-spinner {
+          max-width: 30px;
+          circle {
+            stroke: black;
+          }
+        }
       }
     }
-  }
 
-  ::ng-deep mat-spinner circle {
-    stroke: black;
+    &__roster {
+      width: 55%;
+      display: flex;
+      align-items: start;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid black;
+
+      &-starters {
+        width: 50%;
+        padding: 10px;
+      }
+      &-bench {
+        width: 50%;
+        padding: 10px;
+      }
+
+      .roster-column {
+        font-weight: bold;
+      }
+
+      .player-row {
+        display: flex;
+        align-items: center;
+        font-size: 11pt;
+
+        .roster-pos {
+          min-width: 40px;
+        }
+        .player {
+          width: 80%;
+          min-width: 250px;
+          padding: 5px;
+          border-radius: 20px;
+          border: 1px solid black;
+          margin-left: 15px;
+          margin-top: 5px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          &__profile {
+            display: flex;
+            align-items: center;
+            width: 60%;
+            &-pic {
+              margin-right: 10px;
+              width: 40px;
+              height: 40px;
+              border: 1px solid black;
+              border-radius: 50px;
+            }
+          }
+
+          &__about {
+            width: 40%;
+            text-align: center;
+          }
+        }
+        .quarterback {
+          background-color: lightblue;
+        }
+        .runningback {
+          background-color: lightgreen;
+        }
+        .widereceiver {
+          background-color: lightcoral;
+        }
+        .tightend {
+          background-color: plum;
+        }
+        .defense {
+          background-color: burlywood;
+        }
+        .kicker {
+          background-color: lightgray;
+        }
+      }
+    }
   }
 }
