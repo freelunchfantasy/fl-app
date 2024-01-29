@@ -20,6 +20,9 @@ export class Team {
   ties: number;
   pointsFor: number;
   pointsAgainst: number;
+  schedule: number[];
+  scores: string[];
+  outcomes: string[];
 }
 
 export class Player {
@@ -32,4 +35,15 @@ export class Player {
   projectedTotalPoints: number;
   percentStarted: number;
   stats: any;
+}
+
+export class LeagueSimulationResult {
+  id: number;
+  teamResults: TeamSimulationResult[];
+}
+
+export class TeamSimulationResult {
+  id: number;
+  wins: number;
+  losses: number;
 }

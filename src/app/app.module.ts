@@ -14,9 +14,10 @@ import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './routes/page-not-found/page-not-found.component';
 import { BackendService } from './services/backend-service';
 import { RouterService } from './services/router-service';
-import { ComparisonClassService } from './services/comparison-class-service';
 import { StandingsService } from './services/standings-service';
 import { RosterService } from './services/roster-service';
+import { ScheduleService } from './services/schedule-service';
+import { SimulationPayloadService } from './services/simulation-payload-service';
 import { ApplicationEffects } from './state/application/application-effects';
 import { reducers } from './state/reducers';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -45,7 +46,15 @@ const baseHrefProvider = {
     HttpClientModule,
     NgxSkeletonLoaderModule,
   ],
-  providers: [BackendService, RouterService, ComparisonClassService, StandingsService, RosterService, baseHrefProvider],
+  providers: [
+    BackendService,
+    RouterService,
+    StandingsService,
+    RosterService,
+    ScheduleService,
+    SimulationPayloadService,
+    baseHrefProvider,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

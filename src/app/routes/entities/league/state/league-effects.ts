@@ -22,5 +22,18 @@ export class LeagueEffects {
     )
   );
 
+  simulateLeague$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(LeagueActions.SIMULATE_LEAGUE),
+      map((action: LeagueActions.SimulateLeague) => action.payload),
+      switchMap(payload => {
+        return this.backendService.simulateLeague(payload).pipe(
+          map(result => new LeagueActions.SimulateLeagueSuccess(result)),
+          catchError(err => of(new ApplicationActions.HandleBackendError(err)))
+        );
+      })
+    )
+  );
+
   constructor(private actions$: Actions, private backendService: BackendService) {}
 }
