@@ -1,0 +1,79 @@
+<div class="trade">
+  <div *ngIf="!(leagueDataIsLoading$() | async)" class="trade-container">
+    <div class="trade-container__team">
+      <dropdown id="left-team-dropdown" [items]="teamDropdownItems" (onClick)="onSelectLeftTeam($event)"></dropdown>
+      <team-roster
+        class="trade-container__team-roster"
+        [starters]="leftStarters"
+        [bench]="leftBench"
+        [startingPositions]="startingPositions"
+        [mode]="teamRosterMode"
+        [playersBeingTraded]="tradeBlock.left"
+        (onPlayerTradeAdd)="addPlayerToTrade($event)"
+        (onPlayerTradeRemove)="removePlayerFromTrade($event)"
+      ></team-roster>
+    </div>
+    <div class="trade-container__trade-block-container">
+      <div class="trade-block">
+        <div class="trade-block__side left">
+          <div class="trade-block__side-arrow">&#8594;</div>
+          <div
+            *ngFor="let player of tradeBlock.left"
+            [class]="getPlayerCssClasses(player, i, false)"
+            (click)="handlePlayerClick(player)"
+          >
+            <div class="player__profile">
+              <img src="../../../../assets/anonymous.jpg" class="player__profile-pic" />
+              <div class="player__profile-name">{{ player.name }}</div>
+            </div>
+            <div class="player__about">{{ player.position }} - {{ player.proTeam }}</div>
+          </div>
+        </div>
+        <div class="sim-btn-container">
+          <div *ngIf="leagueSimulationIsLoading$() | async"><mat-spinner></mat-spinner></div>
+
+          <div *ngIf="!(leagueSimulationIsLoading$() | async)">
+            <button [class]="getSimSeasonButtonClasses()" (click)="simulateSeason()">Simulate Season</button>
+          </div>
+        </div>
+        <div class="trade-block__side right">
+          <div
+            *ngFor="let player of tradeBlock.right"
+            [class]="getPlayerCssClasses(player, i, false)"
+            (click)="handlePlayerClick(player)"
+          >
+            <div class="player__profile">
+              <img src="../../../../assets/anonymous.jpg" class="player__profile-pic" />
+              <div class="player__profile-name">{{ player.name }}</div>
+            </div>
+            <div class="player__about">{{ player.position }} - {{ player.proTeam }}</div>
+          </div>
+          <div class="trade-block__side-arrow">&#8592;</div>
+        </div>
+      </div>
+    </div>
+    <div class="trade-container__team">
+      <dropdown
+        id="right-team-dropdown"
+        [items]="teamDropdownItems"
+        (onClick)="onSelectRightTeam($event)"
+        [triggerMarkup]="rightTeamDropdownTriggerMarkup"
+      ></dropdown>
+      <team-roster
+        *ngIf="rightTeam"
+        class="trade-container__team-roster"
+        [starters]="rightStarters"
+        [bench]="rightBench"
+        [startingPositions]="startingPositions"
+        [mode]="teamRosterMode"
+        [playersBeingTraded]="tradeBlock.right"
+        (onPlayerTradeAdd)="addPlayerToTrade($event)"
+        (onPlayerTradeRemove)="removePlayerFromTrade($event)"
+      ></team-roster>
+      <div *ngIf="!rightTeam" class="trade-container__team-none-selected">Please select a team to trade with</div>
+    </div>
+  </div>
+  <div *ngIf="leagueDataIsLoading$() | async">
+    <div class="display-4">Loading league...</div>
+  </div>
+</div>

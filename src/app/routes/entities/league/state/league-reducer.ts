@@ -1,12 +1,14 @@
 import { AsyncStatus } from '@app/lib/enums/async-status';
 import * as LeagueActions from './league-actions';
-import { League, LeagueSimulationResult } from '@app/lib/models/league';
+import { League, LeagueSimulationResult, Team } from '@app/lib/models/league';
 
 export interface State {
   leagueData: League;
   leagueDataStatus: AsyncStatus;
   leagueSimulationResult: LeagueSimulationResult;
   leagueSimulationStatus: AsyncStatus;
+  leagueStandings: Team[];
+  leagueSchedule: number[][][];
 }
 
 const initialState: State = {
@@ -14,6 +16,8 @@ const initialState: State = {
   leagueDataStatus: AsyncStatus.Idle,
   leagueSimulationResult: null,
   leagueSimulationStatus: AsyncStatus.Idle,
+  leagueStandings: [],
+  leagueSchedule: [],
 };
 
 export function reducer(state = initialState, action: LeagueActions.All): State {
@@ -63,6 +67,20 @@ export function reducer(state = initialState, action: LeagueActions.All): State 
         ...state,
         leagueSimulationResult: null,
         leagueSimulationStatus: AsyncStatus.Failure,
+      };
+    }
+
+    case LeagueActions.SET_LEAGUE_STANDINGS: {
+      return {
+        ...state,
+        leagueStandings: action.standings,
+      };
+    }
+
+    case LeagueActions.SET_LEAGUE_SCHEDULE: {
+      return {
+        ...state,
+        leagueSchedule: action.schedule,
       };
     }
 

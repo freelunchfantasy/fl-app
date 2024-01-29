@@ -1,0 +1,14 @@
+<div class="team-row col-header" style="border-bottom: 1px solid black">
+  <div class="team-row__team-name">Team</div>
+  <div class="team-row__team-record">Record</div>
+  <div class="team-row__team-proj-record">Projected</div>
+</div>
+<div class="team-row" *ngFor="let team of leagueStandings">
+  <div class="team-row__team-name">{{ team.teamName }}</div>
+  <div class="team-row__team-record">{{ team.wins }} - {{ team.losses }}</div>
+  <div class="team-row__team-proj-record">
+    <div *ngIf="simulatedWinsByTeamId">
+      {{ simulatedWinsByTeamId[team.id] }} - {{ simulatedLossesByTeamId[team.id] }}
+    </div>
+  </div>
+</div>

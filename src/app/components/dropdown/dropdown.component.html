@@ -1,0 +1,19 @@
+<div [id]="id" class="dropdown">
+  <!-- dropdown trigger -->
+  <button class="btn dropdown__trigger" [id]="dropdownTriggerId" (click)="handleVisibilityEvent($event)">
+    <span class="dropdown__trigger-text">{{ triggerHTML }}</span>
+    <span class="dropdown__trigger-arrow">&#9660;</span>
+  </button>
+
+  <!-- dropdown menu -->
+  <div *ngIf="this.isDropdownVisible" class="dropdown__menu dropdown__right-auto">
+    <li
+      *ngFor="let item of items"
+      [id]="item.id"
+      class="dropdown__menu-row"
+      (click)="onSelectItem(item.id, item.value)"
+    >
+      {{ item.htmlMarkup[0] }}
+    </li>
+  </div>
+</div>
