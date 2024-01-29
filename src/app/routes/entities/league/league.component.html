@@ -11,13 +11,19 @@
         <div class="team-row" *ngFor="let team of standings">
           <div class="team-row__team-name">{{ team.teamName }}</div>
           <div class="team-row__team-record">{{ team.wins }} - {{ team.losses }}</div>
-          <div class="team-row__team-proj-record">{{ team.wins }} - {{ team.losses }}</div>
+          <div class="team-row__team-proj-record">
+            <div *ngIf="simulatedWinsByTeamId">
+              {{ simulatedWinsByTeamId[team.id] }} - {{ simulatedLossesByTeamId[team.id] }}
+            </div>
+          </div>
         </div>
       </div>
       <div class="sim-btn-container">
-        <div *ngIf="simulating"><mat-spinner></mat-spinner></div>
+        <div *ngIf="leagueSimulationIsLoading$() | async"><mat-spinner></mat-spinner></div>
       </div>
-      <div *ngIf="!simulating"><button class="btn btn-success" (click)="simulateSeason()">Simulate Season</button></div>
+      <div *ngIf="!(leagueSimulationIsLoading$() | async)">
+        <button class="btn btn-success" (click)="simulateSeason()">Simulate Season</button>
+      </div>
     </div>
     <div class="league-container__roster">
       <div class="league-container__roster-starters">

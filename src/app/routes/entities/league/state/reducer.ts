@@ -18,3 +18,13 @@ export const selectLeagueDataIsLoading = createSelector(
   getLeagueState,
   (state: State) => state.league.leagueDataStatus == AsyncStatus.Processing
 );
+
+export const selectLeagueSimulationResult = createSelector(
+  getLeagueState,
+  (state: State) => state.league.leagueSimulationResult
+);
+
+export const selectLeagueSimulationIsLoading = createSelector(
+  getLeagueState,
+  (state: State) => state.league.leagueSimulationStatus == AsyncStatus.Processing
+);

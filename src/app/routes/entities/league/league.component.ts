@@ -6,10 +6,12 @@ import * as ApplicationActions from '@app/state/application/application-actions'
 import * as fromLeagueRoot from '@app/routes/entities/league/state/reducer';
 import * as LeagueActions from '@app/routes/entities/league/state/league-actions';
 import { Observable, Subscription, combineLatest } from 'rxjs';
-import { League, Player, Team } from '@app/lib/models/league';
+import { League, LeagueSimulationResult, Player, Team, TeamSimulationResult } from '@app/lib/models/league';
 import { Position } from '@app/lib/constants/position.constants';
 import { RosterService } from '@app/services/roster-service';
 import { StandingsService } from '@app/services/standings-service';
+import { ScheduleService } from '@app/services/schedule-service';
+import { SimulationPayloadService } from '@app/services/simulation-payload-service';
 
 @Component({
   selector: 'league',
@@ -43,13 +45,17 @@ export class LeagueComponent implements OnInit, OnDestroy {
   bench: Player[] = [];
   eligibleBenchReplacementsForSelectedStarter: Player[] = [];
   eligibleSlotsForSelectedBenchPlayer: boolean[] = [];
+  leagueSchedule: number[][][];
 
   swappingStarter: boolean = false;
   swappingBench: boolean = false;
   currSwappingStarter: Player;
   currSwappingStarterIndex: number;
   currSwappingBenchPlayer: Player;
-  simulating: boolean = false;
+
+  simulationResult: LeagueSimulationResult;
+  simulatedWinsByTeamId: any;
+  simulatedLossesByTeamId: any;
 
   @HostListener('document:click', ['$event.target'])
   onClick(element: HTMLElement) {
@@ -61,7 +67,9 @@ export class LeagueComponent implements OnInit, OnDestroy {
     private cookieService: CookieService,
     private leagueStore: Store<fromLeagueRoot.State>,
     private standingsService: StandingsService,
-    private rosterService: RosterService
+    private rosterService: RosterService,
+    private scheduleService: ScheduleService,
+    private simulationPayloadService: SimulationPayloadService
   ) {}
 
   leagueData$(): Observable<any> {
@@ -72,17 +80,43 @@ export class LeagueComponent implements OnInit, OnDestroy {
     return this.leagueStore.select(fromLeagueRoot.selectLeagueDataIsLoading);
   }
 
+  leagueSimulationResult$(): Observable<any> {
+    return this.leagueStore.select(fromLeagueRoot.selectLeagueSimulationResult);
+  }
+
+  leagueSimulationIsLoading$(): Observable<any> {
+    return this.leagueStore.select(fromLeagueRoot.selectLeagueSimulationIsLoading);
+  }
+
   ngOnInit() {
     this.leagueStore.dispatch(new LeagueActions.GetLeagueData(this.leagueId));
 
-    const leagueDataSubscriptions = combineLatest([this.leagueData$(), this.leagueDataIsLoading$()]).subscribe(
+    const leagueDataSubscription = combineLatest([this.leagueData$(), this.leagueDataIsLoading$()]).subscribe(
       ([leagueData, isLoading]) => {
         if (!isLoading) {
           this.processLeagueData(leagueData);
         }
       }
     );
-    this.subscriptions.push(leagueDataSubscriptions);
+    this.subscriptions.push(leagueDataSubscription);
+
+    const leagueSimulationSubscription = combineLatest([
+      this.leagueSimulationResult$(),
+      this.leagueSimulationIsLoading$(),
+    ]).subscribe(([result, isLoading]) => {
+      if (!isLoading && result) {
+        this.simulationResult = result;
+        let wins: any = {};
+        let losses: any = {};
+        result.teamResults.forEach((tr: TeamSimulationResult) => {
+          wins[tr.id] = tr.wins.toFixed(2);
+          losses[tr.id] = tr.losses.toFixed(2);
+        });
+        this.simulatedWinsByTeamId = wins;
+        this.simulatedLossesByTeamId = losses;
+      }
+    });
+    this.subscriptions.push(leagueSimulationSubscription);
   }
 
   ngOnDestroy(): void {
@@ -98,6 +132,10 @@ export class LeagueComponent implements OnInit, OnDestroy {
     this.startingPositions = this.rosterService.constructStartingPositions(this.DEFAULT_ACTIVE_ROSTER);
     this.standings = this.standingsService.constructStandings(this.league.teams);
     this.eligibleSlotsForSelectedBenchPlayer = this.startingPositions.map(p => false);
+    this.leagueSchedule = this.scheduleService.constructLeagueSchedule(
+      this.league.teams,
+      this.league.settings.regSeasonGames
+    );
   }
 
   getPlayerCssClasses(player: Player, i: number, isStarter: boolean) {
@@ -137,23 +175,29 @@ export class LeagueComponent implements OnInit, OnDestroy {
   }
 
   simulateSeason() {
-    this.simulating = true;
-    setTimeout(() => {
-      this.simulating = false;
-    }, 2000);
+    const simulationPayload = this.simulationPayloadService.constructSimulationPayload(
+      this.leagueId,
+      this.league.teams,
+      this.leagueSchedule
+    );
+    this.leagueStore.dispatch(new LeagueActions.SimulateLeague(simulationPayload));
   }
 
   handlePlayerClick(player: Player, i: number) {
     const shouldExecuteSwapToBench = (player: Player) =>
       this.swappingStarter && this.eligibleBenchReplacementsForSelectedStarter.find(p => p.id == player.id);
     const shouldExecuteSwapToStarter = (i: number) => this.swappingBench && this.eligibleSlotsForSelectedBenchPlayer[i];
-
     if (shouldExecuteSwapToBench(player)) {
       return this.executeSwapToBench(player);
     }
     if (shouldExecuteSwapToStarter(i)) {
       return this.executeSwapToStarter(player, i);
     }
+    // If we're in swapping mode but a valid player wasn't clicked, exit swapping mode and leave method
+    if (this.swappingBench || this.swappingStarter) {
+      return this.swappingBench ? (this.swappingBench = false) : (this.swappingStarter = false);
+    }
+
     const isStarter = this.starters.find(p => p.id == player.id);
     isStarter ? this.showBenchReplacements(i) : this.getEligibleSlots(player);
     if (isStarter) {
