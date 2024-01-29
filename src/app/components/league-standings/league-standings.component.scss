@@ -1,0 +1,32 @@
+.team-row {
+  width: 100%;
+  display: flex;
+  padding: 4px;
+  font-size: 11pt;
+  cursor: pointer;
+  &:hover {
+    background-color: #adebeb;
+  }
+
+  &__team-name {
+    width: 50%;
+  }
+
+  &__team-record {
+    width: 20%;
+    text-align: center;
+  }
+
+  &__team-proj-record {
+    width: 30%;
+    text-align: center;
+  }
+}
+
+.col-header {
+  font-weight: bold;
+  cursor: default;
+  &:hover {
+    background-color: #e0ffff;
+  }
+}

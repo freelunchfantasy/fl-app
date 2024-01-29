@@ -1,0 +1,32 @@
+.dropdown {
+  position: relative;
+
+  &__trigger {
+    background-color: white;
+    border: 1px solid black;
+
+    &-arrow {
+      margin-left: 10px;
+    }
+  }
+
+  &__menu {
+    position: absolute;
+
+    &-row {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      background-color: white;
+
+      &:hover {
+        background-color: gray;
+        cursor: pointer;
+      }
+    }
+  }
+
+  &__right-auto {
+    right: auto;
+  }
+}

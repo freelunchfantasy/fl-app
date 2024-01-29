@@ -4,6 +4,7 @@ import { PageNotFoundComponent } from './routes/page-not-found/page-not-found.co
 import { LeagueComponent } from './routes/entities/league/league.component';
 import { LoginComponent } from './routes/entities/login/login.component';
 import { AuthGuardService } from './services/auth-guard-service';
+import { TradeComponent } from './routes/entities/trade/trade.component';
 
 const routes: Routes = [
   {
@@ -11,12 +12,16 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
     children: [
       {
+        path: 'login',
+        component: LoginComponent,
+      },
+      {
         path: 'league',
         component: LeagueComponent,
       },
       {
-        path: 'login',
-        component: LoginComponent,
+        path: 'trade',
+        component: TradeComponent,
       },
       { path: 'unavailable', component: PageNotFoundComponent },
     ],

@@ -1,4 +1,4 @@
-import { League, LeagueSimulationResult } from '@app/lib/models/league';
+import { League, LeagueSimulationResult, Team } from '@app/lib/models/league';
 import { SimulateLeaguePayload } from '@app/lib/models/payloads';
 import { Action } from '@ngrx/store';
 
@@ -8,6 +8,8 @@ export const GET_LEAGUE_DATA_FAILURE = '[League] Failed to get league data';
 export const SIMULATE_LEAGUE = '[League] Simulating league';
 export const SIMULATE_LEAGUE_SUCCESS = '[League] Successfully simulated league';
 export const SIMULATE_LEAGUE_FAILURE = '[League] Failed to simulate league';
+export const SET_LEAGUE_STANDINGS = '[League] Setting league standings in league store';
+export const SET_LEAGUE_SCHEDULE = '[League] Setting league schedule in league store';
 
 export class GetLeagueData implements Action {
   readonly type = GET_LEAGUE_DATA;
@@ -43,10 +45,24 @@ export class SimulateLeagueFailure implements Action {
   constructor(public payload: any) {}
 }
 
+export class SetLeagueStandings implements Action {
+  readonly type = SET_LEAGUE_STANDINGS;
+
+  constructor(public standings: Team[]) {}
+}
+
+export class SetLeagueSchedule implements Action {
+  readonly type = SET_LEAGUE_SCHEDULE;
+
+  constructor(public schedule: number[][][]) {}
+}
+
 export type All =
   | GetLeagueData
   | GetLeagueDataSuccess
   | GetLeagueDataFailure
   | SimulateLeague
   | SimulateLeagueSuccess
-  | SimulateLeagueFailure;
+  | SimulateLeagueFailure
+  | SetLeagueStandings
+  | SetLeagueSchedule;
