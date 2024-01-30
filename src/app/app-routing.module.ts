@@ -5,12 +5,17 @@ import { LeagueComponent } from './routes/entities/league/league.component';
 import { LoginComponent } from './routes/entities/login/login.component';
 import { AuthGuardService } from './services/auth-guard-service';
 import { TradeComponent } from './routes/entities/trade/trade.component';
+import { HomeComponent } from './routes/entities/home/home.component';
 
 const routes: Routes = [
   {
     path: '',
     canActivate: [AuthGuardService],
     children: [
+      {
+        path: '',
+        component: HomeComponent,
+      },
       {
         path: 'login',
         component: LoginComponent,

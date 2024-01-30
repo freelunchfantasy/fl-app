@@ -23,6 +23,7 @@ import { SimulationPayloadService } from './services/simulation-payload-service'
 import { ApplicationEffects } from './state/application/application-effects';
 import { reducers } from './state/reducers';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { HomeModule } from './routes/entities/home/home.module';
 
 export function getBaseHref(platformLocation: PlatformLocation): string {
   return platformLocation.getBaseHrefFromDOM();
@@ -42,6 +43,7 @@ const baseHrefProvider = {
     StoreModule.forRoot(reducers),
     EffectsModule.forRoot([ApplicationEffects]),
     CommonComponentModule,
+    HomeModule,
     LoginModule,
     LeagueModule,
     TradeModule,

@@ -14,25 +14,10 @@ export function selectBackendUrl(state: State) {
   return state.application.backendUrl;
 }
 
-export function selectSessionCookie(state: State) {
-  return state.application.sessionCookie;
+export function selectUser(state: State) {
+  return state.application.user;
 }
 
-export function selectAuthUser(state: State) {
-  return state.application.authUser;
-}
-
-export function selectAuthUserFinishedLoading(state: State) {
-  return (
-    state.application.authUserDataStatus == AsyncStatus.Success ||
-    state.application.authUserDataStatus == AsyncStatus.Failure
-  );
-}
-
-export function selectGameUser(state: State) {
-  return state.application.gameUser;
-}
-
-export function selectGameUserDataFinishedLoading(state: State) {
-  return state.application.gameUserDataStatus == AsyncStatus.Success;
+export function selectUserIsLoading(state: State) {
+  return state.application.userStatus == AsyncStatus.Processing;
 }

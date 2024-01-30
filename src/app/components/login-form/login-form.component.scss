@@ -1,0 +1,26 @@
+.login-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 10px;
+  border: 1px solid black;
+  padding: 20px;
+  background-color: white;
+
+  &__message {
+    font-size: 24pt;
+    font-weight: bold;
+  }
+
+  &__input {
+    input {
+      padding: 8px;
+      border-radius: 10px;
+    }
+  }
+
+  &__item {
+    margin-top: 20px;
+  }
+}

@@ -1,31 +1,59 @@
 import * as ApplicationActions from './application-actions';
 import { AsyncStatus } from '@app/lib/enums/async-status';
-import { GameUser, AuthUser } from '@app/lib/models/user';
+import { User } from '@app/lib/models/user';
 
 export interface State {
-  sessionCookie: string;
-  authUser: AuthUser;
-  authUserDataStatus: AsyncStatus;
-  gameUser: GameUser;
-  gameUserDataStatus: AsyncStatus;
+  user: User;
+  userStatus: AsyncStatus;
   backendUrl: string;
+  sessionToken: string;
 }
 
 export const initialState: State = {
-  sessionCookie: null,
-  authUser: null,
-  authUserDataStatus: AsyncStatus.Idle,
-  gameUser: null,
-  gameUserDataStatus: AsyncStatus.Idle,
+  user: null,
+  userStatus: AsyncStatus.Idle,
   backendUrl: null,
+  sessionToken: null,
 };
 
 export function reducer(state = initialState, action: ApplicationActions.All): State {
   switch (action.type) {
-    case ApplicationActions.SET_SESSION_COOKIE: {
+    case ApplicationActions.LOGIN: {
       return {
         ...state,
-        sessionCookie: action.payload,
+        user: null,
+        userStatus: AsyncStatus.Processing,
+      };
+    }
+
+    case ApplicationActions.LOGIN_SUCCESS: {
+      return {
+        ...state,
+        user: action.payload,
+        userStatus: AsyncStatus.Success,
+      };
+    }
+
+    case ApplicationActions.LOGIN_FAILURE: {
+      return {
+        ...state,
+        user: null,
+        userStatus: AsyncStatus.Failure,
+      };
+    }
+
+    case ApplicationActions.SET_SESSION_TOKEN: {
+      return {
+        ...state,
+        sessionToken: action.payload,
+      };
+    }
+
+    case ApplicationActions.CLEAR_USER: {
+      return {
+        ...state,
+        sessionToken: null,
+        user: null,
       };
     }
 

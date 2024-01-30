@@ -1,5 +1,5 @@
 import { League, LeagueSimulationResult, Team } from '@app/lib/models/league';
-import { SimulateLeaguePayload } from '@app/lib/models/payloads';
+import { SimulateLeaguePayload } from '@app/lib/models/league-payloads';
 import { Action } from '@ngrx/store';
 
 export const GET_LEAGUE_DATA = '[League] Getting league data';

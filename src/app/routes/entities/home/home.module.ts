@@ -7,12 +7,12 @@ import { FormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // custom
-import { LoginComponent } from './login.component';
+import { HomeComponent } from './home.component';
 import { CommonComponentModule } from '@app/components/components.module';
 
 @NgModule({
   imports: [CommonModule, FormsModule, CommonComponentModule, MatProgressSpinnerModule],
-  declarations: [LoginComponent],
-  exports: [LoginComponent],
+  declarations: [HomeComponent],
+  exports: [HomeComponent],
 })
-export class LoginModule {}
+export class HomeModule {}
