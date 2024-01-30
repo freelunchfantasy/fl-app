@@ -51,6 +51,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
+  toggleLoginMode() {
+    this.loginMode = this.loginMode == LOGIN_MODE.LOGIN ? LOGIN_MODE.REGISTER : LOGIN_MODE.LOGIN;
+  }
+
   get loggingIn() {
     return this.loginMode == LOGIN_MODE.LOGIN;
   }

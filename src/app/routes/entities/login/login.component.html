@@ -1,7 +1,7 @@
 <div class="login">
   <div *ngIf="!(userIsLoading$() | async)">
-    <login-form *ngIf="loggingIn"></login-form>
-    <register-form *ngIf="registering"></register-form>
+    <login-form *ngIf="loggingIn" (toggleLoginMode)="toggleLoginMode()"></login-form>
+    <register-form *ngIf="registering" (toggleLoginMode)="toggleLoginMode()"></register-form>
   </div>
   <div *ngIf="userIsLoading$() | async">
     <mat-spinner></mat-spinner>

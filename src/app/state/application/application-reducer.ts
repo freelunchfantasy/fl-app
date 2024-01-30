@@ -42,6 +42,30 @@ export function reducer(state = initialState, action: ApplicationActions.All): S
       };
     }
 
+    case ApplicationActions.REGISTER: {
+      return {
+        ...state,
+        user: null,
+        userStatus: AsyncStatus.Processing,
+      };
+    }
+
+    case ApplicationActions.REGISTER_SUCCESS: {
+      return {
+        ...state,
+        user: action.payload,
+        userStatus: AsyncStatus.Success,
+      };
+    }
+
+    case ApplicationActions.REGISTER_FAILURE: {
+      return {
+        ...state,
+        user: null,
+        userStatus: AsyncStatus.Failure,
+      };
+    }
+
     case ApplicationActions.SET_SESSION_TOKEN: {
       return {
         ...state,

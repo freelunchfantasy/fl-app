@@ -25,6 +25,19 @@ export class ApplicationEffects {
     )
   );
 
+  register$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ApplicationActions.REGISTER),
+      map((action: ApplicationActions.Register) => action.payload),
+      switchMap(payload => {
+        return this.backendService.register(payload).pipe(
+          map(result => new ApplicationActions.RegisterSuccess(result)),
+          catchError(err => of(new ApplicationActions.HandleBackendError(err)))
+        );
+      })
+    )
+  );
+
   logout$ = createEffect(
     () =>
       this.actions$.pipe(

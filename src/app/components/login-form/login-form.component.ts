@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as fromApplicationRoot from '@app/state/reducers';
 import * as ApplicationActions from '@app/state/application/application-actions';
@@ -9,7 +9,10 @@ import * as ApplicationActions from '@app/state/application/application-actions'
   styleUrls: ['./login-form.component.scss'],
 })
 export class LoginFormComponent implements OnInit, OnDestroy {
-  username: string = '';
+  @Output()
+  toggleLoginMode: EventEmitter<any> = new EventEmitter<any>();
+
+  email: string = '';
   password: string = '';
 
   constructor(public appStore: Store<fromApplicationRoot.State>) {}
@@ -19,6 +22,10 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   handleLoginSubmit() {
-    this.appStore.dispatch(new ApplicationActions.Login({ u: this.username, p: this.password }));
+    this.appStore.dispatch(new ApplicationActions.Login({ e: this.email, p: this.password }));
+  }
+
+  switchToRegister() {
+    this.toggleLoginMode.emit();
   }
 }
