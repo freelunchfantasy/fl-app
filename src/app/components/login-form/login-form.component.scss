@@ -1,0 +1,38 @@
+.login-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 10px;
+  border: 1px solid black;
+  padding: 50px;
+  background-color: white;
+
+  &__message {
+    font-size: 24pt;
+    font-weight: bold;
+  }
+
+  &__input {
+    input {
+      min-width: 300px;
+      padding: 8px;
+      border-radius: 10px;
+    }
+  }
+
+  &__item {
+    margin-top: 20px;
+  }
+}
+
+.switch-message {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: bold;
+
+  .switch {
+    color: rgb(68, 141, 250);
+    cursor: pointer;
+  }
+}

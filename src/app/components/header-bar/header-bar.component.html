@@ -1,7 +1,9 @@
 <div class="header-bar">
-  <div class="game-title">
+  <div class="app-title">
     <div><img src="../../../assets/logo.png" class="logo" (click)="redirectToHome()" /></div>
-    <nav-option *ngFor="let option of navOptions" [navOption]="option"></nav-option>
+    <div *ngIf="sessionToken" class="nav-options-container">
+      <nav-option *ngFor="let option of navOptions" [navOption]="option"></nav-option>
+    </div>
   </div>
-  <div *ngIf="sessionCookie$() | async" class="logout" (click)="handleLogout()">Log out</div>
+  <div *ngIf="sessionToken" class="logout" (click)="handleLogout()">Log out</div>
 </div>

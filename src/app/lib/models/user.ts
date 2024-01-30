@@ -1,17 +1,13 @@
-export class GameUser {
+export class User {
   id: number;
   firstName: string;
-  lastName: string;
   email: string;
+  sessionToken: string;
+  leagues: League[];
 }
 
-export class AuthUser {
-  user_id: string;
-  expires_in: number;
-  email: string;
-}
-
-export class GetGameUserDataPayload {
-  authUserId: string;
-  email: string;
+class League {
+  id: number;
+  userTeamId: number;
+  isDefault: boolean;
 }

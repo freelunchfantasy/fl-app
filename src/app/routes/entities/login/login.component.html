@@ -1,10 +1,9 @@
 <div class="login">
-  <div *ngIf="!userDataLoading" class="welcome-container">
-    <h1 class="display-4">Welcome to Dictionordle!</h1>
-    <h1 class="display-6">The daily word game</h1>
-    <button class="btn btn-primary" (click)="handleLogin()">Play</button>
+  <div *ngIf="!(userIsLoading$() | async)">
+    <login-form *ngIf="loggingIn" (toggleLoginMode)="toggleLoginMode()"></login-form>
+    <register-form *ngIf="registering" (toggleLoginMode)="toggleLoginMode()"></register-form>
   </div>
-  <div *ngIf="userDataLoading">
+  <div *ngIf="userIsLoading$() | async">
     <mat-spinner></mat-spinner>
   </div>
 </div>

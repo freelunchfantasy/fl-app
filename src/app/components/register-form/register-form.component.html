@@ -1,0 +1,24 @@
+<div class="register-form">
+  <div class="register-form__message">Register</div>
+  <div class="register-form__item register-form__input">
+    <input type="text" placeholder="*email address" [(ngModel)]="email" />
+  </div>
+  <div class="register-form__item register-form__input">
+    <input type="text" placeholder="first name" [(ngModel)]="firstName" />
+  </div>
+  <div class="register-form__item register-form__input">
+    <input type="text" placeholder="last name" [(ngModel)]="lastName" />
+  </div>
+  <div class="register-form__item register-form__input">
+    <input type="password" placeholder="*password" [(ngModel)]="password" />
+  </div>
+  <div class="register-form__item register-form__input">
+    <input type="password" placeholder="*confirm password" [(ngModel)]="confirmPassword" />
+  </div>
+  <div class="register-form__item register-form__submit">
+    <button class="btn btn-success" (click)="handleRegisterSubmit()">Submit</button>
+  </div>
+</div>
+<div class="switch-message">
+  Already a member? Click <span class="switch" (click)="switchToLogin()">here</span> to login!
+</div>
