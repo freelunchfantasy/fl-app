@@ -1,28 +1,58 @@
 .register-form {
+  min-width: 425px;
+  min-height: 615px;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   border-radius: 10px;
   border: 1px solid black;
   padding: 50px;
   background-color: white;
 
-  &__message {
-    font-size: 24pt;
-    font-weight: bold;
-  }
+  &__list {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
 
-  &__input {
-    input {
-      min-width: 300px;
-      padding: 8px;
-      border-radius: 10px;
+    &-message {
+      font-size: 24pt;
+      font-weight: bold;
+    }
+
+    &-input {
+      display: flex;
+      flex-direction: column;
+      input {
+        min-width: 300px;
+        padding: 8px;
+        border-radius: 10px;
+      }
+
+      &-error {
+        margin-top: 2px;
+        min-height: 20px;
+        font-size: 10pt;
+        color: red;
+      }
+    }
+
+    &-item {
+      margin-top: 15px;
     }
   }
 
-  &__item {
-    margin-top: 20px;
+  .loading-spinner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    ::ng-deep mat-spinner {
+      max-width: 30px;
+      circle {
+        stroke: black;
+      }
+    }
   }
 }
 

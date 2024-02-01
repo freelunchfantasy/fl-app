@@ -20,6 +20,7 @@ import { StandingsService } from './services/standings-service';
 import { RosterService } from './services/roster-service';
 import { ScheduleService } from './services/schedule-service';
 import { SimulationPayloadService } from './services/simulation-payload-service';
+import { InputValidationService } from './services/input-validation-service';
 import { ApplicationEffects } from './state/application/application-effects';
 import { reducers } from './state/reducers';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -59,6 +60,7 @@ const baseHrefProvider = {
     RosterService,
     ScheduleService,
     SimulationPayloadService,
+    InputValidationService,
     baseHrefProvider,
   ],
   bootstrap: [AppComponent],

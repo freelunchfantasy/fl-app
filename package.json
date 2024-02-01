@@ -23,6 +23,7 @@
     "@ngrx/effects": "^15.2.1",
     "@ngrx/store": "^15.2.1",
     "@swimlane/ngx-datatable": "^20.1.0",
+    "email-validator": "^2.0.4",
     "moment": "^2.29.4",
     "ngx-cookie-service": "^15.0.0",
     "ngx-skeleton-loader": "^7.0.0",
