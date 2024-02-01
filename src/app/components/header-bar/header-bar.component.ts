@@ -41,7 +41,7 @@ export class HeaderBarComponent implements OnInit, OnDestroy {
   }
 
   redirectToHome() {
-    if (this.sessionToken) this.appStore.dispatch(new ApplicationActions.NavigateToHome());
+    this.appStore.dispatch(new ApplicationActions.NavigateToHome());
   }
 
   handleLogout() {

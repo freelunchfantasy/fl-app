@@ -1,7 +1,12 @@
+// angular
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+// 3rd party
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+// custom components
 import { ModalComponent } from './modal/modal.component';
 import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { NavOptionComponent } from './nav-option/nav-option.component';
@@ -23,7 +28,7 @@ const components = [
 ];
 
 @NgModule({
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatProgressSpinnerModule],
   declarations: components,
   exports: [components],
 })

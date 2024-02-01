@@ -1,24 +1,43 @@
-<div class="register-form">
-  <div class="register-form__message">Register</div>
-  <div class="register-form__item register-form__input">
-    <input type="text" placeholder="*email address" [(ngModel)]="email" />
+<form class="register-form">
+  <div class="register-form__list" *ngIf="!(userIsLoading$() | async)">
+    <div class="register-form__list-message">Register</div>
+    <div class="register-form__list-item register-form__list-input">
+      <input type="text" placeholder="*email address" [(ngModel)]="email" name="email" />
+      <span class="register-form__list-input-error">{{ emailError }}</span>
+    </div>
+    <div class="register-form__list-item register-form__list-input">
+      <input type="text" placeholder="first name" [(ngModel)]="firstName" name="firstName" />
+      <span class="register-form__list-input-error">{{ firstNameError }}</span>
+    </div>
+    <div class="register-form__list-item register-form__list-input">
+      <input type="text" placeholder="last name" [(ngModel)]="lastName" name="lastName" />
+      <span class="register-form__list-input-error">{{ lastNameError }}</span>
+    </div>
+    <div class="register-form__list-item register-form__list-input">
+      <input type="password" placeholder="*password" [(ngModel)]="password" name="password" />
+      <span class="register-form__list-input-error">{{ passwordError }}</span>
+    </div>
+    <div class="register-form__list-item register-form__list-input">
+      <input type="password" placeholder="*confirm password" [(ngModel)]="confirmPassword" name="confirmPassword" />
+      <span class="register-form__list-input-error">{{ confirmPasswordError }}</span>
+    </div>
+    <div class="register-form__list-item register-form__list-submit">
+      <button
+        type="submit"
+        class="btn btn-success"
+        (keyup.enter)="handleRegisterSubmit()"
+        (click)="handleRegisterSubmit()"
+      >
+        Submit
+      </button>
+    </div>
   </div>
-  <div class="register-form__item register-form__input">
-    <input type="text" placeholder="first name" [(ngModel)]="firstName" />
+
+  <div *ngIf="userIsLoading$() | async" class="loading-spinner-container">
+    <mat-spinner></mat-spinner>
+    <span>Registering...</span>
   </div>
-  <div class="register-form__item register-form__input">
-    <input type="text" placeholder="last name" [(ngModel)]="lastName" />
-  </div>
-  <div class="register-form__item register-form__input">
-    <input type="password" placeholder="*password" [(ngModel)]="password" />
-  </div>
-  <div class="register-form__item register-form__input">
-    <input type="password" placeholder="*confirm password" [(ngModel)]="confirmPassword" />
-  </div>
-  <div class="register-form__item register-form__submit">
-    <button class="btn btn-success" (click)="handleRegisterSubmit()">Submit</button>
-  </div>
-</div>
-<div class="switch-message">
+</form>
+<div *ngIf="!(userIsLoading$() | async)" class="switch-message">
   Already a member? Click <span class="switch" (click)="switchToLogin()">here</span> to login!
 </div>

@@ -7,6 +7,7 @@ export class LoginPayload {
 export class RegisterPayload {
   e: string;
   p: string;
+  confirmPassword?: string;
   firstName?: string;
   lastName?: string;
 }

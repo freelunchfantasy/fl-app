@@ -1,15 +1,25 @@
-<div class="login-form">
-  <div class="login-form__message">Welcome back!</div>
-  <div class="login-form__item login-form__input">
-    <input type="text" placeholder="email address" [(ngModel)]="email" />
+<form class="login-form">
+  <div class="login-form__list" *ngIf="!(userIsLoading$() | async)">
+    <div class="login-form__list-message">Welcome back!</div>
+    <div class="login-form__list-item login-form__list-input">
+      <input type="text" placeholder="email address" [(ngModel)]="email" name="email" />
+      <span class="login-form__list-input-error">{{ emailError }}</span>
+    </div>
+    <div class="login-form__list-item login-form__list-input">
+      <input type="password" placeholder="password" [(ngModel)]="password" name="password" />
+      <span class="login-form__list-input-error">{{ passwordError }}</span>
+    </div>
+    <div class="login-form__list-item login-form__list-submit">
+      <button class="btn btn-success" (click)="handleLoginSubmit()">Submit</button>
+    </div>
+    <div class="login-form__list-item login-form__list-error">{{ loginError }}</div>
   </div>
-  <div class="login-form__item login-form__input">
-    <input type="password" placeholder="password" [(ngModel)]="password" />
+
+  <div *ngIf="userIsLoading$() | async" class="loading-spinner-container">
+    <mat-spinner></mat-spinner>
+    <span>Logging you in...</span>
   </div>
-  <div class="login-form__item login-form__submit">
-    <button class="btn btn-success" (click)="handleLoginSubmit()">Submit</button>
-  </div>
-</div>
-<div class="switch-message">
+</form>
+<div *ngIf="!(userIsLoading$() | async)" class="switch-message">
   New to FreeLunch? Click <span class="switch" (click)="switchToRegister()">here</span> to register!
 </div>
