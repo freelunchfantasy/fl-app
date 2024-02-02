@@ -1,5 +1,5 @@
 import * as EmailValidator from 'email-validator';
-import { LoginPayload, RegisterPayload } from '@app/lib/models/auth-payloads';
+import { ContactPayload, LoginPayload, RegisterPayload } from '@app/lib/models/auth-payloads';
 import { InputLimits } from '@app/lib/constants/input-limits.constants';
 
 export class InputValidationService {
@@ -17,6 +17,12 @@ export class InputValidationService {
     return {
       email: this.validateEmailForLogin(payload.e),
       password: this.validatePasswordForLogin(payload.p),
+    };
+  }
+
+  validateContactInputs(payload: ContactPayload) {
+    return {
+      message: this.validateMessageForContact(payload.message),
     };
   }
 
@@ -58,5 +64,13 @@ export class InputValidationService {
 
   validatePasswordForLogin(password: string): string {
     return password.length ? '' : 'Password is required';
+  }
+
+  validateMessageForContact(message: string): string {
+    if (message.length < InputLimits.contactMessage.minLength.value)
+      return InputLimits.contactMessage.minLength.message;
+    if (message.length > InputLimits.contactMessage.maxLength.value)
+      return InputLimits.contactMessage.maxLength.message;
+    return '';
   }
 }

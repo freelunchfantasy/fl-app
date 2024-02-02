@@ -11,3 +11,10 @@ export class RegisterPayload {
   firstName?: string;
   lastName?: string;
 }
+
+export class ContactPayload {
+  e?: string;
+  firstName?: string;
+  lastName?: string;
+  message: string;
+}

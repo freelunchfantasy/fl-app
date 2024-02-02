@@ -6,6 +6,7 @@ import { LoginComponent } from './routes/entities/login/login.component';
 import { AuthGuardService } from './services/auth-guard-service';
 import { TradeComponent } from './routes/entities/trade/trade.component';
 import { HomeComponent } from './routes/entities/home/home.component';
+import { ContactUsComponent } from './routes/entities/contact-us/contact-us.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,10 @@ const routes: Routes = [
       {
         path: 'trade',
         component: TradeComponent,
+      },
+      {
+        path: 'contact',
+        component: ContactUsComponent,
       },
       { path: 'unavailable', component: PageNotFoundComponent },
     ],

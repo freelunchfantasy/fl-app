@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 import { User } from '@app/lib/models/user';
-import { LoginPayload, RegisterPayload } from '@app/lib/models/auth-payloads';
+import { ContactPayload, LoginPayload, RegisterPayload } from '@app/lib/models/auth-payloads';
 
 export const LOGIN = '[Application] Attempting user login';
 export const LOGIN_SUCCESS = '[Application] Successfully logged in user';
@@ -8,6 +8,8 @@ export const LOGIN_FAILURE = '[Application] Failed to log in user';
 export const REGISTER = '[Application] Attempting to register user';
 export const REGISTER_SUCCESS = '[Application] Successfully registered user';
 export const REGISTER_FAILURE = '[Application] Failed to register user';
+export const SEND_CONTACT_EMAIL = '[Application] Sending contact email';
+export const SEND_CONTACT_EMAIL_SUCCESS = '[Application] Successfully sent contact email';
 export const LOG_OUT = '[Application] Logging user out';
 export const CLEAR_USER = '[Application] Clearing user from state';
 export const SET_SESSION_TOKEN = '[Application] Setting session token cookie';
@@ -15,6 +17,7 @@ export const HANDLE_BACKEND_ERROR = '[Application] Backend error occurred';
 export const NAVIGATE_TO_HOME = '[Application] Navigating to home page';
 export const NAVIGATE_TO_LOGIN = '[Application] Navigating to login page';
 export const NAVIGATE_TO_LEAGUE = '[Application] Navigating to league page';
+export const NAVIGATE_TO_CONTACT_US = '[Application] Navigating to contact us page';
 export const NAVIGATE_TO_UNAVAILABLE = '[Application] Navigating to unavailable';
 
 export class Login implements Action {
@@ -53,6 +56,18 @@ export class RegisterFailure implements Action {
   constructor(public payload: any) {}
 }
 
+export class SendContactEmail implements Action {
+  readonly type = SEND_CONTACT_EMAIL;
+
+  constructor(public payload: ContactPayload) {}
+}
+
+export class SendContactEmailSuccess implements Action {
+  readonly type = SEND_CONTACT_EMAIL_SUCCESS;
+
+  constructor(public payload: any) {}
+}
+
 export class LogOut implements Action {
   readonly type = LOG_OUT;
 }
@@ -85,6 +100,10 @@ export class NavigateToLeague implements Action {
   readonly type = NAVIGATE_TO_LEAGUE;
 }
 
+export class NavigateToContactUs implements Action {
+  readonly type = NAVIGATE_TO_CONTACT_US;
+}
+
 export class NavigateToUnavailable implements Action {
   readonly type = NAVIGATE_TO_UNAVAILABLE;
 }
@@ -96,9 +115,13 @@ export type All =
   | Register
   | RegisterSuccess
   | RegisterFailure
+  | SendContactEmail
   | LogOut
   | ClearUser
   | SetSessionToken
   | HandleBackendError
   | NavigateToHome
+  | NavigateToLogin
+  | NavigateToLeague
+  | NavigateToContactUs
   | NavigateToUnavailable;

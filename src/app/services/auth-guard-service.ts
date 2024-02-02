@@ -14,6 +14,8 @@ export class AuthGuardService implements CanActivate {
   backendUrl$: Observable<string>;
   user$: Observable<User>;
 
+  allowedRoutesWithoutSessionToken = ['/', '/login', '/contact', '/unavailable'];
+
   constructor(
     public cookieService: CookieService,
     public routerService: RouterService,
@@ -26,18 +28,16 @@ export class AuthGuardService implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | boolean {
     // Get url route information
-    const baseRoute = '/';
     const navUrl = (state.url || '').trim();
-    if (baseRoute == navUrl) return true;
+
+    if (this.allowedRoutesWithoutSessionToken.includes(navUrl)) {
+      return true;
+    }
 
     const sessionCookie = this.getSessionTokenCookie();
     if (sessionCookie) {
       this.store.dispatch(new ApplicationActions.SetSessionToken(sessionCookie));
       return navUrl == '/login' ? true : this.forceNavigateToLogin();
-    }
-
-    if (navUrl == '/' || navUrl == '/login') {
-      return true;
     }
     return this.forceNavigateToHome();
   }

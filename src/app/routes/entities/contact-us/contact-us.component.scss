@@ -1,0 +1,12 @@
+.contact {
+  margin: 50px;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+
+  ::ng-deep mat-spinner circle {
+    stroke: black;
+  }
+}

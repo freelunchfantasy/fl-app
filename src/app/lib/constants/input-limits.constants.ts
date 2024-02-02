@@ -16,4 +16,8 @@ export const InputLimits = {
     maxLength: { value: 20, message: 'Last name must be fewer than 21 characters' },
     validChars: { value: /^[a-z]+$/i, message: 'Only letters permitted in last name' },
   },
+  contactMessage: {
+    minLength: { value: 1, message: 'Please include a message' },
+    maxLength: { value: 128, message: 'Message must be fewer than 127 characters' },
+  },
 };
