@@ -5,5 +5,8 @@
       <nav-option *ngFor="let option of navOptions" [navOption]="option"></nav-option>
     </div>
   </div>
-  <div *ngIf="sessionToken" class="logout" (click)="handleLogout()">Log out</div>
+  <div class="right-nav-options">
+    <div *ngIf="sessionToken" (click)="handleLogout()">Log out</div>
+    <div (click)="handleClickContactUs()">Contact Us</div>
+  </div>
 </div>

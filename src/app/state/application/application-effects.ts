@@ -38,6 +38,19 @@ export class ApplicationEffects {
     )
   );
 
+  sendContactEmail$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ApplicationActions.SEND_CONTACT_EMAIL),
+      map((action: ApplicationActions.SendContactEmail) => action.payload),
+      switchMap(payload => {
+        return this.backendService.sendContactEmail(payload).pipe(
+          map(result => new ApplicationActions.SendContactEmailSuccess(result)),
+          catchError(err => of(new ApplicationActions.HandleBackendError(err)))
+        );
+      })
+    )
+  );
+
   logout$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -95,6 +108,19 @@ export class ApplicationEffects {
         map(([action, state]) => {
           const leagueRoute = '/league';
           this.routerService.redirectTo(leagueRoute);
+        })
+      ),
+    { dispatch: false }
+  );
+
+  navigateToContactUs$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(ApplicationActions.NAVIGATE_TO_CONTACT_US),
+        withLatestFrom(this.store$),
+        map(([action, state]) => {
+          const contactRoute = '/contact';
+          this.routerService.redirectTo(contactRoute);
         })
       ),
     { dispatch: false }

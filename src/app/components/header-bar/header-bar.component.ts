@@ -48,4 +48,8 @@ export class HeaderBarComponent implements OnInit, OnDestroy {
     this.appStore.dispatch(new ApplicationActions.ClearUser());
     this.appStore.dispatch(new ApplicationActions.LogOut());
   }
+
+  handleClickContactUs() {
+    this.appStore.dispatch(new ApplicationActions.NavigateToContactUs());
+  }
 }

@@ -1,0 +1,77 @@
+.contact-form {
+  min-width: 425px;
+  min-height: 375px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  border: 1px solid black;
+  padding: 50px;
+  background-color: white;
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+
+    &-message {
+      font-size: 24pt;
+      font-weight: bold;
+    }
+
+    &-input {
+      display: flex;
+      flex-direction: column;
+      input {
+        min-width: 300px;
+        padding: 8px;
+        border-radius: 10px;
+      }
+      textarea {
+        min-width: 300px;
+        padding: 8px;
+        border-radius: 10px;
+      }
+
+      &-error {
+        margin-top: 2px;
+        min-height: 20px;
+        font-size: 10pt;
+        color: red;
+      }
+    }
+
+    &-item {
+      margin-top: 7px;
+    }
+
+    &-error {
+      color: red;
+    }
+  }
+
+  .loading-spinner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    ::ng-deep mat-spinner {
+      max-width: 30px;
+      circle {
+        stroke: black;
+      }
+    }
+  }
+}
+
+.switch-message {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: bold;
+
+  .switch {
+    color: rgb(68, 141, 250);
+    cursor: pointer;
+  }
+}

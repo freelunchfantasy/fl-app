@@ -15,6 +15,7 @@ import { LoginFormComponent } from './login-form/login-form.component';
 import { LeagueStandingsComponent } from './league-standings/league-standings.component';
 import { TeamRosterComponent } from './team-roster/team-roster.component';
 import { DropdownComponent } from './dropdown/dropdown.component';
+import { ContactFormComponent } from './contact-form/contact-form.component';
 
 const components = [
   ModalComponent,
@@ -22,6 +23,7 @@ const components = [
   NavOptionComponent,
   RegisterFormComponent,
   LoginFormComponent,
+  ContactFormComponent,
   LeagueStandingsComponent,
   TeamRosterComponent,
   DropdownComponent,

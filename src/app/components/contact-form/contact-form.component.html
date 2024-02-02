@@ -1,0 +1,28 @@
+<form class="contact-form">
+  <div class="contact-form__list" *ngIf="!(userIsLoading$() | async)">
+    <div class="contact-form__list-message">Contact us!</div>
+    <div class="contact-form__list-item contact-form__list-input">
+      <input type="text" placeholder="email address" [(ngModel)]="email" name="email" />
+    </div>
+    <div class="contact-form__list-item contact-form__list-input">
+      <input type="text" placeholder="first name" [(ngModel)]="firstName" name="firstName" />
+    </div>
+    <div class="contact-form__list-item contact-form__list-input">
+      <input type="text" placeholder="last name" [(ngModel)]="lastName" name="lastName" />
+    </div>
+    <div class="contact-form__list-item contact-form__list-input">
+      <textarea type="text" placeholder="message (required)" [(ngModel)]="message" name="message"></textarea>
+      <span class="contact-form__list-input-error">{{ messageError }}</span>
+    </div>
+    <div class="contact-form__list-item contact-form__list-submit">
+      <button class="btn btn-success" (click)="handleContactFormSubmit()">Submit</button>
+    </div>
+    <div class="contact-form__list-item contact-form__list-error">{{ loginError }}</div>
+  </div>
+
+  <div *ngIf="userIsLoading$() | async" class="loading-spinner-container">
+    <mat-spinner></mat-spinner>
+    <span>Sending...</span>
+  </div>
+</form>
+<div>DONATE</div>

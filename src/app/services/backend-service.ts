@@ -6,7 +6,7 @@ import { CookieService } from 'ngx-cookie-service';
 // Models
 import { League, LeagueSimulationResult } from '@app/lib/models/league';
 import { SimulateLeaguePayload } from '@app/lib/models/league-payloads';
-import { LoginPayload, RegisterPayload } from '@app/lib/models/auth-payloads';
+import { ContactPayload, LoginPayload, RegisterPayload } from '@app/lib/models/auth-payloads';
 import { User } from '@app/lib/models/user';
 
 @Injectable()
@@ -24,6 +24,10 @@ export class BackendService {
 
   register(payload: RegisterPayload): Observable<User> {
     return this.http.post<User>(`${this.getApiUrl()}/auth/register`, payload, this.httpOptions);
+  }
+
+  sendContactEmail(payload: ContactPayload): Observable<any> {
+    return this.http.post<any>(`${this.getApiUrl()}/auth/send-contact-email`, payload, this.httpOptions);
   }
 
   getLeagueData(leagueId: number): Observable<League> {
