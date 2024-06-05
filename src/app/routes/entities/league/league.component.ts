@@ -6,10 +6,11 @@ import * as ApplicationActions from '@app/state/application/application-actions'
 import * as fromLeagueRoot from '@app/routes/entities/league/state/reducer';
 import * as LeagueActions from '@app/routes/entities/league/state/league-actions';
 import { Observable, Subscription, combineLatest } from 'rxjs';
-import { League, LeagueSimulationResult, Player, Team, TeamSimulationResult } from '@app/lib/models/league';
+import { League, LeagueSimulationResult, Player, Team, TeamSimulationResult, UserLeague } from '@app/lib/models/league';
 import { RosterService } from '@app/services/roster-service';
 import { SimulationPayloadService } from '@app/services/simulation-payload-service';
 import { LeagueDataProcessingService } from '@app/services/league-data-processing-service';
+import { User } from '@app/lib/models/user';
 
 @Component({
   selector: 'league',
@@ -19,13 +20,20 @@ import { LeagueDataProcessingService } from '@app/services/league-data-processin
 export class LeagueComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
 
+  // User leagues
+  user: User;
+  userLeagues: UserLeague[];
+
+  // Selected league
+  leagueId: number;
+  userTeamId: number;
   league: League;
   leagueStandings: Team[] = [];
   userTeam: Team;
+  didInitialLoad: boolean = false;
+  leagueIsLoading: boolean = false;
 
-  // TODO: REPLACE WITH ACTUAL LOGIN AND USER INFO
-  leagueId: number = 49454731;
-  userTeamId: number = 7;
+  showNewUserLeagueModal: boolean = false;
 
   DEFAULT_ACTIVE_ROSTER: any = {
     QB: 1,
@@ -57,18 +65,29 @@ export class LeagueComponent implements OnInit, OnDestroy {
 
   constructor(
     public appStore: Store<fromApplicationRoot.State>,
-    private cookieService: CookieService,
     private leagueStore: Store<fromLeagueRoot.State>,
     private leagueDataProcessingService: LeagueDataProcessingService,
     private rosterService: RosterService,
     private simulationPayloadService: SimulationPayloadService
   ) {}
 
-  leagueData$(): Observable<any> {
+  user$(): Observable<User> {
+    return this.appStore.select(fromApplicationRoot.selectUser);
+  }
+
+  userLeagues$(): Observable<UserLeague[]> {
+    return this.leagueStore.select(fromLeagueRoot.selectUserLeagues);
+  }
+
+  userLeaguesAreLoading$(): Observable<boolean> {
+    return this.leagueStore.select(fromLeagueRoot.selectUserLeaguesAreLoading);
+  }
+
+  leagueData$(): Observable<League> {
     return this.leagueStore.select(fromLeagueRoot.selectLeagueData);
   }
 
-  leagueDataIsLoading$(): Observable<any> {
+  leagueDataIsLoading$(): Observable<boolean> {
     return this.leagueStore.select(fromLeagueRoot.selectLeagueDataIsLoading);
   }
 
@@ -89,22 +108,39 @@ export class LeagueComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    // User sub
+    const userSubscription = this.user$().subscribe(user => {
+      if (user) {
+        this.user = user;
+        this.leagueStore.dispatch(new LeagueActions.GetUserLeagues());
+      }
+    });
+    this.subscriptions.push(userSubscription);
+
+    // User leagues sub
+    const userLeaguesSubscription = combineLatest([this.userLeagues$(), this.userLeaguesAreLoading$()]).subscribe(
+      ([userLeagues, areLoading]) => {
+        if (userLeagues && !areLoading) {
+          this.userLeagues = userLeagues;
+        }
+      }
+    );
+    this.subscriptions.push(userLeaguesSubscription);
+
+    // Selected league data sub
     const leagueDataSubscription = combineLatest([this.leagueData$(), this.leagueDataIsLoading$()]).subscribe(
       ([leagueData, isLoading]) => {
-        if (!isLoading) {
-          if (leagueData) {
-            this.leagueDataProcessingService.processLeagueData(leagueData);
+        this.leagueIsLoading = isLoading;
+        if (leagueData && !isLoading && this.leagueId) {
+          this.leagueDataProcessingService.processLeagueData(leagueData);
 
-            // League data processing specific for this component
-            this.league = leagueData;
-            this.userTeam = leagueData.teams.find((team: Team) => team.id == this.userTeamId);
-            this.starters = this.rosterService.constructStarters(this.userTeam.roster, this.DEFAULT_ACTIVE_ROSTER);
-            this.bench = this.userTeam.roster.filter(player => !this.starters.map(p => p.id).includes(player.id));
-            this.startingPositions = this.rosterService.constructStartingPositions(this.DEFAULT_ACTIVE_ROSTER);
-            this.eligibleSlotsForSelectedBenchPlayer = this.startingPositions.map(p => false);
-          } else {
-            this.leagueStore.dispatch(new LeagueActions.GetLeagueData(this.leagueId));
-          }
+          // League data processing specific for this component
+          this.league = leagueData;
+          this.userTeam = leagueData.teams.find((team: Team) => team.id == this.userTeamId);
+          this.starters = this.rosterService.constructStarters(this.userTeam.roster, this.DEFAULT_ACTIVE_ROSTER);
+          this.bench = this.userTeam.roster.filter(player => !this.starters.map(p => p.id).includes(player.id));
+          this.startingPositions = this.rosterService.constructStartingPositions(this.DEFAULT_ACTIVE_ROSTER);
+          this.eligibleSlotsForSelectedBenchPlayer = this.startingPositions.map(p => false);
         }
       }
     );
@@ -139,6 +175,12 @@ export class LeagueComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
+  selectUserLeague(userLeague: UserLeague) {
+    this.leagueId = userLeague.leagueId;
+    this.userTeamId = userLeague.userTeamId;
+    this.leagueStore.dispatch(new LeagueActions.GetLeagueData(this.leagueId));
+  }
+
   processLeagueSimulationResult(result: LeagueSimulationResult) {
     this.simulationResult = result;
     let wins: any = {};
@@ -158,5 +200,18 @@ export class LeagueComponent implements OnInit, OnDestroy {
       this.leagueSchedule
     );
     this.leagueStore.dispatch(new LeagueActions.SimulateLeague(simulationPayload));
+  }
+
+  openNewUserLeagueModal() {
+    this.showNewUserLeagueModal = true;
+  }
+
+  closeNewUserLeagueModal() {
+    this.showNewUserLeagueModal = false;
+    this.leagueStore.dispatch(new LeagueActions.GetUserLeagues());
+  }
+
+  get shouldShowLeague() {
+    return this.league && !this.leagueIsLoading;
   }
 }

@@ -1,0 +1,37 @@
+.new-user-league-modal {
+  padding: 10px;
+  .new-user-league__form {
+    display: flex;
+    flex-direction: column;
+
+    &-input {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      input {
+        min-width: 150px;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid black;
+        margin: 5px 15px 5px 2px;
+      }
+
+      button {
+        padding: 5px 8px 5px 8px;
+      }
+    }
+    &-message {
+      font-size: 8pt;
+    }
+  }
+}
+
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}

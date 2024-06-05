@@ -7,6 +7,12 @@ export class User {
   leagues: League[];
 }
 
+export class UserResult {
+  user?: User;
+  error?: string;
+  success: boolean;
+}
+
 class League {
   id: number;
   userTeamId: number;

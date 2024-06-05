@@ -1,6 +1,6 @@
 <div class="trade">
   <div *ngIf="!(leagueDataIsLoading$() | async)" class="trade-container">
-    <div class="trade-container__team">
+    <div class="trade-container__team trade-container__team__left">
       <dropdown id="left-team-dropdown" [items]="teamDropdownItems" (onClick)="onSelectLeftTeam($event)"></dropdown>
       <team-roster
         class="trade-container__team-roster"
@@ -16,7 +16,7 @@
     <div class="trade-container__trade-block-container">
       <div class="trade-block">
         <div class="trade-block__side left">
-          <div class="trade-block__side-arrow">&#8594;</div>
+          <img src="../../../../assets/arrow-right.png" class="trade-block__side-arrow" style="margin-bottom: 5px" />
           <div
             *ngFor="let player of tradeBlock.left"
             [class]="getPlayerCssClasses(player, i, false)"
@@ -30,11 +30,10 @@
           </div>
         </div>
         <div class="sim-btn-container">
-          <div *ngIf="leagueSimulationIsLoading$() | async"><mat-spinner></mat-spinner></div>
-
-          <div *ngIf="!(leagueSimulationIsLoading$() | async)">
-            <button [class]="getSimSeasonButtonClasses()" (click)="simulateSeason()">Simulate Season</button>
-          </div>
+          <button [class]="canSimTrade ? 'sim-btn' : 'sim-btn disabled'" (click)="simulateTrade()">
+            <span *ngIf="!(tradeSimulationIsLoading$() | async)">Simulate</span>
+            <mat-spinner *ngIf="tradeSimulationIsLoading$() | async"></mat-spinner>
+          </button>
         </div>
         <div class="trade-block__side right">
           <div
@@ -48,11 +47,11 @@
             </div>
             <div class="player__about">{{ player.position }} - {{ player.proTeam }}</div>
           </div>
-          <div class="trade-block__side-arrow">&#8592;</div>
+          <img src="../../../../assets/arrow-left.png" class="trade-block__side-arrow" style="margin-top: 5px" />
         </div>
       </div>
     </div>
-    <div class="trade-container__team">
+    <div class="trade-container__team trade-container__team__right">
       <dropdown
         id="right-team-dropdown"
         [items]="teamDropdownItems"
@@ -77,3 +76,14 @@
     <div class="display-4">Loading league...</div>
   </div>
 </div>
+
+<!-- Trade result modal -->
+<trade-result-modal
+  *ngIf="showTradeResultModal"
+  [modalTitle]="'Trade Result'"
+  [tradeResult]="tradeResult"
+  [leagueStandings]="leagueStandings"
+  [tradeBlock]="tradeBlock"
+  [showCloseIcon]="true"
+  (dismissModal)="closeTradeResultModal()"
+></trade-result-modal>

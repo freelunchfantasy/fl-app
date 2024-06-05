@@ -81,7 +81,9 @@ export class RosterService {
   }
 
   getBestPlayerAtPosition(players: Player[]) {
-    return players.reduce((max, player) => (max.percentStarted > player.percentStarted ? max : player));
+    return (players || []).length
+      ? players.reduce((max, player) => (max.percentStarted > player.percentStarted ? max : player))
+      : null;
   }
 
   constructStartingPositions(rosterSettings: any): string[] {

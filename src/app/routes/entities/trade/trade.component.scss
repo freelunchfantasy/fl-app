@@ -1,21 +1,30 @@
+@import '../../../../styles.scss';
+
 .trade {
-  background-color: rgb(253, 255, 230);
+  background-color: $fl-white;
   padding: 25px;
-  min-height: 800px;
   &-container {
     display: flex;
     justify-content: space-around;
+    min-height: 600px;
 
     &__team {
       width: 40%;
       padding: 10px;
       border-radius: 10px;
       border: 1px solid black;
-      background-color: rgb(238, 218, 255);
+
+      &__left {
+        background-color: $fl-green;
+      }
+
+      &__right {
+        background-color: $fl-orange;
+      }
 
       &-roster {
         display: flex;
-        align-items: start;
+        align-items: flex-start;
 
         ::ng-deep {
           .player-row {
@@ -56,36 +65,33 @@
 
       .trade-block {
         width: 100%;
-        height: 80%;
+        height: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
+        justify-content: space-between;
         align-items: center;
         border-radius: 10px;
-        border: 1px solid black;
-        background-color: rgb(167, 255, 203);
 
         &__side {
           width: 100%;
           height: 45%;
           display: flex;
           flex-direction: column;
-          justify-content: start;
+          justify-content: flex-start;
           align-items: center;
 
           &-arrow {
-            font-size: 32pt;
-            font-weight: bold;
+            width: 120px;
           }
 
           .player {
-            width: 80%;
+            width: 100%;
             min-width: 100px;
             padding: 5px;
             font-size: 10pt;
             border-radius: 20px;
-            border: 1px solid black;
-            margin-left: 15px;
+            border: 1px solid $fl-white;
+            color: $fl-white;
             margin-top: 5px;
             display: flex;
             justify-content: space-between;
@@ -93,7 +99,7 @@
             transition: opacity 0.5s;
             &:hover {
               cursor: pointer;
-              background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
+              background-image: linear-gradient(rgb(0 0 0/20%) 0 0);
             }
 
             &__profile {
@@ -116,22 +122,22 @@
             }
           }
           .quarterback {
-            background-color: lightblue;
+            background-color: $fl-qb;
           }
           .runningback {
-            background-color: lightgreen;
+            background-color: $fl-rb;
           }
           .widereceiver {
-            background-color: lightcoral;
+            background-color: $fl-wr;
           }
           .tightend {
-            background-color: plum;
+            background-color: $fl-te;
           }
           .defense {
-            background-color: burlywood;
+            background-color: $fl-dst;
           }
           .kicker {
-            background-color: lightgray;
+            background-color: $fl-k;
           }
         }
         .right {
@@ -139,14 +145,41 @@
         }
 
         .sim-btn-container {
-          ::ng-deep mat-spinner {
-            max-width: 25px;
-            circle {
-              stroke: black;
+          .sim-btn {
+            background-color: $fl-red;
+            color: $fl-white;
+            border: 2px solid black;
+            padding: 6px;
+            border-radius: 8px;
+            font-size: 12pt;
+            min-width: 77px;
+            min-height: 38px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &:hover {
+              cursor: pointer;
+              background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
+            }
+
+            ::ng-deep mat-spinner {
+              max-width: 15px;
+              max-height: 15px;
+              circle {
+                stroke: black;
+              }
             }
           }
-          .unclickable {
-            cursor: not-allowed;
+
+          .disabled {
+            background-color: $fl-gray;
+            &:hover {
+              background-image: none;
+            }
+            &:focus {
+              outline: none;
+            }
           }
         }
       }

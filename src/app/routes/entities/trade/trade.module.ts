@@ -17,6 +17,7 @@ import * as fromLeague from '../league/state/reducer';
 
 // custom
 import { TradeComponent } from './trade.component';
+import { TradeResultModalComponent } from './trade-result-modal/trade-result-modal.component';
 import { CommonComponentModule } from '@app/components/components.module';
 
 @NgModule({
@@ -30,7 +31,7 @@ import { CommonComponentModule } from '@app/components/components.module';
     StoreModule.forFeature('league', reducers),
     EffectsModule.forFeature([LeagueEffects]),
   ],
-  declarations: [TradeComponent],
+  declarations: [TradeComponent, TradeResultModalComponent],
   exports: [TradeComponent],
 })
 export class TradeModule {}

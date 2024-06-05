@@ -1,0 +1,24 @@
+<div class="trade-result-modal">
+  <app-modal
+    [modalTitle]="modalTitle"
+    [modalSubtitle]="modalSubtitle"
+    [showCloseIcon]="showCloseIcon"
+    (dismissModal)="handleModalClose()"
+  >
+    <div body class="trade-result">
+      <div class="trade-result__summary">
+        Here's what would happen if <span class="important">{{ tradeBlockLeftTeam.teamName }}</span> traded
+        <span class="important">{{ getPlayersString(tradeBlock.left) }}</span> to
+        <span class="important">{{ tradeBlockRightTeam.teamName }}</span> for
+        <span class="important">{{ getPlayersString(tradeBlock.right) }}</span
+        >.
+      </div>
+      <league-standings
+        class="league-standings"
+        [leagueStandings]="leagueStandings"
+        [leagueSimulation]="tradeResult.before"
+        [leagueSimulationAfterTrade]="tradeResult.after"
+      ></league-standings>
+    </div>
+  </app-modal>
+</div>

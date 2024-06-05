@@ -18,6 +18,7 @@ import * as fromLeague from './state/reducer';
 // custom
 import { LeagueComponent } from './league.component';
 import { CommonComponentModule } from '@app/components/components.module';
+import { NewUserLeagueModal } from './new-user-league-modal/new-user-league-modal.component';
 
 @NgModule({
   imports: [
@@ -30,7 +31,7 @@ import { CommonComponentModule } from '@app/components/components.module';
     StoreModule.forFeature('league', reducers),
     EffectsModule.forFeature([LeagueEffects]),
   ],
-  declarations: [LeagueComponent],
+  declarations: [LeagueComponent, NewUserLeagueModal],
   exports: [LeagueComponent],
 })
 export class LeagueModule {}

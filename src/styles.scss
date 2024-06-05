@@ -1,0 +1,27 @@
+// Brand color palette
+$fl-blue: #1a237e;
+$fl-orange: #ff6f00;
+$fl-green: #4caf50;
+$fl-white: #f5f5f5;
+$fl-red: #d32f2f;
+$fl-gray: #adadad;
+
+// Player position color palette
+$fl-qb: #1a237e;
+$fl-rb: #002d04;
+$fl-wr: #800000;
+$fl-te: #3c4142;
+$fl-k: #804a00;
+$fl-dst: #2f4f4f;
+
+body {
+  background-color: $fl-white;
+  margin: 0px;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.util__center-flex {
+  display: flex;
+  justify-content: flex;
+  align-items: flex;
+}

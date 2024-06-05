@@ -12,6 +12,20 @@ export const reducers: ActionReducerMap<State, any> = {
 
 export const getLeagueState = createFeatureSelector<State>('league');
 
+export const selectUserLeagues = createSelector(getLeagueState, (state: State) => state.league.userLeagues);
+
+export const selectUserLeaguesAreLoading = createSelector(
+  getLeagueState,
+  (state: State) => state.league.userLeaguesStatus == AsyncStatus.Processing
+);
+
+export const selectNewUserLeagueData = createSelector(getLeagueState, (state: State) => state.league.newUserLeagueData);
+
+export const selectNewUserLeagueDataIsLoading = createSelector(
+  getLeagueState,
+  (state: State) => state.league.newUserLeagueDataStatus == AsyncStatus.Processing
+);
+
 export const selectLeagueData = createSelector(getLeagueState, (state: State) => state.league.leagueData);
 
 export const selectLeagueDataIsLoading = createSelector(
@@ -27,6 +41,16 @@ export const selectLeagueSimulationResult = createSelector(
 export const selectLeagueSimulationIsLoading = createSelector(
   getLeagueState,
   (state: State) => state.league.leagueSimulationStatus == AsyncStatus.Processing
+);
+
+export const selectTradeSimulationResult = createSelector(
+  getLeagueState,
+  (state: State) => state.league.tradeSimulationResult
+);
+
+export const selectTradeSimulationIsLoading = createSelector(
+  getLeagueState,
+  (state: State) => state.league.tradeSimulationStatus == AsyncStatus.Processing
 );
 
 export const selectLeagueStandings = createSelector(getLeagueState, (state: State) => state.league.leagueStandings);

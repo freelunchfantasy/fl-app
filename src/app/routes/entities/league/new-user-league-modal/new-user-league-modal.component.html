@@ -1,0 +1,35 @@
+<div class="new-user-league-modal">
+  <app-modal
+    [modalTitle]="modalTitle"
+    [modalSubtitle]="modalSubtitle"
+    [showCloseIcon]="showCloseIcon"
+    (dismissModal)="handleModalClose()"
+    ><div body class="new-user-league">
+      <form class="new-user-league__form">
+        <div class="new-user-league__form-input">
+          <input type="number" placeholder="League ID" [(ngModel)]="leagueId" name="leagueId" autocomplete="off" />
+          <button class="btn btn-primary" (click)="getUserLeagueData()">Find</button>
+        </div>
+        <div *ngIf="foundLeague">
+          <div class="new-user-league__form-input">
+            <input
+              type="text"
+              placeholder="League Name"
+              [(ngModel)]="leagueName"
+              name="leagueName"
+              autocomplete="off"
+              [disabled]="!foundLeague"
+            />
+          </div>
+          <dropdown
+            id="left-team-dropdown"
+            [items]="teamDropdownItems"
+            triggerMarkup="Select Team"
+            (onClick)="onSelectTeam($event)"
+          ></dropdown>
+          <button class="btn btn-success" (click)="handleSaveNewUserLeague()">Save</button>
+        </div>
+      </form>
+    </div>
+  </app-modal>
+</div>
