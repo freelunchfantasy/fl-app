@@ -68,7 +68,8 @@ export class ApplicationEffects {
       this.actions$.pipe(
         ofType(ApplicationActions.SET_SESSION_TOKEN),
         map((action: ApplicationActions.SetSessionToken) => {
-          this.cookieService.set('session', action.payload);
+          const now = new Date();
+          this.cookieService.set('session', action.payload, now.setDate(now.getDate() + 1));
         })
       ),
     { dispatch: false }

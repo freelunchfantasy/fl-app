@@ -28,6 +28,8 @@
     "ngx-cookie-service": "^15.0.0",
     "ngx-skeleton-loader": "^7.0.0",
     "rxjs": "~7.8.0",
+    "sass": "^1.77.1",
+    "sass-loader": "^14.2.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
   },

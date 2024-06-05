@@ -11,3 +11,9 @@ class Team {
 }
 
 class Player {}
+
+export class NewUserLeaguePayload {
+  externalLeagueId: number;
+  leagueName: string;
+  userTeamId: number;
+}

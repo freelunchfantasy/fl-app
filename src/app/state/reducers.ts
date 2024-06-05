@@ -18,6 +18,10 @@ export function selectUser(state: State) {
   return state.application.user;
 }
 
+export function selectUserResult(state: State) {
+  return state.application.userResult;
+}
+
 export function selectUserIsLoading(state: State) {
   return state.application.userStatus == AsyncStatus.Processing;
 }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnDestroy, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as fromApplicationRoot from '@app/state/reducers';
 import * as ApplicationActions from '@app/state/application/application-actions';
@@ -12,6 +12,9 @@ import { User } from '@app/lib/models/user';
   styleUrls: ['./login-form.component.scss'],
 })
 export class LoginFormComponent implements OnInit, OnDestroy {
+  @Input()
+  loginError: string = '';
+
   @Output()
   toggleLoginMode: EventEmitter<any> = new EventEmitter<any>();
 
@@ -19,7 +22,6 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   password: string = '';
   emailError: string = '';
   passwordError: string = '';
-  loginError: string = '';
 
   user$(): Observable<User> {
     return this.appStore.select(fromApplicationRoot.selectUser);
@@ -45,7 +47,9 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     });
     const canSubmit = !Object.values(validationResult).find(message => message.length > 0);
     if (canSubmit) {
+      console.log(`Logging in with ${this.email} and ${this.password}`);
       this.appStore.dispatch(new ApplicationActions.Login({ e: this.email, p: this.password }));
+      this.clearInputErrors();
     } else {
       this.handleInputErrors(validationResult);
     }
@@ -54,6 +58,11 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   handleInputErrors(validationResult: any) {
     this.emailError = validationResult.email;
     this.passwordError = validationResult.password;
+  }
+
+  clearInputErrors() {
+    this.emailError = '';
+    this.passwordError = '';
   }
 
   switchToRegister() {

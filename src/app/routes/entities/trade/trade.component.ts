@@ -6,7 +6,7 @@ import * as ApplicationActions from '@app/state/application/application-actions'
 import * as fromLeagueRoot from '@app/routes/entities/league/state/reducer';
 import * as LeagueActions from '@app/routes/entities/league/state/league-actions';
 import { SimulationPayloadService } from '@app/services/simulation-payload-service';
-import { League, Player, Team } from '@app/lib/models/league';
+import { League, LeagueSimulationResult, Player, Team } from '@app/lib/models/league';
 import { ScheduleService } from '@app/services/schedule-service';
 import { LeagueDataProcessingService } from '@app/services/league-data-processing-service';
 import { RosterService } from '@app/services/roster-service';
@@ -52,6 +52,10 @@ export class TradeComponent implements OnInit, OnDestroy {
   teamDropdownItems: IDropdownItem[];
   rightTeamDropdownTriggerMarkup: string = 'Select a team';
   tradeBlock: TradeBlock = { left: [], right: [] };
+  isSimulating: boolean = false;
+
+  showTradeResultModal: boolean = false;
+  tradeResult: LeagueSimulationResult;
 
   subscriptions: Subscription[] = [];
 
@@ -71,12 +75,12 @@ export class TradeComponent implements OnInit, OnDestroy {
     return this.leagueStore.select(fromLeagueRoot.selectLeagueDataIsLoading);
   }
 
-  leagueSimulationResult$(): Observable<any> {
-    return this.leagueStore.select(fromLeagueRoot.selectLeagueSimulationResult);
+  tradeSimulationResult$(): Observable<any> {
+    return this.leagueStore.select(fromLeagueRoot.selectTradeSimulationResult);
   }
 
-  leagueSimulationIsLoading$(): Observable<any> {
-    return this.leagueStore.select(fromLeagueRoot.selectLeagueSimulationIsLoading);
+  tradeSimulationIsLoading$(): Observable<any> {
+    return this.leagueStore.select(fromLeagueRoot.selectTradeSimulationIsLoading);
   }
 
   leagueStandings$(): Observable<Team[]> {
@@ -88,6 +92,8 @@ export class TradeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.leagueStore.dispatch(new LeagueActions.ResetTradeResult());
+
     const leagueDataSubscription = combineLatest([this.leagueData$(), this.leagueDataIsLoading$()]).subscribe(
       ([leagueData, isLoading]) => {
         if (!isLoading) {
@@ -129,16 +135,22 @@ export class TradeComponent implements OnInit, OnDestroy {
       }
     });
     this.subscriptions.push(leagueScheduleSubscription);
+
+    const tradeSimulationSubscription = combineLatest([
+      this.tradeSimulationResult$(),
+      this.tradeSimulationIsLoading$(),
+    ]).subscribe(([result, isSimulating]) => {
+      this.isSimulating = isSimulating;
+      if (!isSimulating && result) {
+        this.tradeResult = result;
+        this.showTradeResultModal = true;
+      }
+    });
+    this.subscriptions.push(tradeSimulationSubscription);
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
-  }
-
-  getSimSeasonButtonClasses() {
-    return `btn ${
-      this.tradeBlock.left.length > 0 && this.tradeBlock.right.length > 0 ? 'btn-success' : 'btn-secondary unclickable'
-    }`;
   }
 
   getPlayerCssClasses(player: Player) {
@@ -185,6 +197,7 @@ export class TradeComponent implements OnInit, OnDestroy {
   }
 
   addPlayerToTrade(player: Player) {
+    if (this.isSimulating) return;
     const inLeftTeam = this.leftTeam.roster.find(p => p.id == player.id);
     inLeftTeam ? this.tradeBlock.left.push(player) : (this.tradeBlock.right = [player, ...this.tradeBlock.right]);
   }
@@ -197,19 +210,32 @@ export class TradeComponent implements OnInit, OnDestroy {
   }
 
   handlePlayerClick(player: Player) {
+    if (this.isSimulating) return;
     this.removePlayerFromTrade(player);
     this.tradeBlock.left = this.tradeBlock.left.filter(p => p.id != player.id);
     this.tradeBlock.right = this.tradeBlock.right.filter(p => p.id != player.id);
   }
 
-  simulateSeason() {
-    if (this.tradeBlock.left.length > 0 && this.tradeBlock.right.length > 0) {
-      const simulationPayload = this.simulationPayloadService.constructSimulationPayload(
-        this.leagueId,
-        this.league.teams,
-        this.leagueSchedule
-      );
-      this.leagueStore.dispatch(new LeagueActions.SimulateLeague(simulationPayload));
+  simulateTrade() {
+    if (this.tradeBlock.left.length > 0 && this.tradeBlock.right.length > 0 && !this.isSimulating) {
+      const simulationPayload = [
+        this.simulationPayloadService.constructSimulationPayload(this.leagueId, this.league.teams, this.leagueSchedule),
+        this.simulationPayloadService.constructSimulationPayload(
+          this.leagueId,
+          this.league.teams,
+          this.leagueSchedule,
+          this.tradeBlock
+        ),
+      ];
+      this.leagueStore.dispatch(new LeagueActions.SimulateTrade(simulationPayload));
     }
+  }
+
+  get canSimTrade() {
+    return this.tradeBlock.left.length && this.tradeBlock.right.length;
+  }
+
+  closeTradeResultModal() {
+    this.showTradeResultModal = false;
   }
 }

@@ -4,7 +4,7 @@ import { CookieService } from 'ngx-cookie-service';
 import * as fromApplicationRoot from '@app/state/reducers';
 import * as ApplicationActions from '@app/state/application/application-actions';
 import { Observable, Subscription, combineLatest } from 'rxjs';
-import { User } from '@app/lib/models/user';
+import { User, UserResult } from '@app/lib/models/user';
 import { LOGIN_MODE } from './login.constants';
 
 @Component({
@@ -17,6 +17,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   userDataLoading: boolean = true;
 
   loginMode: LOGIN_MODE = LOGIN_MODE.LOGIN;
+  loginError: string = '';
 
   constructor(public appStore: Store<fromApplicationRoot.State>, private cookieService: CookieService) {}
 
@@ -24,8 +25,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     return this.cookieService.get('session');
   }
 
-  user$(): Observable<User> {
-    return this.appStore.select(fromApplicationRoot.selectUser);
+  userResult$(): Observable<UserResult> {
+    return this.appStore.select(fromApplicationRoot.selectUserResult);
   }
 
   userIsLoading$(): Observable<boolean> {
@@ -34,12 +35,20 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // User subscription
-    const userSubscription = combineLatest([this.user$(), this.userIsLoading$()]).subscribe(([user, isLoading]) => {
-      if (!isLoading && user) {
-        this.appStore.dispatch(new ApplicationActions.SetSessionToken(user.sessionToken));
-        this.appStore.dispatch(new ApplicationActions.NavigateToLeague());
+    const userSubscription = combineLatest([this.userResult$(), this.userIsLoading$()]).subscribe(
+      ([result, isLoading]) => {
+        if (!isLoading && result) {
+          if (result.success) {
+            const user = result.user;
+            this.appStore.dispatch(new ApplicationActions.SetUser(user));
+            this.appStore.dispatch(new ApplicationActions.SetSessionToken(user.sessionToken));
+            this.appStore.dispatch(new ApplicationActions.NavigateToLeague());
+          } else {
+            this.loginError = result.error;
+          }
+        }
       }
-    });
+    );
     this.subscriptions.push(userSubscription);
 
     if ((this.sessionToken() || '').length > 0) {

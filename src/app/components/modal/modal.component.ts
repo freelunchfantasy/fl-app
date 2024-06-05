@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { animationTimeConstants } from '@app/lib/constants/animation-time-constants';
 
 @Component({
   selector: 'app-modal',
@@ -26,7 +25,7 @@ export class ModalComponent implements OnInit {
   ngOnInit() {
     setTimeout(function () {
       document.getElementById('modal').style.opacity = '1';
-    }, animationTimeConstants.gameFieldAnimationTime);
+    }, 1);
   }
 
   handleOverlayClicked(e: any) {

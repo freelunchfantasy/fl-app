@@ -1,16 +1,12 @@
 export const AppNavOptions = {
   navBarOptions: [
     {
-      title: 'Roster Sim',
+      title: 'League',
       path: '/league',
     },
     {
-      title: 'Trade Sim',
+      title: 'Trade',
       path: '/trade',
-    },
-    {
-      title: 'Waiver Sim',
-      path: '/waiver',
     },
   ],
 };

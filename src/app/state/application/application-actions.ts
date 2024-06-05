@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { User } from '@app/lib/models/user';
+import { User, UserResult } from '@app/lib/models/user';
 import { ContactPayload, LoginPayload, RegisterPayload } from '@app/lib/models/auth-payloads';
 
 export const LOGIN = '[Application] Attempting user login';
@@ -10,6 +10,7 @@ export const REGISTER_SUCCESS = '[Application] Successfully registered user';
 export const REGISTER_FAILURE = '[Application] Failed to register user';
 export const SEND_CONTACT_EMAIL = '[Application] Sending contact email';
 export const SEND_CONTACT_EMAIL_SUCCESS = '[Application] Successfully sent contact email';
+export const SET_USER = '[Application] Setting user to state';
 export const LOG_OUT = '[Application] Logging user out';
 export const CLEAR_USER = '[Application] Clearing user from state';
 export const SET_SESSION_TOKEN = '[Application] Setting session token cookie';
@@ -29,7 +30,7 @@ export class Login implements Action {
 export class LoginSuccess implements Action {
   readonly type = LOGIN_SUCCESS;
 
-  constructor(public payload: User) {}
+  constructor(public payload: UserResult) {}
 }
 
 export class LoginFailure implements Action {
@@ -76,6 +77,12 @@ export class ClearUser implements Action {
   readonly type = CLEAR_USER;
 }
 
+export class SetUser implements Action {
+  readonly type = SET_USER;
+
+  constructor(public payload: User) {}
+}
+
 export class SetSessionToken implements Action {
   readonly type = SET_SESSION_TOKEN;
 
@@ -118,6 +125,7 @@ export type All =
   | SendContactEmail
   | LogOut
   | ClearUser
+  | SetUser
   | SetSessionToken
   | HandleBackendError
   | NavigateToHome

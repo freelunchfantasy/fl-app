@@ -37,6 +37,13 @@ export class Player {
   stats: any;
 }
 
+export class UserLeague {
+  userId: number;
+  leagueId: number;
+  leagueName: string;
+  userTeamId: number;
+}
+
 export class LeagueSimulationResult {
   id: number;
   teamResults: TeamSimulationResult[];
@@ -46,4 +53,9 @@ export class TeamSimulationResult {
   id: number;
   wins: number;
   losses: number;
+}
+
+export class TradeSimulationResult {
+  before: TeamSimulationResult[];
+  after: TeamSimulationResult[];
 }

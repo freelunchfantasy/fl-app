@@ -1,0 +1,18 @@
+.trade-result-modal {
+  padding: 10px;
+
+  app-modal {
+    min-width: 1000px;
+    ::ng-deep .modal__content {
+      min-width: 1000px;
+    }
+  }
+
+  .trade-result {
+    &__summary {
+      .important {
+        font-weight: bold;
+      }
+    }
+  }
+}

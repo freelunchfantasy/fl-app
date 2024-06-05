@@ -1,12 +1,27 @@
 <div class="header-bar">
-  <div class="app-title">
-    <div><img src="../../../assets/logo.png" class="logo" (click)="redirectToHome()" /></div>
-    <div *ngIf="sessionToken" class="nav-options-container">
-      <nav-option *ngFor="let option of navOptions" [navOption]="option"></nav-option>
+  <div class="left-nav-options">
+    <div class="app-title">
+      <div><img src="../../../assets/logo.png" class="logo" (click)="redirectToHome()" /></div>
+      <div *ngIf="sessionToken" class="nav-options-container">
+        <nav-option style="height: 100%" *ngFor="let option of navOptions" [navOption]="option"></nav-option>
+      </div>
     </div>
   </div>
   <div class="right-nav-options">
-    <div *ngIf="sessionToken" (click)="handleLogout()">Log out</div>
-    <div (click)="handleClickContactUs()">Contact Us</div>
+    <div class="app-help">
+      <nav-option
+        style="height: 100%"
+        *ngIf="sessionToken"
+        [navOption]="LOGOUT_NAV_OPTION"
+        [bypassNav]="true"
+        (click)="handleLogout()"
+      ></nav-option>
+      <nav-option
+        style="height: 100%"
+        [navOption]="CONTACT_US_NAV_OPTION"
+        [bypassNav]="true"
+        (click)="handleClickContactUs()"
+      ></nav-option>
+    </div>
   </div>
 </div>

@@ -1,14 +1,16 @@
+@import '../../../styles.scss';
+
 .header-bar {
   width: 100vw;
-  background-color: rgb(98, 98, 250);
+  background-color: $fl-blue;
   display: flex;
-  justify-content: start;
+  justify-content: space-between;
   border-bottom: 1px solid black;
 
   .app-title {
-    padding: 10px;
     display: flex;
     align-items: center;
+    height: 100%;
     margin-left: 0;
 
     .title {
@@ -17,22 +19,22 @@
     }
 
     .logo {
+      margin: 10px;
       max-width: 90px;
       cursor: pointer;
     }
 
     .nav-options-container {
+      height: 100%;
       display: flex;
-      justify-content: start;
+      justify-content: flex-start;
+      align-items: center;
     }
   }
 
-  .right-nav-options {
-    position: absolute;
-    right: 20px;
-    min-height: 60px;
+  .app-help {
     display: flex;
     align-items: center;
-    cursor: pointer;
+    height: 100%;
   }
 }

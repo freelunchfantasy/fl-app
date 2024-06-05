@@ -11,6 +11,9 @@ export class NavOptionComponent implements OnInit, OnDestroy {
   @Input()
   navOption: AppNavOption;
 
+  @Input()
+  bypassNav: boolean = false;
+
   navOptions: AppNavOption[] = [];
 
   constructor(private activatedRoute: ActivatedRoute, private router: Router) {}

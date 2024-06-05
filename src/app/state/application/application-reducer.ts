@@ -1,9 +1,10 @@
 import * as ApplicationActions from './application-actions';
 import { AsyncStatus } from '@app/lib/enums/async-status';
-import { User } from '@app/lib/models/user';
+import { User, UserResult } from '@app/lib/models/user';
 
 export interface State {
   user: User;
+  userResult: UserResult;
   userStatus: AsyncStatus;
   backendUrl: string;
   sessionToken: string;
@@ -11,6 +12,7 @@ export interface State {
 
 export const initialState: State = {
   user: null,
+  userResult: null,
   userStatus: AsyncStatus.Idle,
   backendUrl: null,
   sessionToken: null,
@@ -22,6 +24,7 @@ export function reducer(state = initialState, action: ApplicationActions.All): S
       return {
         ...state,
         user: null,
+        userResult: null,
         userStatus: AsyncStatus.Processing,
       };
     }
@@ -29,7 +32,7 @@ export function reducer(state = initialState, action: ApplicationActions.All): S
     case ApplicationActions.LOGIN_SUCCESS: {
       return {
         ...state,
-        user: action.payload,
+        userResult: action.payload,
         userStatus: AsyncStatus.Success,
       };
     }
@@ -38,6 +41,7 @@ export function reducer(state = initialState, action: ApplicationActions.All): S
       return {
         ...state,
         user: null,
+        userResult: null,
         userStatus: AsyncStatus.Failure,
       };
     }
@@ -63,6 +67,13 @@ export function reducer(state = initialState, action: ApplicationActions.All): S
         ...state,
         user: null,
         userStatus: AsyncStatus.Failure,
+      };
+    }
+
+    case ApplicationActions.SET_USER: {
+      return {
+        ...state,
+        user: action.payload,
       };
     }
 
