@@ -8,9 +8,9 @@
   <!-- dropdown menu -->
   <div *ngIf="this.isDropdownVisible" class="dropdown__menu dropdown__right-auto">
     <li
-      *ngFor="let item of items"
+      *ngFor="let item of items; index as i"
       [id]="item.id"
-      class="dropdown__menu-row"
+      [class]="getDropdownMenuRowClasses(i)"
       (click)="onSelectItem(item.id, item.value)"
     >
       {{ item.htmlMarkup[0] }}

@@ -47,7 +47,6 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     });
     const canSubmit = !Object.values(validationResult).find(message => message.length > 0);
     if (canSubmit) {
-      console.log(`Logging in with ${this.email} and ${this.password}`);
       this.appStore.dispatch(new ApplicationActions.Login({ e: this.email, p: this.password }));
       this.clearInputErrors();
     } else {

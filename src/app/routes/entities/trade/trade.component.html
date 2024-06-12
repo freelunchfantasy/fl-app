@@ -1,7 +1,7 @@
 <div class="trade">
   <div *ngIf="!(leagueDataIsLoading$() | async)" class="trade-container">
     <div class="trade-container__team trade-container__team__left">
-      <dropdown id="left-team-dropdown" [items]="teamDropdownItems" (onClick)="onSelectLeftTeam($event)"></dropdown>
+      <dropdown id="left-team-dropdown" [items]="leftTeamDropdownItems" (onClick)="onSelectLeftTeam($event)"></dropdown>
       <team-roster
         class="trade-container__team-roster"
         [starters]="leftStarters"
@@ -54,7 +54,7 @@
     <div class="trade-container__team trade-container__team__right">
       <dropdown
         id="right-team-dropdown"
-        [items]="teamDropdownItems"
+        [items]="rightTeamDropdownItems"
         (onClick)="onSelectRightTeam($event)"
         [triggerMarkup]="rightTeamDropdownTriggerMarkup"
       ></dropdown>
