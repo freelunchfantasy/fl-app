@@ -1,6 +1,5 @@
 .dropdown {
   position: relative;
-
   &__trigger {
     background-color: white;
     border: 1px solid black;
@@ -11,13 +10,17 @@
   }
 
   &__menu {
-    position: absolute;
+    position: fixed;
 
     &-row {
+      position: relative;
+      z-index: 9999;
       display: flex;
       flex-wrap: wrap;
       width: 100%;
       background-color: white;
+      padding: 5px;
+      margin-left: 5px;
 
       &:hover {
         background-color: gray;

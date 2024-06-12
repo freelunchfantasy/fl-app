@@ -9,6 +9,7 @@
   justify-content: space-between;
 
   .user-leagues-container {
+    margin-top: 100px;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -19,7 +20,7 @@
       min-height: 250px;
       margin: 10px;
       padding: 10px;
-      background-color: $fl-blue;
+      background-color: $fl-green;
       border-radius: 20px;
       border: 1px solid black;
       display: flex;
@@ -32,7 +33,19 @@
       }
 
       &__league-name {
-        color: white;
+        color: black;
+      }
+    }
+    .add-new-league {
+      background-color: $fl-orange;
+    }
+  }
+  .user-leagues-loading {
+    margin-top: 150px;
+    ::ng-deep mat-spinner {
+      max-width: 75px;
+      circle {
+        stroke: black;
       }
     }
   }
@@ -50,24 +63,36 @@
       align-items: center;
 
       .league-name {
+        min-height: 40px;
         font-size: 18pt;
       }
 
       .league-standings {
         width: 100%;
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid black;
         margin: 10px 0px 10px 0px;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        background-color: #e0ffff;
+        border-top: 1px solid black;
+        border-bottom: 1px solid black;
       }
 
-      .sim-btn-container {
+      .sim-btn {
+        background-color: $fl-green;
+        color: $fl-white;
+        border: 1px solid black;
+        padding: 6px;
+        border-radius: 8px;
+        font-size: 12pt;
+        min-width: 140px;
+        min-height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        &:focus {
+          box-shadow: none;
+        }
+
         ::ng-deep mat-spinner {
-          max-width: 30px;
+          max-width: 15px;
+          max-height: 15px;
           circle {
             stroke: black;
           }
@@ -75,14 +100,62 @@
       }
     }
 
-    &__roster {
+    &__roster-container {
       width: 55%;
       display: flex;
-      align-items: flex-start;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid black;
-      background-color: rgb(238, 218, 255);
+      flex-direction: column;
+      align-items: center;
+
+      &__team-name {
+        min-height: 40px;
+
+        ::ng-deep .dropdown__trigger {
+          background-color: transparent;
+          border: 1px solid transparent;
+          &:hover {
+            border: 1px solid black;
+          }
+        }
+      }
+
+      &__roster {
+        margin-top: 10px;
+        width: 100%;
+        display: flex;
+        align-items: stretch;
+        border: 1px solid black;
+        background-color: $fl-brown;
+        border-radius: 3px;
+      }
+    }
+  }
+
+  .league-loading {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 150px;
+    ::ng-deep mat-spinner {
+      max-width: 75px;
+      circle {
+        stroke: black;
+      }
+    }
+  }
+
+  .options {
+    display: flex;
+    &__back-btn-container {
+      display: flex;
+      border-bottom: 1px solid transparent;
+      &:hover {
+        cursor: pointer;
+        border-bottom: 1px solid black;
+      }
+
+      .back-btn {
+        padding-left: 8px;
+      }
     }
   }
 }

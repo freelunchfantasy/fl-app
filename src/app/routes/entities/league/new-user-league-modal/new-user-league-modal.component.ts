@@ -50,7 +50,6 @@ export class NewUserLeagueModal implements OnInit, OnDestroy {
       this.newUserLeagueData$(),
       this.newUserLeagueDataIsLoading$(),
     ]).subscribe(([leagueData, isLoading]) => {
-      console.log(leagueData, isLoading);
       if (leagueData && isLoading) {
         this.newUserLeagueData = leagueData;
         this.foundLeague = true;

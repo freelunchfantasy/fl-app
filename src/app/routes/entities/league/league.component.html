@@ -1,37 +1,58 @@
 <div class="league">
   <!-- List user leagues -->
-  <div *ngIf="!leagueId" class="user-leagues-container">
+  <div *ngIf="!leagueId && !(userLeaguesAreLoading$() | async)" class="user-leagues-container">
     <div *ngFor="let userLeague of userLeagues" class="user-league" (click)="selectUserLeague(userLeague)">
       <div class="user-league__league-name">{{ userLeague.leagueName }}</div>
     </div>
-    <div class="user-league" (click)="openNewUserLeagueModal()">
+    <div class="user-league add-new-league" (click)="openNewUserLeagueModal()">
       <div class="user-league__league-name">+ Add League</div>
     </div>
+  </div>
+  <!-- Loading state for loading user leagues -->
+  <div *ngIf="!leagueId && (userLeaguesAreLoading$() | async)" class="user-leagues-container user-leagues-loading">
+    <mat-spinner></mat-spinner>
   </div>
 
   <!-- If league has been selected -->
   <div *ngIf="leagueId">
+    <div class="options">
+      <div *ngIf="shouldShowLeague" class="options__back-btn-container">
+        <span>&#x2039;</span>
+        <btn class="back-btn" (click)="backToSelectLeague()">Change League</btn>
+      </div>
+    </div>
     <div *ngIf="shouldShowLeague" class="league-container">
       <div class="league-container__standings">
         <div class="league-name">{{ league.settings.name }}</div>
-        <league-standings class="league-standings" [leagueStandings]="leagueStandings"></league-standings>
-        <div class="sim-btn-container">
+        <league-standings
+          class="league-standings"
+          [leagueStandings]="leagueStandings"
+          [userTeamId]="userTeamId"
+          [leagueSimulation]="simulationResult"
+        ></league-standings>
+        <button class="btn btn-success sim-btn" (click)="simulateSeason()">
+          <div *ngIf="!(leagueSimulationIsLoading$() | async)">Simulate Season</div>
           <div *ngIf="leagueSimulationIsLoading$() | async"><mat-spinner></mat-spinner></div>
-          <div *ngIf="!(leagueSimulationIsLoading$() | async)">
-            <button class="btn btn-success" (click)="simulateSeason()">Simulate Season</button>
-          </div>
-        </div>
+        </button>
       </div>
-      <team-roster
-        class="league-container__roster"
-        [starters]="starters"
-        [bench]="bench"
-        [startingPositions]="startingPositions"
-      ></team-roster>
+      <div class="league-container__roster-container">
+        <dropdown
+          id="team-dropdown"
+          class="league-container__roster-container__team-name"
+          [items]="teamDropdownItems"
+          (onClick)="onSelectTeam($event)"
+        ></dropdown>
+        <team-roster
+          class="league-container__roster-container__roster"
+          [starters]="starters"
+          [bench]="bench"
+          [startingPositions]="startingPositions"
+        ></team-roster>
+      </div>
     </div>
 
-    <div *ngIf="!shouldShowLeague">
-      <div class="display-4">Loading league...</div>
+    <div *ngIf="!shouldShowLeague" class="league-loading">
+      <mat-spinner></mat-spinner>
     </div>
   </div>
 

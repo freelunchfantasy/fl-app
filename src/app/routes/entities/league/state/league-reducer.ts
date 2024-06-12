@@ -7,6 +7,7 @@ export interface State {
   userLeaguesStatus: AsyncStatus;
   newUserLeagueData: League;
   newUserLeagueDataStatus: AsyncStatus;
+  selectedUserLeague: UserLeague;
   leagueData: League;
   leagueDataStatus: AsyncStatus;
   leagueSimulationResult: LeagueSimulationResult;
@@ -22,6 +23,7 @@ const initialState: State = {
   userLeaguesStatus: AsyncStatus.Idle,
   newUserLeagueData: null,
   newUserLeagueDataStatus: AsyncStatus.Idle,
+  selectedUserLeague: null,
   leagueData: null,
   leagueDataStatus: AsyncStatus.Idle,
   leagueSimulationResult: null,
@@ -79,6 +81,20 @@ export function reducer(state = initialState, action: LeagueActions.All): State 
         ...state,
         newUserLeagueData: null,
         newUserLeagueDataStatus: AsyncStatus.Failure,
+      };
+    }
+
+    case LeagueActions.SET_SELECTED_USER_LEAGUE: {
+      return {
+        ...state,
+        selectedUserLeague: action.payload,
+      };
+    }
+
+    case LeagueActions.CLEAR_SELECTED_USER_LEAGUE: {
+      return {
+        ...state,
+        selectedUserLeague: null,
       };
     }
 

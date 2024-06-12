@@ -49,7 +49,8 @@ export class TradeComponent implements OnInit, OnDestroy {
   rightTeam: Team;
   rightStarters: Player[];
   rightBench: Player[];
-  teamDropdownItems: IDropdownItem[];
+  leftTeamDropdownItems: IDropdownItem[];
+  rightTeamDropdownItems: IDropdownItem[];
   rightTeamDropdownTriggerMarkup: string = 'Select a team';
   tradeBlock: TradeBlock = { left: [], right: [] };
   isSimulating: boolean = false;
@@ -108,12 +109,20 @@ export class TradeComponent implements OnInit, OnDestroy {
               player => !this.leftStarters.map(p => p.id).includes(player.id)
             );
             this.startingPositions = this.rosterService.constructStartingPositions(this.DEFAULT_ACTIVE_ROSTER);
-            this.teamDropdownItems = this.league.teams.map(t => ({
+            this.leftTeamDropdownItems = this.league.teams.map(t => ({
               id: t.id.toString(),
               value: t.id,
               htmlMarkup: [t.teamName],
               selected: t.id == this.userTeamId,
             }));
+            this.rightTeamDropdownItems = this.league.teams
+              .filter(t => t.id != this.leftTeam.id)
+              .map(t => ({
+                id: t.id.toString(),
+                value: t.id,
+                htmlMarkup: [t.teamName],
+                selected: t.id == this.userTeamId,
+              }));
           } else {
             this.leagueStore.dispatch(new LeagueActions.GetLeagueData(this.leagueId));
           }
@@ -185,6 +194,14 @@ export class TradeComponent implements OnInit, OnDestroy {
       this.leftTeam = this.league.teams.find(t => t.id == event.payload.dropdownItemValue);
       this.leftStarters = this.rosterService.constructStarters(this.leftTeam.roster, this.DEFAULT_ACTIVE_ROSTER);
       this.leftBench = this.leftTeam.roster.filter(player => !this.leftStarters.map(p => p.id).includes(player.id));
+      this.rightTeamDropdownItems = this.league.teams
+        .filter(t => t.id != this.leftTeam.id)
+        .map(t => ({
+          id: t.id.toString(),
+          value: t.id,
+          htmlMarkup: [t.teamName],
+          selected: t.id == this.userTeamId,
+        }));
     }
   }
 
@@ -193,6 +210,14 @@ export class TradeComponent implements OnInit, OnDestroy {
       this.rightTeam = this.league.teams.find(t => t.id == event.payload.dropdownItemValue);
       this.rightStarters = this.rosterService.constructStarters(this.rightTeam.roster, this.DEFAULT_ACTIVE_ROSTER);
       this.rightBench = this.rightTeam.roster.filter(player => !this.rightStarters.map(p => p.id).includes(player.id));
+      this.leftTeamDropdownItems = this.league.teams
+        .filter(t => t.id != this.rightTeam.id)
+        .map(t => ({
+          id: t.id.toString(),
+          value: t.id,
+          htmlMarkup: [t.teamName],
+          selected: t.id == this.userTeamId,
+        }));
     }
   }
 

@@ -23,7 +23,6 @@ export function reducer(state = initialState, action: ApplicationActions.All): S
     case ApplicationActions.LOGIN: {
       return {
         ...state,
-        user: null,
         userResult: null,
         userStatus: AsyncStatus.Processing,
       };
@@ -32,6 +31,7 @@ export function reducer(state = initialState, action: ApplicationActions.All): S
     case ApplicationActions.LOGIN_SUCCESS: {
       return {
         ...state,
+        user: action.payload.user,
         userResult: action.payload,
         userStatus: AsyncStatus.Success,
       };
@@ -89,6 +89,7 @@ export function reducer(state = initialState, action: ApplicationActions.All): S
         ...state,
         sessionToken: null,
         user: null,
+        userResult: null,
       };
     }
 

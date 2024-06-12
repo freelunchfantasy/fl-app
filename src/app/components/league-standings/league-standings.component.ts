@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { LeagueSimulationResult, Team, TeamSimulationResult } from '@app/lib/models/league';
+import { Team, TeamSimulationResult } from '@app/lib/models/league';
 
 @Component({
   selector: 'league-standings',
@@ -11,6 +11,9 @@ export class LeagueStandingsComponent implements OnInit {
   leagueStandings: Team[] = [];
 
   @Input()
+  userTeamId: number;
+
+  @Input()
   leagueSimulation: TeamSimulationResult[];
 
   @Input()
@@ -18,11 +21,7 @@ export class LeagueStandingsComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {
-    console.log(this.leagueStandings);
-    console.log(this.leagueSimulation);
-    console.log(this.leagueSimulationAfterTrade);
-  }
+  ngOnInit() {}
 
   getSimulatedRecord(team: Team) {
     const before = this.leagueSimulation.find(t => t.id == team.id);
@@ -42,6 +41,11 @@ export class LeagueStandingsComponent implements OnInit {
 
   getSimulatedLossesAfterTrade(team: Team) {
     return this.leagueSimulationAfterTrade.find(t => t.id == team.id).losses.toFixed(2);
+  }
+
+  getTeamClasses(team: Team, i: number) {
+    let classes = i % 2 ? 'team-row even' : 'team-row odd';
+    return `${classes} ${team.id == this.userTeamId ? 'user-team' : ''}`;
   }
 
   getWinDifferenceClasses(team: Team): string {

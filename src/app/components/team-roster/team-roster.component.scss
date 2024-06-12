@@ -2,42 +2,45 @@
 
 .roster-starters {
   width: 50%;
-  padding: 10px;
+  padding-bottom: 20px;
 }
 .roster-bench {
   width: 50%;
-  padding: 10px;
+  border-left: 1px solid black;
+  padding-bottom: 20px;
 }
 
 .roster-column {
   font-weight: bold;
+  text-align: center;
+  padding: 4px;
 }
 
 .player-row {
   display: flex;
   align-items: center;
   font-size: 11pt;
+  &:hover {
+    cursor: pointer;
+    background-image: linear-gradient(rgb(0 0 0/20%) 0 0);
+  }
 
   .roster-pos {
     min-width: 40px;
+    text-align: center;
+    padding-left: 3px;
+    font-weight: bold;
   }
   .player {
-    width: 80%;
+    width: 90%;
     min-width: 250px;
     padding: 5px;
-    border-radius: 20px;
-    border: 1px solid black;
-    color: $fl-white;
+    color: black;
     margin-left: 15px;
-    margin-top: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: opacity 0.5s;
-    &:hover {
-      cursor: pointer;
-      background-image: linear-gradient(rgb(0 0 0/20%) 0 0);
-    }
 
     &__profile {
       display: flex;
@@ -49,6 +52,11 @@
         height: 40px;
         border: 1px solid black;
         border-radius: 50px;
+        background-color: $fl-white;
+      }
+      .plus {
+        border: 0px;
+        background-color: transparent;
       }
     }
 
@@ -58,28 +66,7 @@
       text-align: right;
     }
   }
-  .quarterback {
-    background-color: $fl-qb;
-  }
-  .runningback {
-    background-color: $fl-rb;
-  }
-  .widereceiver {
-    background-color: $fl-wr;
-  }
-  .tightend {
-    background-color: $fl-te;
-  }
-  .defense {
-    background-color: $fl-dst;
-  }
-  .kicker {
-    background-color: $fl-k;
-  }
   .invalid {
-    opacity: 0.5;
-    &:hover {
-      background-image: none;
-    }
+    opacity: 0.3;
   }
 }

@@ -74,11 +74,13 @@ export class TeamRosterComponent implements OnInit {
     }
     // If we're in swapping mode but a valid player wasn't clicked, exit swapping mode and leave method
     if (this.swappingBench || this.swappingStarter) {
+      // Remove placeholder 'Move to bench' object
+      this.bench = this.bench.filter((player: Player) => player.id);
       return this.swappingBench ? (this.swappingBench = false) : (this.swappingStarter = false);
     }
 
     const isStarter = this.starters.find(p => p.id == player.id);
-    isStarter ? this.showBenchReplacements(i) : this.getEligibleSlots(player);
+    isStarter ? this.showBenchReplacements(player, i) : this.getEligibleSlots(player);
     if (isStarter) {
       this.currSwappingStarter = player;
       this.currSwappingStarterIndex = i;
@@ -92,11 +94,27 @@ export class TeamRosterComponent implements OnInit {
     playerAlreadyInTrade ? this.onPlayerTradeRemove.emit(player) : this.onPlayerTradeAdd.emit(player);
   }
 
-  showBenchReplacements(i: number) {
+  showBenchReplacements(player: Player, i: number) {
+    const moveToBenchPlaceholder: Player = {
+      id: 0,
+      name: 'Move to bench',
+      position: '',
+      rank: 0,
+      proTeam: '',
+      projectedAveragePoints: 0,
+      projectedTotalPoints: 0,
+      percentStarted: 0,
+      stats: {},
+    };
+
     this.eligibleBenchReplacementsForSelectedStarter = this.rosterService.findEligibleBenchPlayers(
       this.bench,
       this.startingPositions[i]
     );
+    if (player.id) {
+      this.bench.push(moveToBenchPlaceholder);
+      this.eligibleBenchReplacementsForSelectedStarter.push(moveToBenchPlaceholder);
+    }
     this.swappingStarter = true;
     this.swappingBench = false;
   }
@@ -108,45 +126,28 @@ export class TeamRosterComponent implements OnInit {
   }
 
   executeSwapToBench(benchPlayer: Player) {
-    const starterId = this.starters.findIndex(p => p.id == this.currSwappingStarter.id);
     const benchId = this.bench.findIndex(p => p.id == benchPlayer.id);
-    this.starters[starterId] = benchPlayer;
-    this.bench[benchId] = this.currSwappingStarter;
+    this.starters[this.currSwappingStarterIndex].id
+      ? (this.bench[benchId] = this.currSwappingStarter)
+      : this.bench.splice(benchId, 1);
+    this.starters[this.currSwappingStarterIndex] = benchPlayer.id ? benchPlayer : { ...benchPlayer, name: 'Empty' };
     this.swappingStarter = false;
+    // Remove placeholder 'Move to bench' object
+    this.bench = this.bench.filter((player: Player) => player.id);
   }
 
   executeSwapToStarter(starter: Player, i: number) {
     const benchId = this.bench.findIndex(p => p.id == this.currSwappingBenchPlayer.id);
     this.starters[i] = this.currSwappingBenchPlayer;
-    this.bench[benchId] = starter;
+    starter.id ? (this.bench[benchId] = starter) : this.bench.splice(benchId, 1);
     this.swappingBench = false;
   }
 
-  getPlayerCssClasses(player: Player, i: number, isStarter: boolean) {
-    let classes = 'player';
-    switch (player.position) {
-      case Position.Quarterback:
-        classes = `${classes} quarterback`;
-        break;
-      case Position.RunningBack:
-        classes = `${classes} runningback`;
-        break;
-      case Position.WideReceiver:
-        classes = `${classes} widereceiver`;
-        break;
-      case Position.TightEnd:
-        classes = `${classes} tightend`;
-        break;
-      case Position.Defense:
-        classes = `${classes} defense`;
-        break;
-      case Position.Kicker:
-        classes = `${classes} kicker`;
-        break;
-      default:
-        break;
-    }
+  getPlayerRowCssClasses(i: number) {
+    return `player-row ${i % 2 ? 'even' : 'odd'}`;
+  }
 
+  getPlayerCssClasses(player: Player, i: number, isStarter: boolean) {
     let addInvalid = false;
     if (this.mode == TeamRosterMode.SWAP) {
       const addInvalidToStarter = (i: number) =>
@@ -159,14 +160,19 @@ export class TeamRosterComponent implements OnInit {
     } else if (this.mode == TeamRosterMode.TRADE) {
       addInvalid = this.playersBeingTraded.filter(p => p.id == player.id).length > 0;
     }
-    classes = `${classes} ${addInvalid ? 'invalid' : ''}`;
-    return classes;
+    return `player ${addInvalid ? 'invalid' : ''}`;
+  }
+
+  getPlayerPicture(player: Player) {
+    return `../../../../assets/players/${player.id}.png`;
   }
 
   clickHandler(target: HTMLElement) {
     if (!target.classList.value.includes('player')) {
       this.swappingBench = false;
       this.swappingStarter = false;
+      // Remove placeholder 'Move to bench' object
+      this.bench = this.bench.filter((player: Player) => player.id);
     }
   }
 }

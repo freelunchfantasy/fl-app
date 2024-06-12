@@ -1,42 +1,57 @@
 @import '../../../styles.scss';
 
-.team-row {
-  width: 100%;
+.league-standings {
   display: flex;
-  padding: 4px;
-  font-size: 11pt;
-  cursor: pointer;
-  &:hover {
-    background-color: #adebeb;
-  }
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 10px 0px;
 
-  &__team-name {
-    width: 50%;
-  }
-
-  &__team-record {
-    width: 20%;
-    text-align: center;
-  }
-
-  &__team-proj-record {
-    width: 30%;
-    text-align: center;
-
-    .positive {
-      color: $fl-green;
+  .team-row {
+    width: 100%;
+    display: flex;
+    padding: 8px;
+    font-size: 11pt;
+    cursor: pointer;
+    &:hover {
+      background-image: linear-gradient(rgb(0 0 0/15%) 0 0);
     }
 
-    .negative {
-      color: $fl-red;
+    &__team-rank {
+      width: 5%;
+    }
+
+    &__team-name {
+      width: 45%;
+    }
+
+    &__team-record {
+      width: 20%;
+      text-align: center;
+    }
+
+    &__team-proj-record {
+      width: 30%;
+      text-align: center;
+
+      .positive {
+        color: $fl-green;
+      }
+
+      .negative {
+        color: $fl-red;
+      }
     }
   }
-}
 
-.col-header {
-  font-weight: bold;
-  cursor: default;
-  &:hover {
-    background-color: #e0ffff;
+  .user-team {
+    font-weight: bold;
+  }
+
+  .col-header {
+    font-weight: bold;
+    cursor: default;
+    &:hover {
+      background-image: linear-gradient(rgb(0 0 0/0%) 0 0);
+    }
   }
 }

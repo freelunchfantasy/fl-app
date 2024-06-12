@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     );
     this.subscriptions.push(userSubscription);
 
-    if ((this.sessionToken() || '').length > 0) {
+    if ((this.sessionToken() || '').length) {
       this.appStore.dispatch(new ApplicationActions.Login({ sessionToken: this.sessionToken() }));
     }
   }

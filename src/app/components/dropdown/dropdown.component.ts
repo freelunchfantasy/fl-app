@@ -71,6 +71,10 @@ export class DropdownComponent implements OnInit {
     this.isDropdownVisible = false;
   }
 
+  getDropdownMenuRowClasses(i: number) {
+    return i % 2 ? 'dropdown__menu-row even' : 'dropdown__menu-row odd';
+  }
+
   private getTriggerHTMLFromDropdownItem(targetDropdownId: string, defaultItem?: IDropdownItem): string {
     const targetItem = this.items.find(item => item.id == targetDropdownId) || defaultItem;
     if (!targetItem) return '';

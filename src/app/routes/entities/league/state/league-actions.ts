@@ -11,6 +11,8 @@ export const GET_NEW_USER_LEAGUE_DATA_FAILURE = '[League] Failed to get new user
 export const SAVE_NEW_USER_LEAGUE = '[League] Saving new user league';
 export const SAVE_NEW_USER_LEAGUE_SUCCESS = '[League] Successfully saved new user league';
 export const SAVE_NEW_USER_LEAGUE_FAILURE = '[League] Failed to save new user league';
+export const SET_SELECTED_USER_LEAGUE = '[League] Setting selected user league';
+export const CLEAR_SELECTED_USER_LEAGUE = '[League] Clearing selected user league';
 export const GET_LEAGUE_DATA = '[League] Getting league data';
 export const GET_LEAGUE_DATA_SUCCESS = '[League] Successfully got league data';
 export const GET_LEAGUE_DATA_FAILURE = '[League] Failed to get league data';
@@ -68,6 +70,16 @@ export class SaveNewUserLeagueSuccess implements Action {
 
 export class SaveNewUserLeagueFailure implements Action {
   readonly type = SAVE_NEW_USER_LEAGUE_FAILURE;
+  constructor() {}
+}
+
+export class SetSelectedUserLeague implements Action {
+  readonly type = SET_SELECTED_USER_LEAGUE;
+  constructor(public payload: UserLeague) {}
+}
+
+export class ClearSelectedUserLeague implements Action {
+  readonly type = CLEAR_SELECTED_USER_LEAGUE;
   constructor() {}
 }
 
@@ -157,6 +169,8 @@ export type All =
   | SaveNewUserLeague
   | SaveNewUserLeagueSuccess
   | SaveNewUserLeagueFailure
+  | SetSelectedUserLeague
+  | ClearSelectedUserLeague
   | GetLeagueData
   | GetLeagueDataSuccess
   | GetLeagueDataFailure
