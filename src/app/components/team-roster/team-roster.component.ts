@@ -167,6 +167,10 @@ export class TeamRosterComponent implements OnInit {
     return `../../../../assets/players/${player.id}.png`;
   }
 
+  getPlayerProfilePicClasses(player: Player) {
+    return player.position == Position.Defense ? 'player__profile-pic dst' : 'player__profile-pic';
+  }
+
   clickHandler(target: HTMLElement) {
     if (!target.classList.value.includes('player')) {
       this.swappingBench = false;

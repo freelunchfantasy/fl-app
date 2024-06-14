@@ -4,8 +4,12 @@ import { Observable, of } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 
 // Models
-import { League, UserLeague, LeagueSimulationResult, TradeSimulationResult } from '@app/lib/models/league';
-import { NewUserLeaguePayload, SimulateLeaguePayload } from '@app/lib/models/league-payloads';
+import { League, UserLeague, LeagueSimulationResult, TradeSimulationResult, NflTeam } from '@app/lib/models/league';
+import {
+  NewUserLeaguePayload,
+  ShareTradeSimulationResultPayload,
+  SimulateLeaguePayload,
+} from '@app/lib/models/league-payloads';
 import { ContactPayload, LoginPayload, RegisterPayload } from '@app/lib/models/auth-payloads';
 import { User, UserResult } from '@app/lib/models/user';
 
@@ -38,6 +42,10 @@ export class BackendService {
     return this.http.post<number>(`${this.getApiUrl()}/api/league/save-user-league`, payload, this.httpOptions);
   }
 
+  getNflTeams(): Observable<NflTeam[]> {
+    return this.http.get<NflTeam[]>(`${this.getApiUrl()}/api/league/nfl-teams`, this.httpOptions);
+  }
+
   getLeagueData(leagueId: number): Observable<League> {
     return this.http.post<League>(`${this.getApiUrl()}/api/league/get-league`, { id: leagueId }, this.httpOptions);
   }
@@ -56,6 +64,10 @@ export class BackendService {
       tradePayload,
       this.httpOptions
     );
+  }
+
+  shareTradeSimulationResult(payload: ShareTradeSimulationResultPayload): Observable<any> {
+    return this.http.post<any>(`${this.getApiUrl()}/api/league/share-trade-simulation`, payload, this.httpOptions);
   }
 
   getApiUrl() {

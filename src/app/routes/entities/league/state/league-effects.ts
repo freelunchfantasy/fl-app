@@ -22,6 +22,19 @@ export class LeagueEffects {
     )
   );
 
+  getNflTeams$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(LeagueActions.GET_NFL_TEAMS),
+      map((action: LeagueActions.GetNflTeams) => action),
+      switchMap(() => {
+        return this.backendService.getNflTeams().pipe(
+          map(result => new LeagueActions.GetNflTeamsSuccess(result)),
+          catchError(err => of(new ApplicationActions.HandleBackendError(err)))
+        );
+      })
+    )
+  );
+
   getNewUserLeagueData$ = createEffect(() =>
     this.actions$.pipe(
       ofType(LeagueActions.GET_NEW_USER_LEAGUE_DATA),
@@ -81,6 +94,19 @@ export class LeagueEffects {
       switchMap(payload => {
         return this.backendService.simulateTrade(payload).pipe(
           map(result => new LeagueActions.SimulateTradeSuccess(result)),
+          catchError(err => of(new ApplicationActions.HandleBackendError(err)))
+        );
+      })
+    )
+  );
+
+  shareTradeSimulationResult$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(LeagueActions.SHARE_TRADE_SIMULATION_RESULT),
+      map((action: LeagueActions.ShareTradeSimulationResult) => action.payload),
+      switchMap(payload => {
+        return this.backendService.shareTradeSimulationResult(payload).pipe(
+          map(result => new LeagueActions.ShareTradeSimulationResultSuccess(result)),
           catchError(err => of(new ApplicationActions.HandleBackendError(err)))
         );
       })

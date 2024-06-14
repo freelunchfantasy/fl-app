@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, combineLatest } from 'rxjs';
 import { AppNavOptions } from '@app/lib/constants/nav-bar-options.constants';
 import { AppNavOption } from '@app/lib/models/navigation';
 import * as fromApplicationRoot from '@app/state/reducers';
@@ -8,6 +8,7 @@ import * as ApplicationActions from '@app/state/application/application-actions'
 import * as fromLeagueRoot from '@app/routes/entities/league/state/reducer';
 import * as LeagueActions from '@app/routes/entities/league/state/league-actions';
 import { User } from '@app/lib/models/user';
+import { UserLeague } from '@app/lib/models/league';
 
 @Component({
   selector: 'header-bar',
@@ -16,6 +17,7 @@ import { User } from '@app/lib/models/user';
 })
 export class HeaderBarComponent implements OnInit, OnDestroy {
   sessionToken: string;
+  leagueData: any;
   navOptions: AppNavOption[] = [];
   subscriptions: Subscription[] = [];
 
@@ -32,6 +34,14 @@ export class HeaderBarComponent implements OnInit, OnDestroy {
     return this.appStore.select(fromApplicationRoot.selectUser);
   }
 
+  leagueData$(): Observable<any> {
+    return this.leagueStore.select(fromLeagueRoot.selectLeagueData);
+  }
+
+  leagueDataIsLoading$(): Observable<any> {
+    return this.leagueStore.select(fromLeagueRoot.selectLeagueDataIsLoading);
+  }
+
   constructor(public appStore: Store<fromApplicationRoot.State>, public leagueStore: Store<fromLeagueRoot.State>) {}
 
   ngOnInit(): void {
@@ -45,6 +55,14 @@ export class HeaderBarComponent implements OnInit, OnDestroy {
       }
     });
     this.subscriptions.push(userSubscription);
+    const leagueDataSubscription = combineLatest([this.leagueData$(), this.leagueDataIsLoading$()]).subscribe(
+      ([leagueData, isLoading]) => {
+        if (!isLoading) {
+          this.leagueData = leagueData;
+        }
+      }
+    );
+    this.subscriptions.push(leagueDataSubscription);
   }
 
   ngOnDestroy(): void {

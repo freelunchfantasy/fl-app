@@ -2,7 +2,7 @@
   <div class="left-nav-options">
     <div class="app-title">
       <div><img src="../../../assets/logo.png" class="logo" (click)="redirectToHome()" /></div>
-      <div *ngIf="sessionToken" class="nav-options-container">
+      <div *ngIf="sessionToken && leagueData" class="nav-options-container">
         <nav-option style="height: 100%" *ngFor="let option of navOptions" [navOption]="option"></nav-option>
       </div>
     </div>

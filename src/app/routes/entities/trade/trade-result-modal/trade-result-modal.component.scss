@@ -1,3 +1,5 @@
+@import '../../../../../styles.scss';
+
 .trade-result-modal {
   padding: 10px;
 
@@ -9,9 +11,64 @@
   }
 
   .trade-result {
-    &__summary {
-      .important {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .league-standings {
+      width: 100%;
+      border-bottom: 1px solid black;
+    }
+
+    .team-results {
+      width: 100%;
+      display: flex;
+      justify-content: space-evenly;
+      margin: 15px 0px;
+
+      .team-name {
         font-weight: bold;
+      }
+      .player {
+        margin-left: 5px;
+      }
+      .summary {
+        .important {
+          font-weight: bold;
+        }
+        .positive {
+          color: $fl-green;
+        }
+        .negative {
+          color: $fl-red;
+        }
+      }
+    }
+
+    .share-results-container {
+      background-color: $fl-orange;
+      border-radius: 5px;
+      border: 1px solid black;
+
+      &__before {
+        color: white;
+        padding: 12px;
+        &:hover {
+          cursor: pointer;
+          background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
+        }
+      }
+
+      &__after {
+        display: flex;
+        align-items: center;
+
+        input {
+          margin: 5px;
+        }
+        button {
+          margin: 5px;
+        }
       }
     }
   }

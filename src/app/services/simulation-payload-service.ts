@@ -1,4 +1,4 @@
-import { Player, Team } from '@app/lib/models/league';
+import { NflTeam, Player, Team } from '@app/lib/models/league';
 import { RosterService } from './roster-service';
 import { Injectable } from '@angular/core';
 
@@ -6,7 +6,25 @@ import { Injectable } from '@angular/core';
 export class SimulationPayloadService {
   constructor(private rosterService: RosterService) {}
 
-  constructSimulationPayload(leagueId: number, teams: Team[], schedule: number[][][], tradeBlock?: any) {
+  POSITIONAL_REPLACEMENT_PROJECTIONS: any = {
+    QB: 16,
+    RB: 8,
+    WR: 8,
+    TE: 5.5,
+    FLEX: 8,
+    OP: 11,
+    'D/ST': 5,
+    K: 7,
+  };
+
+  constructSimulationPayload(
+    leagueId: number,
+    teams: Team[],
+    schedule: number[][][],
+    nflTeams: NflTeam[],
+    activeRosterSettings: any,
+    tradeBlock?: any
+  ) {
     if (tradeBlock) {
       teams = this.teamsAfterTradeExecution(teams, tradeBlock.left, tradeBlock.right);
     }
@@ -14,12 +32,12 @@ export class SimulationPayloadService {
       id: leagueId,
       teams: teams.map(t => ({
         id: t.id,
-        // BREAK ROSTER BETWEEN STARTERS AND BENCH? starters: this.rosterService.constructStarters(),
         roster: t.roster.map(p => ({
           id: p.id,
           name: p.name,
           scoreProjections: [p.projectedAveragePoints],
         })),
+        startingLineups: this.determineStartingLineups(t, nflTeams, schedule, activeRosterSettings),
       })),
       schedule,
     };
@@ -52,5 +70,41 @@ export class SimulationPayloadService {
     teams.push(leftTeam);
     teams.push(rightTeam);
     return teams;
+  }
+
+  determineStartingLineups(
+    team: Team,
+    nflTeams: NflTeam[],
+    schedule: number[][][],
+    activeRosterSettings: any
+  ): any[][] {
+    let week = 1;
+    let startingLineups: any[][] = [];
+    schedule.forEach(() => {
+      startingLineups.push(
+        this.rosterService
+          .constructStarters(
+            team.roster.map((player: Player) => ({
+              ...player,
+              projectedAveragePoints: nflTeams
+                .filter(t => t.byeWeek == week)
+                .map(t => t.abbreviation)
+                .includes(player.proTeam)
+                ? 0
+                : player.projectedAveragePoints,
+            })),
+            activeRosterSettings
+          )
+          .map((p: Player) => ({
+            pos: p.position,
+            proj:
+              p.projectedAveragePoints > 0
+                ? p.projectedAveragePoints
+                : this.POSITIONAL_REPLACEMENT_PROJECTIONS[p.position], // If 0 in lineup, assume fill with replacement level player
+          }))
+      );
+      week++;
+    });
+    return startingLineups;
   }
 }

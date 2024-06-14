@@ -6,13 +6,22 @@ import * as ApplicationActions from '@app/state/application/application-actions'
 import * as fromLeagueRoot from '@app/routes/entities/league/state/reducer';
 import * as LeagueActions from '@app/routes/entities/league/state/league-actions';
 import { Observable, Subscription, combineLatest } from 'rxjs';
-import { League, LeagueSimulationResult, Player, Team, TeamSimulationResult, UserLeague } from '@app/lib/models/league';
+import {
+  League,
+  LeagueSimulationResult,
+  NflTeam,
+  Player,
+  Team,
+  TeamSimulationResult,
+  UserLeague,
+} from '@app/lib/models/league';
 import { RosterService } from '@app/services/roster-service';
 import { SimulationPayloadService } from '@app/services/simulation-payload-service';
 import { LeagueDataProcessingService } from '@app/services/league-data-processing-service';
 import { User } from '@app/lib/models/user';
 import { IDropdownEvent, IDropdownItem } from '@app/components/dropdown/dropdown-interfaces';
 import { DropdownEvent } from '@app/components/dropdown/dropdown-constants';
+import { SimulateLeaguePayload } from '@app/lib/models/league-payloads';
 
 @Component({
   selector: 'league',
@@ -21,6 +30,7 @@ import { DropdownEvent } from '@app/components/dropdown/dropdown-constants';
 })
 export class LeagueComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
+  nflTeams: NflTeam[] = [];
 
   // User leagues
   user: User;
@@ -85,6 +95,10 @@ export class LeagueComponent implements OnInit, OnDestroy {
     return this.leagueStore.select(fromLeagueRoot.selectUserLeaguesAreLoading);
   }
 
+  nflTeams$(): Observable<NflTeam[]> {
+    return this.leagueStore.select(fromLeagueRoot.selectNflTeams);
+  }
+
   selectedUserLeague$(): Observable<UserLeague> {
     return this.leagueStore.select(fromLeagueRoot.selectSelectedUserLeague);
   }
@@ -132,6 +146,12 @@ export class LeagueComponent implements OnInit, OnDestroy {
       }
     );
     this.subscriptions.push(userLeaguesSubscription);
+
+    // NFL teams sub
+    const nflTeamsSubscription = this.nflTeams$().subscribe(nflTeams => {
+      this.nflTeams = nflTeams;
+    });
+    this.subscriptions.push(nflTeamsSubscription);
 
     // Selected user league sub
     const selectedUserLeagueSubscription = this.selectedUserLeague$().subscribe(userLeague => {
@@ -189,6 +209,10 @@ export class LeagueComponent implements OnInit, OnDestroy {
       }
     });
     this.subscriptions.push(leagueSimulationSubscription);
+
+    if (!(this.nflTeams || []).length) {
+      this.leagueStore.dispatch(new LeagueActions.GetNflTeams());
+    }
   }
 
   ngOnDestroy(): void {
@@ -203,11 +227,18 @@ export class LeagueComponent implements OnInit, OnDestroy {
   }
 
   simulateSeason() {
-    const simulationPayload = this.simulationPayloadService.constructSimulationPayload(
-      this.leagueId,
-      this.league.teams,
-      this.leagueSchedule
-    );
+    const simulationPayload: SimulateLeaguePayload = {
+      ...this.simulationPayloadService.constructSimulationPayload(
+        this.leagueId,
+        this.league.teams,
+        this.leagueSchedule,
+        this.nflTeams,
+        this.DEFAULT_ACTIVE_ROSTER
+      ),
+      userId: this.user.id,
+      userLeagueId: this.userLeague.id,
+    };
+    console.log(simulationPayload);
     this.leagueStore.dispatch(new LeagueActions.SimulateLeague(simulationPayload));
   }
 
@@ -227,6 +258,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
 
   backToSelectLeague() {
     this.leagueStore.dispatch(new LeagueActions.ClearSelectedUserLeague());
+    this.leagueStore.dispatch(new LeagueActions.ClearLeagueData());
   }
 
   openNewUserLeagueModal() {

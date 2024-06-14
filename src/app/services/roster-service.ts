@@ -8,7 +8,7 @@ export class RosterService {
     // QBs
     let activeQBs = [];
     let rosteredQBs: Player[] = [...roster.filter(player => player.position == 'QB')];
-    while (activeQBs.length < rosterSettings.QB) {
+    while (activeQBs.length < rosterSettings.QB && rosteredQBs.length) {
       const bestQB = this.getBestPlayerAtPosition(rosteredQBs);
       rosteredQBs = rosteredQBs.filter(player => player.id != bestQB.id);
       activeQBs.push(bestQB);
@@ -18,7 +18,7 @@ export class RosterService {
     // RBs
     let activeRBs = [];
     let rosteredRBs: Player[] = [...roster.filter(player => player.position == 'RB')];
-    while (activeRBs.length < rosterSettings.RB) {
+    while (activeRBs.length < rosterSettings.RB && rosteredRBs.length) {
       const bestRB = this.getBestPlayerAtPosition(rosteredRBs);
       rosteredRBs = rosteredRBs.filter(player => player.id != bestRB.id);
       activeRBs.push(bestRB);
@@ -28,7 +28,7 @@ export class RosterService {
     // WRs
     let activeWRs = [];
     let rosteredWRs: Player[] = [...roster.filter(player => player.position == 'WR')];
-    while (activeWRs.length < rosterSettings.WR) {
+    while (activeWRs.length < rosterSettings.WR && rosteredWRs.length) {
       const bestWR = this.getBestPlayerAtPosition(rosteredWRs);
       rosteredWRs = rosteredWRs.filter(player => player.id != bestWR.id);
       activeWRs.push(bestWR);
@@ -38,7 +38,7 @@ export class RosterService {
     // TEs
     let activeTEs = [];
     let rosteredTEs: Player[] = [...roster.filter(player => player.position == 'TE')];
-    while (activeTEs.length < rosterSettings.TE) {
+    while (activeTEs.length < rosterSettings.TE && rosteredTEs.length) {
       const bestTE = this.getBestPlayerAtPosition(rosteredTEs);
       rosteredTEs = rosteredTEs.filter(player => player.id != bestTE.id);
       activeTEs.push(bestTE);
@@ -50,7 +50,7 @@ export class RosterService {
     let rosteredFlex: Player[] = [...roster.filter(player => ['RB', 'WR', 'TE'].includes(player.position))].filter(
       player => !activePlayerIds.includes(player.id)
     );
-    while (activeFlexes.length < rosterSettings.FLEX) {
+    while (activeFlexes.length < rosterSettings.FLEX && rosteredFlex.length) {
       const bestFlex = this.getBestPlayerAtPosition(rosteredFlex);
       rosteredFlex = rosteredFlex.filter(player => player.id != bestFlex.id);
       activeFlexes.push(bestFlex);
@@ -62,7 +62,7 @@ export class RosterService {
     // D/ST
     let activeDSTs = [];
     let rosteredDSTs: Player[] = [...roster.filter(player => player.position == 'D/ST')];
-    while (activeDSTs.length < rosterSettings['D/ST']) {
+    while (activeDSTs.length < rosterSettings['D/ST'] && rosteredDSTs.length) {
       const bestDST = this.getBestPlayerAtPosition(rosteredDSTs);
       rosteredDSTs = rosteredDSTs.filter(player => player.id != bestDST.id);
       activeDSTs.push(bestDST);
@@ -71,7 +71,7 @@ export class RosterService {
     // K
     let activeKs = [];
     let rosteredKs: Player[] = [...roster.filter(player => player.position == 'K')];
-    while (activeKs.length < rosterSettings.K) {
+    while (activeKs.length < rosterSettings.K && rosteredKs.length) {
       const bestK = this.getBestPlayerAtPosition(rosteredKs);
       rosteredKs = rosteredKs.filter(player => player.id != bestK.id);
       activeKs.push(bestK);
@@ -82,7 +82,7 @@ export class RosterService {
 
   getBestPlayerAtPosition(players: Player[]) {
     return (players || []).length
-      ? players.reduce((max, player) => (max.percentStarted > player.percentStarted ? max : player))
+      ? players.reduce((max, player) => (max.projectedAveragePoints > player.projectedAveragePoints ? max : player))
       : null;
   }
 

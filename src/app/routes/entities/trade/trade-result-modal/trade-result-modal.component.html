@@ -6,19 +6,42 @@
     (dismissModal)="handleModalClose()"
   >
     <div body class="trade-result">
-      <div class="trade-result__summary">
-        Here's what would happen if <span class="important">{{ tradeBlockLeftTeam.teamName }}</span> traded
-        <span class="important">{{ getPlayersString(tradeBlock.left) }}</span> to
-        <span class="important">{{ tradeBlockRightTeam.teamName }}</span> for
-        <span class="important">{{ getPlayersString(tradeBlock.right) }}</span
-        >.
-      </div>
       <league-standings
         class="league-standings"
         [leagueStandings]="leagueStandings"
         [leagueSimulation]="tradeResult.before"
         [leagueSimulationAfterTrade]="tradeResult.after"
+        [tradeTeamIds]="[tradeBlockLeftTeam.id, tradeBlockRightTeam.id]"
       ></league-standings>
+      <div class="team-results">
+        <div class="team-results__left">
+          <div class="team-name">{{ tradeBlockLeftTeam.teamName }}</div>
+          <div class="player" *ngFor="let player of tradeBlock.right">+ {{ player.name }}</div>
+          <div class="player" *ngFor="let player of tradeBlock.left">- {{ player.name }}</div>
+          <div class="summary">
+            Expected to
+            <span [class]="winDiffClasses(true)">{{ getTeamTradeSummary(true) }}</span>
+          </div>
+        </div>
+        <div class="team-results__right">
+          <div class="team-name">{{ tradeBlockRightTeam.teamName }}</div>
+          <div class="player" *ngFor="let player of tradeBlock.left">+ {{ player.name }}</div>
+          <div class="player" *ngFor="let player of tradeBlock.right">- {{ player.name }}</div>
+          <div class="summary">
+            Expected to
+            <span [class]="winDiffClasses(false)">{{ getTeamTradeSummary(false) }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="share-results-container">
+        <div class="share-results-container__before" *ngIf="!shareResultsClicked" (click)="handleShareResultsClicked()">
+          Share results
+        </div>
+        <div class="share-results-container__after" *ngIf="shareResultsClicked">
+          <input type="text" placeholder="email address" [(ngModel)]="email" name="email" autocomplete="off" />
+          <button class="btn btn-success" (click)="shareTradeSimulationResults()">Send</button>
+        </div>
+      </div>
     </div>
   </app-modal>
 </div>

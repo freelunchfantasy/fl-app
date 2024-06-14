@@ -7,7 +7,7 @@
         <img
           [src]="getPlayerPicture(player)"
           onerror="this.src='../../../../assets/anonymous.jpg'"
-          class="player__profile-pic"
+          [class]="getPlayerProfilePicClasses(player)"
         />
         <div class="player__profile-name">{{ player.name }}</div>
       </div>
@@ -24,7 +24,7 @@
           *ngIf="player.id"
           [src]="getPlayerPicture(player)"
           onerror="this.src='../../../../assets/anonymous.jpg'"
-          class="player__profile-pic"
+          [class]="getPlayerProfilePicClasses(player)"
         />
         <img *ngIf="!player.id" src="../../../assets/plus.png" class="player__profile-pic plus" />
         <div class="player__profile-name">{{ player.name }}</div>

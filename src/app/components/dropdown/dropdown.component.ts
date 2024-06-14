@@ -40,7 +40,7 @@ export class DropdownComponent implements OnInit {
   constructor(private elRef: ElementRef) {}
 
   ngOnInit(): void {
-    const defaultItem = this.items.length ? this.items[0] : { value: '' };
+    const defaultItem = this.items.length ? this.items.find(i => i.selected) || this.items[0] : { value: '' };
     this.triggerHTML = this.triggerMarkup
       ? this.triggerMarkup
       : this.getTriggerHTMLFromDropdownItem(this.activeItem, defaultItem);
