@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Team, TeamSimulationResult } from '@app/lib/models/league';
+import { StandingsService } from '@app/services/standings-service';
 
 @Component({
   selector: 'league-standings',
@@ -11,7 +12,10 @@ export class LeagueStandingsComponent implements OnInit {
   leagueStandings: Team[] = [];
 
   @Input()
-  userTeamId: number;
+  userTeamId?: number;
+
+  @Input()
+  tradeTeamIds?: number[] = [];
 
   @Input()
   leagueSimulation: TeamSimulationResult[];
@@ -19,13 +23,63 @@ export class LeagueStandingsComponent implements OnInit {
   @Input()
   leagueSimulationAfterTrade: TeamSimulationResult[];
 
-  constructor() {}
+  leagueStandingsAfterSimulation: Team[];
+
+  constructor(private standingsService: StandingsService) {}
 
   ngOnInit() {}
+
+  ngOnChanges() {
+    if (this.leagueSimulation) {
+      this.leagueStandingsAfterSimulation = this.standingsService.constructStandings(
+        this.leagueSimulation.map(t => ({
+          id: t.id,
+          teamName: '',
+          wins: t.wins,
+          roster: [],
+          losses: t.losses,
+          ties: 0,
+          pointsFor: 0,
+          pointsAgainst: 0,
+          schedule: [],
+          scores: [],
+          outcomes: [],
+        }))
+      );
+    }
+  }
 
   getSimulatedRecord(team: Team) {
     const before = this.leagueSimulation.find(t => t.id == team.id);
     return `${before.wins.toFixed(2)} - ${before.losses.toFixed(2)}`;
+  }
+
+  getRankChangeAfterSimulation(team: Team) {
+    const rank = this.leagueStandingsAfterSimulation.findIndex(t => t.id == team.id) + 1;
+    let suffix;
+    switch (rank) {
+      case 1:
+        suffix = 'st';
+        break;
+      case 2:
+        suffix = 'nd';
+        break;
+      case 3:
+        suffix = 'rd';
+        break;
+      default:
+        suffix = 'th';
+        break;
+    }
+    return `(${rank}${suffix})`;
+  }
+
+  getRankChangeClasses(team: Team) {
+    const before = this.leagueStandings.findIndex(t => t.id == team.id) + 1;
+    const after = this.leagueStandingsAfterSimulation.findIndex(t => t.id == team.id) + 1;
+    if (before - after == 0) return '';
+    // before - after because lower indexes are a higher rank
+    return before - after > 0 ? 'positive' : 'negative';
   }
 
   getSimulatedRecordAfterTrade(team: Team) {
@@ -45,7 +99,8 @@ export class LeagueStandingsComponent implements OnInit {
 
   getTeamClasses(team: Team, i: number) {
     let classes = i % 2 ? 'team-row even' : 'team-row odd';
-    return `${classes} ${team.id == this.userTeamId ? 'user-team' : ''}`;
+    classes = `${classes} ${this.leagueSimulationAfterTrade ? 'smaller' : ''}`;
+    return `${classes} ${team.id == this.userTeamId || this.tradeTeamIds.includes(team.id) ? 'user-team' : ''}`;
   }
 
   getWinDifferenceClasses(team: Team): string {

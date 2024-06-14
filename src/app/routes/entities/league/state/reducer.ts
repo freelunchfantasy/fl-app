@@ -19,6 +19,8 @@ export const selectUserLeaguesAreLoading = createSelector(
   (state: State) => state.league.userLeaguesStatus == AsyncStatus.Processing
 );
 
+export const selectNflTeams = createSelector(getLeagueState, (state: State) => state.league.nflTeams);
+
 export const selectNewUserLeagueData = createSelector(getLeagueState, (state: State) => state.league.newUserLeagueData);
 
 export const selectNewUserLeagueDataIsLoading = createSelector(

@@ -11,6 +11,14 @@ export class Settings {
   scoringFormat: any[];
 }
 
+export class NflTeam {
+  id: number;
+  city: string;
+  team: string;
+  abbreviation: string;
+  byeWeek: number;
+}
+
 export class Team {
   id: number;
   teamName: string;
@@ -38,6 +46,7 @@ export class Player {
 }
 
 export class UserLeague {
+  id: number;
   userId: number;
   leagueId: number;
   leagueName: string;

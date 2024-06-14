@@ -13,9 +13,10 @@
     <div class="team-row__team-proj-record">
       <div *ngIf="leagueSimulation">
         {{ getSimulatedRecord(team) }}
+        <span [class]="getRankChangeClasses(team)">{{ getRankChangeAfterSimulation(team) }}</span>
       </div>
     </div>
-    <div *ngIf="leagueSimulationAfterTrade" class="team-row__team-proj-record" style="font-weight: bold">
+    <div *ngIf="leagueSimulationAfterTrade" class="team-row__team-proj-record">
       <div [class]="getWinDifferenceClasses(team)">
         {{ getSimulatedRecordAfterTrade(team) }}
       </div>

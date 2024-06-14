@@ -1,10 +1,24 @@
-import { League, UserLeague, LeagueSimulationResult, Team, TradeSimulationResult } from '@app/lib/models/league';
-import { NewUserLeaguePayload, SimulateLeaguePayload } from '@app/lib/models/league-payloads';
+import {
+  League,
+  UserLeague,
+  LeagueSimulationResult,
+  Team,
+  TradeSimulationResult,
+  NflTeam,
+} from '@app/lib/models/league';
+import {
+  NewUserLeaguePayload,
+  ShareTradeSimulationResultPayload,
+  SimulateLeaguePayload,
+} from '@app/lib/models/league-payloads';
 import { Action } from '@ngrx/store';
 
 export const GET_USER_LEAGUES = '[League] Getting user leagues';
 export const GET_USER_LEAGUES_SUCCESS = '[League] Successfully got user leagues';
 export const GET_USER_LEAGUES_FAILURE = '[League] Failed to get user leagues';
+export const GET_NFL_TEAMS = '[League] Getting NFL teams';
+export const GET_NFL_TEAMS_SUCCESS = '[League] Successfully got NFL teams';
+export const GET_NFL_TEAMS_FAILURE = '[League] Failed to get NFL teams';
 export const GET_NEW_USER_LEAGUE_DATA = '[League] Getting new user league data';
 export const GET_NEW_USER_LEAGUE_DATA_SUCCESS = '[League] Successfully got new user league data';
 export const GET_NEW_USER_LEAGUE_DATA_FAILURE = '[League] Failed to get new user league data';
@@ -13,6 +27,7 @@ export const SAVE_NEW_USER_LEAGUE_SUCCESS = '[League] Successfully saved new use
 export const SAVE_NEW_USER_LEAGUE_FAILURE = '[League] Failed to save new user league';
 export const SET_SELECTED_USER_LEAGUE = '[League] Setting selected user league';
 export const CLEAR_SELECTED_USER_LEAGUE = '[League] Clearing selected user league';
+export const CLEAR_LEAGUE_DATA = '[League] Clearing league data';
 export const GET_LEAGUE_DATA = '[League] Getting league data';
 export const GET_LEAGUE_DATA_SUCCESS = '[League] Successfully got league data';
 export const GET_LEAGUE_DATA_FAILURE = '[League] Failed to get league data';
@@ -22,6 +37,9 @@ export const SIMULATE_LEAGUE_FAILURE = '[League] Failed to simulate league';
 export const SIMULATE_TRADE = '[League] Simulating trade';
 export const SIMULATE_TRADE_SUCCESS = '[League] Successfully simulated trade';
 export const SIMULATE_TRADE_FAILURE = '[League] Failed to simulate trade';
+export const SHARE_TRADE_SIMULATION_RESULT = '[League] Sharing trade simulation results';
+export const SHARE_TRADE_SIMULATION_RESULT_SUCCESS = '[League] Successfully shared trade simulation results';
+export const SHARE_TRADE_SIMULATION_RESULT_FAILURE = '[League] Failed to share trade simulation results';
 export const SET_LEAGUE_STANDINGS = '[League] Setting league standings in league store';
 export const SET_LEAGUE_SCHEDULE = '[League] Setting league schedule in league store';
 export const RESET_LEAGUE_STATE = '[League] Resetting league state to initial';
@@ -40,6 +58,21 @@ export class GetUserLeaguesSuccess implements Action {
 
 export class GetUserLeaguesFailure implements Action {
   readonly type = GET_USER_LEAGUES_FAILURE;
+  constructor() {}
+}
+
+export class GetNflTeams implements Action {
+  readonly type = GET_NFL_TEAMS;
+  constructor() {}
+}
+
+export class GetNflTeamsSuccess implements Action {
+  readonly type = GET_NFL_TEAMS_SUCCESS;
+  constructor(public payload: NflTeam[]) {}
+}
+
+export class GetNflTeamsFailure implements Action {
+  readonly type = GET_NFL_TEAMS_FAILURE;
   constructor() {}
 }
 
@@ -80,6 +113,11 @@ export class SetSelectedUserLeague implements Action {
 
 export class ClearSelectedUserLeague implements Action {
   readonly type = CLEAR_SELECTED_USER_LEAGUE;
+  constructor() {}
+}
+
+export class ClearLeagueData implements Action {
+  readonly type = CLEAR_LEAGUE_DATA;
   constructor() {}
 }
 
@@ -135,6 +173,24 @@ export class SimulateTradeFailure implements Action {
   constructor(public payload: any) {}
 }
 
+export class ShareTradeSimulationResult implements Action {
+  readonly type = SHARE_TRADE_SIMULATION_RESULT;
+
+  constructor(public payload: ShareTradeSimulationResultPayload) {}
+}
+
+export class ShareTradeSimulationResultSuccess implements Action {
+  readonly type = SHARE_TRADE_SIMULATION_RESULT_SUCCESS;
+
+  constructor(public payload: any) {}
+}
+
+export class ShareTradeSimulationResultFailure implements Action {
+  readonly type = SHARE_TRADE_SIMULATION_RESULT_FAILURE;
+
+  constructor(public payload: any) {}
+}
+
 export class SetLeagueStandings implements Action {
   readonly type = SET_LEAGUE_STANDINGS;
 
@@ -163,6 +219,9 @@ export type All =
   | GetUserLeagues
   | GetUserLeaguesSuccess
   | GetUserLeaguesFailure
+  | GetNflTeams
+  | GetNflTeamsSuccess
+  | GetNflTeamsFailure
   | GetNewUserLeagueData
   | GetNewUserLeagueDataSuccess
   | GetNewUserLeagueDataFailure
@@ -171,6 +230,7 @@ export type All =
   | SaveNewUserLeagueFailure
   | SetSelectedUserLeague
   | ClearSelectedUserLeague
+  | ClearLeagueData
   | GetLeagueData
   | GetLeagueDataSuccess
   | GetLeagueDataFailure
@@ -180,6 +240,9 @@ export type All =
   | SimulateTrade
   | SimulateTradeSuccess
   | SimulateTradeFailure
+  | ShareTradeSimulationResult
+  | ShareTradeSimulationResultSuccess
+  | ShareTradeSimulationResultFailure
   | SetLeagueStandings
   | SetLeagueSchedule
   | ResetLeagueState

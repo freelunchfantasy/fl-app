@@ -1,10 +1,18 @@
 import { AsyncStatus } from '@app/lib/enums/async-status';
 import * as LeagueActions from './league-actions';
-import { League, LeagueSimulationResult, Team, TradeSimulationResult, UserLeague } from '@app/lib/models/league';
+import {
+  League,
+  LeagueSimulationResult,
+  NflTeam,
+  Team,
+  TradeSimulationResult,
+  UserLeague,
+} from '@app/lib/models/league';
 
 export interface State {
   userLeagues: UserLeague[];
   userLeaguesStatus: AsyncStatus;
+  nflTeams: NflTeam[];
   newUserLeagueData: League;
   newUserLeagueDataStatus: AsyncStatus;
   selectedUserLeague: UserLeague;
@@ -14,6 +22,7 @@ export interface State {
   leagueSimulationStatus: AsyncStatus;
   tradeSimulationResult: TradeSimulationResult;
   tradeSimulationStatus: AsyncStatus;
+  shareTradeSimulationResultStatus: AsyncStatus;
   leagueStandings: Team[];
   leagueSchedule: number[][][];
 }
@@ -21,6 +30,7 @@ export interface State {
 const initialState: State = {
   userLeagues: null,
   userLeaguesStatus: AsyncStatus.Idle,
+  nflTeams: null,
   newUserLeagueData: null,
   newUserLeagueDataStatus: AsyncStatus.Idle,
   selectedUserLeague: null,
@@ -30,6 +40,7 @@ const initialState: State = {
   leagueSimulationStatus: AsyncStatus.Idle,
   tradeSimulationResult: null,
   tradeSimulationStatus: AsyncStatus.Idle,
+  shareTradeSimulationResultStatus: AsyncStatus.Idle,
   leagueStandings: [],
   leagueSchedule: [],
 };
@@ -57,6 +68,27 @@ export function reducer(state = initialState, action: LeagueActions.All): State 
         ...state,
         userLeagues: null,
         userLeaguesStatus: AsyncStatus.Failure,
+      };
+    }
+
+    case LeagueActions.GET_NFL_TEAMS: {
+      return {
+        ...state,
+        nflTeams: null,
+      };
+    }
+
+    case LeagueActions.GET_NFL_TEAMS_SUCCESS: {
+      return {
+        ...state,
+        nflTeams: action.payload,
+      };
+    }
+
+    case LeagueActions.GET_NFL_TEAMS: {
+      return {
+        ...state,
+        nflTeams: null,
       };
     }
 
@@ -95,6 +127,13 @@ export function reducer(state = initialState, action: LeagueActions.All): State 
       return {
         ...state,
         selectedUserLeague: null,
+      };
+    }
+
+    case LeagueActions.CLEAR_LEAGUE_DATA: {
+      return {
+        ...state,
+        leagueData: null,
       };
     }
 
@@ -167,6 +206,27 @@ export function reducer(state = initialState, action: LeagueActions.All): State 
         ...state,
         tradeSimulationResult: null,
         tradeSimulationStatus: AsyncStatus.Failure,
+      };
+    }
+
+    case LeagueActions.SHARE_TRADE_SIMULATION_RESULT: {
+      return {
+        ...state,
+        shareTradeSimulationResultStatus: AsyncStatus.Processing,
+      };
+    }
+
+    case LeagueActions.SHARE_TRADE_SIMULATION_RESULT_SUCCESS: {
+      return {
+        ...state,
+        shareTradeSimulationResultStatus: AsyncStatus.Success,
+      };
+    }
+
+    case LeagueActions.SHARE_TRADE_SIMULATION_RESULT_FAILURE: {
+      return {
+        ...state,
+        shareTradeSimulationResultStatus: AsyncStatus.Failure,
       };
     }
 
