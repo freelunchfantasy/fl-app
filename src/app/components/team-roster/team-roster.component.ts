@@ -168,7 +168,7 @@ export class TeamRosterComponent implements OnInit {
   }
 
   getPlayerProfilePicClasses(player: Player) {
-    return player.position == Position.Defense ? 'player__profile-pic dst' : 'player__profile-pic';
+    return player.position == Position.Defense.display ? 'player__profile-pic dst' : 'player__profile-pic';
   }
 
   clickHandler(target: HTMLElement) {

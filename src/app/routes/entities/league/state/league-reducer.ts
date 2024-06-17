@@ -25,6 +25,7 @@ export interface State {
   shareTradeSimulationResultStatus: AsyncStatus;
   leagueStandings: Team[];
   leagueSchedule: number[][][];
+  leagueStartingPositions: string[];
 }
 
 const initialState: State = {
@@ -43,6 +44,7 @@ const initialState: State = {
   shareTradeSimulationResultStatus: AsyncStatus.Idle,
   leagueStandings: [],
   leagueSchedule: [],
+  leagueStartingPositions: [],
 };
 
 export function reducer(state = initialState, action: LeagueActions.All): State {
@@ -241,6 +243,13 @@ export function reducer(state = initialState, action: LeagueActions.All): State 
       return {
         ...state,
         leagueSchedule: action.schedule,
+      };
+    }
+
+    case LeagueActions.SET_LEAGUE_STARTING_POSITIONS: {
+      return {
+        ...state,
+        leagueStartingPositions: action.payload,
       };
     }
 

@@ -9,6 +9,7 @@ export class Settings {
   regSeasonGames: number;
   scoringType: string;
   scoringFormat: any[];
+  lineup: string[];
 }
 
 export class NflTeam {

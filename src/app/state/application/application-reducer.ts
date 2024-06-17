@@ -57,7 +57,7 @@ export function reducer(state = initialState, action: ApplicationActions.All): S
     case ApplicationActions.REGISTER_SUCCESS: {
       return {
         ...state,
-        user: action.payload,
+        userResult: action.payload,
         userStatus: AsyncStatus.Success,
       };
     }

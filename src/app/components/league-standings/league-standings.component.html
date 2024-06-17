@@ -7,18 +7,20 @@
     <div class="team-row__team-proj-record" *ngIf="leagueSimulationAfterTrade">Projected After Trade</div>
   </div>
   <div [class]="getTeamClasses(team, i)" *ngFor="let team of leagueStandings; index as i">
-    <div class="team-row__team-rank">{{ i + 1 }}</div>
+    <div class="team-row__team-rank">{{ i + 1 }}.</div>
     <div class="team-row__team-name">{{ team.teamName }}</div>
     <div class="team-row__team-record">{{ team.wins }} - {{ team.losses }}</div>
     <div class="team-row__team-proj-record">
       <div *ngIf="leagueSimulation">
-        {{ getSimulatedRecord(team) }}
         <span [class]="getRankChangeClasses(team)">{{ getRankChangeAfterSimulation(team) }}</span>
+        {{ getSimulatedRecord(team) }}
       </div>
     </div>
     <div *ngIf="leagueSimulationAfterTrade" class="team-row__team-proj-record">
-      <div [class]="getWinDifferenceClasses(team)">
+      <div>
+        <span [class]="getRankChangeAfterTradeClasses(team)">{{ getRankChangeAfterTrade(team) }}</span>
         {{ getSimulatedRecordAfterTrade(team) }}
+        <span [class]="getWinDifferenceClasses(team)">{{ getSimulatedRecordDiffAfterTrade(team) }}</span>
       </div>
     </div>
   </div>

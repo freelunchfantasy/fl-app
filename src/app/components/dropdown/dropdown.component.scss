@@ -1,5 +1,9 @@
 .dropdown {
   position: relative;
+  &:focus {
+    outline: none;
+  }
+
   &__trigger {
     background-color: white;
     border: 1px solid black;
@@ -7,10 +11,13 @@
     &-arrow {
       margin-left: 10px;
     }
+    &:focus {
+      box-shadow: none;
+    }
   }
 
   &__menu {
-    position: fixed;
+    position: absolute;
 
     &-row {
       position: relative;

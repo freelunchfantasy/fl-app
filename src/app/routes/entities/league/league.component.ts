@@ -22,6 +22,7 @@ import { User } from '@app/lib/models/user';
 import { IDropdownEvent, IDropdownItem } from '@app/components/dropdown/dropdown-interfaces';
 import { DropdownEvent } from '@app/components/dropdown/dropdown-constants';
 import { SimulateLeaguePayload } from '@app/lib/models/league-payloads';
+import { DEFAULT_STARTING_POSITIONS } from '@app/lib/constants/position.constants';
 
 @Component({
   selector: 'league',
@@ -49,16 +50,6 @@ export class LeagueComponent implements OnInit, OnDestroy {
 
   showNewUserLeagueModal: boolean = false;
 
-  DEFAULT_ACTIVE_ROSTER: any = {
-    QB: 1,
-    RB: 2,
-    WR: 2,
-    TE: 1,
-    FLEX: 1,
-    OP: 0,
-    'D/ST': 1,
-    K: 1,
-  };
   startingPositions: string[] = [];
 
   starters: Player[] = [];
@@ -127,6 +118,10 @@ export class LeagueComponent implements OnInit, OnDestroy {
     return this.leagueStore.select(fromLeagueRoot.selectLeagueSchedule);
   }
 
+  leagueStartingPositions$(): Observable<string[]> {
+    return this.leagueStore.select(fromLeagueRoot.selectLeagueStartingPositions);
+  }
+
   ngOnInit() {
     // User sub
     const userSubscription = this.user$().subscribe(user => {
@@ -171,11 +166,9 @@ export class LeagueComponent implements OnInit, OnDestroy {
           // League data processing specific for this component
           this.league = leagueData;
           this.userTeam = leagueData.teams.find((team: Team) => team.id == this.userTeamId);
-          this.starters = this.rosterService.constructStarters(this.userTeam.roster, this.DEFAULT_ACTIVE_ROSTER);
-          this.bench = this.userTeam.roster.filter(player => !this.starters.map(p => p.id).includes(player.id));
-          this.startingPositions = this.rosterService.constructStartingPositions(this.DEFAULT_ACTIVE_ROSTER);
-          this.eligibleSlotsForSelectedBenchPlayer = this.startingPositions.map(p => false);
-          this.teamDropdownItems = this.league.teams.map(t => ({
+          this.constructStartersAndBench();
+          let sortedTeams = [...this.league.teams].sort(this.compareTwoTeams);
+          this.teamDropdownItems = sortedTeams.map(t => ({
             id: t.id.toString(),
             value: t.id,
             htmlMarkup: [t.teamName],
@@ -200,6 +193,14 @@ export class LeagueComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.push(leagueScheduleSubscription);
 
+    const leagueStartingPositionsSubscription = this.leagueStartingPositions$().subscribe(startingPositions => {
+      if ((startingPositions || []).length) {
+        this.startingPositions = startingPositions;
+        this.constructStartersAndBench();
+      }
+    });
+    this.subscriptions.push(leagueStartingPositionsSubscription);
+
     const leagueSimulationSubscription = combineLatest([
       this.leagueSimulationResult$(),
       this.leagueSimulationIsLoading$(),
@@ -219,6 +220,19 @@ export class LeagueComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
+  constructStartersAndBench() {
+    if ((this.startingPositions || []).length && this.league) {
+      this.starters = this.rosterService.constructStarters(
+        this.userTeam.roster,
+        (this.rosterService.constructStartingPositions(this.league.settings.lineup) || []).length
+          ? this.startingPositions
+          : DEFAULT_STARTING_POSITIONS
+      );
+      this.bench = this.userTeam.roster.filter(player => !this.starters.map(p => p.id).includes(player.id));
+      this.eligibleSlotsForSelectedBenchPlayer = this.startingPositions.map(p => false);
+    }
+  }
+
   selectUserLeague(userLeague: UserLeague) {
     this.leagueId = userLeague.leagueId;
     this.userTeamId = userLeague.userTeamId;
@@ -233,26 +247,30 @@ export class LeagueComponent implements OnInit, OnDestroy {
         this.league.teams,
         this.leagueSchedule,
         this.nflTeams,
-        this.DEFAULT_ACTIVE_ROSTER
+        (this.startingPositions || []).length ? this.startingPositions : DEFAULT_STARTING_POSITIONS
       ),
       userId: this.user.id,
       userLeagueId: this.userLeague.id,
     };
-    console.log(simulationPayload);
     this.leagueStore.dispatch(new LeagueActions.SimulateLeague(simulationPayload));
   }
 
   onSelectTeam(event: IDropdownEvent) {
     if (event.eventType == DropdownEvent.ItemClicked) {
       const selectedTeam = this.league.teams.find(t => t.id == event.payload.dropdownItemValue);
-      this.starters = this.rosterService.constructStarters(selectedTeam.roster, this.DEFAULT_ACTIVE_ROSTER);
+      this.starters = this.rosterService.constructStarters(
+        selectedTeam.roster,
+        (this.startingPositions || []).length ? this.startingPositions : DEFAULT_STARTING_POSITIONS
+      );
       this.bench = selectedTeam.roster.filter(player => !this.starters.map(p => p.id).includes(player.id));
-      this.teamDropdownItems = this.league.teams.map(t => ({
-        id: t.id.toString(),
-        value: t.id,
-        htmlMarkup: [t.teamName],
-        selected: t.id == this.userTeamId,
-      }));
+    }
+  }
+
+  compareTwoTeams(a: Team, b: Team): number {
+    if (a.wins > b.wins) return -1;
+    else if (a.wins < b.wins) return 1;
+    else {
+      return a.pointsFor > b.pointsFor ? -1 : 1;
     }
   }
 

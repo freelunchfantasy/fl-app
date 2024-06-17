@@ -3,7 +3,7 @@
 .league {
   background-color: $fl-white;
   padding: 25px;
-  min-height: 800px;
+  min-height: 75vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -70,7 +70,6 @@
       .league-standings {
         width: 100%;
         margin: 10px 0px 10px 0px;
-        border-top: 1px solid black;
         border-bottom: 1px solid black;
       }
 
@@ -144,14 +143,18 @@
   }
 
   .options {
+    width: 100%;
+    min-height: 75px;
     display: flex;
-    margin-bottom: 15px;
+    justify-content: flex-end;
+    align-items: center;
+    padding-left: 15px;
+
     &__back-btn-container {
       display: flex;
-      border-bottom: 1px solid transparent;
       &:hover {
         cursor: pointer;
-        border-bottom: 1px solid black;
+        background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
       }
 
       .back-btn {

@@ -4,7 +4,7 @@ $fl-orange: #ff6f00;
 $fl-green: #4caf50;
 $fl-white: #f5f5f5;
 $fl-red: #d32f2f;
-$fl-gray: #adadad;
+$fl-gray: #cacaca;
 $fl-brown: #e9b162;
 
 // Player position color palette
@@ -15,14 +15,10 @@ $fl-te: #3c4142;
 $fl-k: #804a00;
 $fl-dst: #2f4f4f;
 
-* {
-  font-family: cursive;
-}
-
 body {
   background-color: $fl-white;
   margin: 0px;
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: 'Lato', sans-serif;
 }
 
 .util__center-flex {

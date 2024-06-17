@@ -22,8 +22,12 @@ export class HeaderBarComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
 
   LOGOUT_NAV_OPTION: AppNavOption = {
-    title: 'Logout',
+    title: 'Log Out',
     path: '',
+  };
+  LOGIN_NAV_OPTION: AppNavOption = {
+    title: 'Log In',
+    path: '/login',
   };
   CONTACT_US_NAV_OPTION: AppNavOption = {
     title: 'Contact Us',
@@ -77,6 +81,10 @@ export class HeaderBarComponent implements OnInit, OnDestroy {
     this.appStore.dispatch(new ApplicationActions.ClearUser());
     this.appStore.dispatch(new ApplicationActions.LogOut());
     this.leagueStore.dispatch(new LeagueActions.ResetLeagueState());
+  }
+
+  handleLogin() {
+    this.appStore.dispatch(new ApplicationActions.NavigateToLogin());
   }
 
   handleClickContactUs() {

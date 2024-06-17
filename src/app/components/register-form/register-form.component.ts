@@ -62,9 +62,8 @@ export class RegisterFormComponent implements OnInit, OnDestroy {
           lastName: this.lastName,
         })
       );
-    } else {
-      this.handleInputErrors(validationResult);
     }
+    this.handleInputErrors(validationResult);
   }
 
   handleInputErrors(validationResult: any) {
