@@ -14,7 +14,7 @@ import { IDropdownEvent, IDropdownItem } from '@app/components/dropdown/dropdown
 import { DropdownEvent } from '@app/components/dropdown/dropdown-constants';
 import { TeamRosterMode } from '@app/components/team-roster/team-roster.constants';
 import { TradeBlock } from './trade.constants';
-import { Position } from '@app/lib/constants/position.constants';
+import { DEFAULT_STARTING_POSITIONS, Position } from '@app/lib/constants/position.constants';
 import { SimulateLeaguePayload } from '@app/lib/models/league-payloads';
 import { User } from '@app/lib/models/user';
 import { RouterService } from '@app/services/router-service';
@@ -25,21 +25,10 @@ import { RouterService } from '@app/services/router-service';
   styleUrls: ['./trade.component.scss'],
 })
 export class TradeComponent implements OnInit, OnDestroy {
-  // TODO: REPLACE WITH ACTUAL LOGIN AND USER INFO
-  leagueId: number = 49454731;
-  userTeamId: number = 1;
+  leagueId: number;
+  userTeamId: number;
   nflTeams: NflTeam[] = [];
 
-  DEFAULT_ACTIVE_ROSTER: any = {
-    QB: 1,
-    RB: 2,
-    WR: 2,
-    TE: 1,
-    FLEX: 1,
-    OP: 0,
-    'D/ST': 1,
-    K: 1,
-  };
   startingPositions: string[] = [];
   teamRosterMode: TeamRosterMode = TeamRosterMode.TRADE;
 
@@ -111,6 +100,10 @@ export class TradeComponent implements OnInit, OnDestroy {
     return this.leagueStore.select(fromLeagueRoot.selectLeagueSchedule);
   }
 
+  leagueStartingPositions$(): Observable<string[]> {
+    return this.leagueStore.select(fromLeagueRoot.selectLeagueStartingPositions);
+  }
+
   ngOnInit(): void {
     this.leagueStore.dispatch(new LeagueActions.ResetTradeResult());
 
@@ -127,29 +120,8 @@ export class TradeComponent implements OnInit, OnDestroy {
         if (!isLoading) {
           if (leagueData) {
             this.leagueDataProcessingService.processLeagueData(leagueData);
-
-            // League data processing specific for this component
             this.league = leagueData;
-            this.leftTeam = this.league.teams.find(t => t.id == this.userTeamId);
-            this.leftStarters = this.rosterService.constructStarters(this.leftTeam.roster, this.DEFAULT_ACTIVE_ROSTER);
-            this.leftBench = this.leftTeam.roster.filter(
-              player => !this.leftStarters.map(p => p.id).includes(player.id)
-            );
-            this.startingPositions = this.rosterService.constructStartingPositions(this.DEFAULT_ACTIVE_ROSTER);
-            this.leftTeamDropdownItems = this.league.teams.map(t => ({
-              id: t.id.toString(),
-              value: t.id,
-              htmlMarkup: [t.teamName],
-              selected: t.id == this.userTeamId,
-            }));
-            this.rightTeamDropdownItems = this.league.teams
-              .filter(t => t.id != this.leftTeam.id)
-              .map(t => ({
-                id: t.id.toString(),
-                value: t.id,
-                htmlMarkup: [t.teamName],
-                selected: t.id == this.userTeamId,
-              }));
+            if (this.userTeamId) this.processLeagueDataForTrade(leagueData, this.userTeamId);
           }
         }
       }
@@ -176,9 +148,20 @@ export class TradeComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.push(leagueScheduleSubscription);
 
+    const leagueStartingPositionsSubscription = this.leagueStartingPositions$().subscribe(startingPositions => {
+      if ((startingPositions || []).length) {
+        this.startingPositions = startingPositions;
+        this.constructStartersAndBench(true);
+      }
+    });
+    this.subscriptions.push(leagueStartingPositionsSubscription);
+
     // Selected user league sub
     const selectedUserLeagueSubscription = this.selectedUserLeague$().subscribe(userLeague => {
       this.userLeague = userLeague;
+      this.userTeamId = userLeague?.userTeamId;
+      this.leagueId = userLeague?.leagueId;
+      if (this.userTeamId && this.league) this.processLeagueDataForTrade(this.league, this.userTeamId);
     });
     this.subscriptions.push(selectedUserLeagueSubscription);
 
@@ -199,43 +182,58 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
-  getPlayerCssClasses(player: Player) {
-    let classes = 'player';
-    switch (player.position) {
-      case Position.Quarterback:
-        classes = `${classes} quarterback`;
-        break;
-      case Position.RunningBack:
-        classes = `${classes} runningback`;
-        break;
-      case Position.WideReceiver:
-        classes = `${classes} widereceiver`;
-        break;
-      case Position.TightEnd:
-        classes = `${classes} tightend`;
-        break;
-      case Position.Defense:
-        classes = `${classes} defense`;
-        break;
-      case Position.Kicker:
-        classes = `${classes} kicker`;
-        break;
-      default:
-        break;
+  processLeagueDataForTrade(league: League, userTeamId: number) {
+    this.leftTeam = league.teams.find(t => t.id == userTeamId);
+    this.constructStartersAndBench(true);
+    let sortedTeams = [...league.teams].sort(this.compareTwoTeams);
+    this.leftTeamDropdownItems = sortedTeams.map(t => ({
+      id: t.id.toString(),
+      value: t.id,
+      htmlMarkup: [t.teamName],
+      selected: t.id == userTeamId,
+    }));
+    this.rightTeamDropdownItems = sortedTeams
+      .filter(t => t.id != this.leftTeam.id)
+      .map(t => ({
+        id: t.id.toString(),
+        value: t.id,
+        htmlMarkup: [t.teamName],
+        selected: t.id == userTeamId,
+      }));
+  }
+
+  constructStartersAndBench(isLeftTeam: boolean) {
+    if ((this.startingPositions || []).length && this.league) {
+      if (isLeftTeam && this.leftTeam) {
+        this.leftStarters = this.rosterService.constructStarters(
+          this.leftTeam.roster,
+          (this.rosterService.constructStartingPositions(this.league.settings.lineup) || []).length
+            ? this.startingPositions
+            : DEFAULT_STARTING_POSITIONS
+        );
+        this.leftBench = this.leftTeam.roster.filter(player => !this.leftStarters.map(p => p.id).includes(player.id));
+      }
     }
-    return classes;
   }
 
   getPlayerPicture(player: Player) {
     return `../../../../assets/players/${player.id}.png`;
   }
 
+  getPlayerProfilePicClasses(player: Player) {
+    return player.position == Position.Defense.display ? 'player__profile-pic dst' : 'player__profile-pic';
+  }
+
   onSelectLeftTeam(event: IDropdownEvent) {
     if (event.eventType == DropdownEvent.ItemClicked) {
       this.leftTeam = this.league.teams.find(t => t.id == event.payload.dropdownItemValue);
-      this.leftStarters = this.rosterService.constructStarters(this.leftTeam.roster, this.DEFAULT_ACTIVE_ROSTER);
+      this.leftStarters = this.rosterService.constructStarters(
+        this.leftTeam.roster,
+        (this.startingPositions || []).length ? this.startingPositions : DEFAULT_STARTING_POSITIONS
+      );
       this.leftBench = this.leftTeam.roster.filter(player => !this.leftStarters.map(p => p.id).includes(player.id));
-      this.rightTeamDropdownItems = this.league.teams
+      let sortedTeams = [...this.league.teams].sort(this.compareTwoTeams);
+      this.rightTeamDropdownItems = sortedTeams
         .filter(t => t.id != this.leftTeam.id)
         .map(t => ({
           id: t.id.toString(),
@@ -250,9 +248,13 @@ export class TradeComponent implements OnInit, OnDestroy {
   onSelectRightTeam(event: IDropdownEvent) {
     if (event.eventType == DropdownEvent.ItemClicked) {
       this.rightTeam = this.league.teams.find(t => t.id == event.payload.dropdownItemValue);
-      this.rightStarters = this.rosterService.constructStarters(this.rightTeam.roster, this.DEFAULT_ACTIVE_ROSTER);
+      this.rightStarters = this.rosterService.constructStarters(
+        this.rightTeam.roster,
+        (this.startingPositions || []).length ? this.startingPositions : DEFAULT_STARTING_POSITIONS
+      );
       this.rightBench = this.rightTeam.roster.filter(player => !this.rightStarters.map(p => p.id).includes(player.id));
-      this.leftTeamDropdownItems = this.league.teams
+      let sortedTeams = [...this.league.teams].sort(this.compareTwoTeams);
+      this.leftTeamDropdownItems = sortedTeams
         .filter(t => t.id != this.rightTeam.id)
         .map(t => ({
           id: t.id.toString(),
@@ -267,7 +269,7 @@ export class TradeComponent implements OnInit, OnDestroy {
   addPlayerToTrade(player: Player) {
     if (this.isSimulating) return;
     const inLeftTeam = this.leftTeam.roster.find(p => p.id == player.id);
-    inLeftTeam ? this.tradeBlock.left.push(player) : (this.tradeBlock.right = [player, ...this.tradeBlock.right]);
+    inLeftTeam ? this.tradeBlock.left.push(player) : this.tradeBlock.right.push(player);
   }
 
   removePlayerFromTrade(player: Player) {
@@ -275,6 +277,12 @@ export class TradeComponent implements OnInit, OnDestroy {
     inLeftTeam
       ? (this.tradeBlock = { left: this.tradeBlock.left.filter(p => p.id != player.id), right: this.tradeBlock.right })
       : (this.tradeBlock = { left: this.tradeBlock.left, right: this.tradeBlock.right.filter(p => p.id != player.id) });
+  }
+
+  clearTradeBlock(isLeftSide: boolean) {
+    this.tradeBlock = isLeftSide
+      ? { left: [], right: this.tradeBlock.right }
+      : { left: this.tradeBlock.left, right: [] };
   }
 
   handlePlayerClick(player: Player) {
@@ -293,7 +301,7 @@ export class TradeComponent implements OnInit, OnDestroy {
             this.league.teams,
             this.leagueSchedule,
             this.nflTeams,
-            this.DEFAULT_ACTIVE_ROSTER
+            (this.startingPositions || []).length ? this.startingPositions : DEFAULT_STARTING_POSITIONS
           ),
           userId: this.user.id,
           userLeagueId: this.userLeague.id,
@@ -304,7 +312,7 @@ export class TradeComponent implements OnInit, OnDestroy {
             this.league.teams,
             this.leagueSchedule,
             this.nflTeams,
-            this.DEFAULT_ACTIVE_ROSTER,
+            (this.startingPositions || []).length ? this.startingPositions : DEFAULT_STARTING_POSITIONS,
             this.tradeBlock
           ),
           userId: this.user.id,
@@ -319,6 +327,14 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.leagueStore.dispatch(new LeagueActions.ClearSelectedUserLeague());
     this.leagueStore.dispatch(new LeagueActions.ClearLeagueData());
     this.routerService.redirectTo('/league');
+  }
+
+  compareTwoTeams(a: Team, b: Team): number {
+    if (a.wins > b.wins) return -1;
+    else if (a.wins < b.wins) return 1;
+    else {
+      return a.pointsFor > b.pointsFor ? -1 : 1;
+    }
   }
 
   get canSimTrade() {

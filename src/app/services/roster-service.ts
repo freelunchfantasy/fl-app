@@ -2,13 +2,14 @@ import { Player } from '@app/lib/models/league';
 import { Position } from '@app/lib/constants/position.constants';
 
 export class RosterService {
-  constructStarters(roster: Player[], rosterSettings: any): Player[] {
+  constructStarters(roster: Player[], startingPositions: string[]): Player[] {
     let activePlayerIds: number[] = [];
 
     // QBs
     let activeQBs = [];
-    let rosteredQBs: Player[] = [...roster.filter(player => player.position == 'QB')];
-    while (activeQBs.length < rosterSettings.QB && rosteredQBs.length) {
+    let rosteredQBs: Player[] = [...roster.filter(player => player.position == Position.Quarterback.code)];
+    const numStartingQBs = startingPositions.filter(p => p == Position.Quarterback.display).length;
+    while (activeQBs.length < numStartingQBs && rosteredQBs.length) {
       const bestQB = this.getBestPlayerAtPosition(rosteredQBs);
       rosteredQBs = rosteredQBs.filter(player => player.id != bestQB.id);
       activeQBs.push(bestQB);
@@ -17,8 +18,9 @@ export class RosterService {
 
     // RBs
     let activeRBs = [];
-    let rosteredRBs: Player[] = [...roster.filter(player => player.position == 'RB')];
-    while (activeRBs.length < rosterSettings.RB && rosteredRBs.length) {
+    let rosteredRBs: Player[] = [...roster.filter(player => player.position == Position.RunningBack.code)];
+    const numStartingRBs = startingPositions.filter(p => p == Position.RunningBack.display).length;
+    while (activeRBs.length < numStartingRBs && rosteredRBs.length) {
       const bestRB = this.getBestPlayerAtPosition(rosteredRBs);
       rosteredRBs = rosteredRBs.filter(player => player.id != bestRB.id);
       activeRBs.push(bestRB);
@@ -27,8 +29,9 @@ export class RosterService {
 
     // WRs
     let activeWRs = [];
-    let rosteredWRs: Player[] = [...roster.filter(player => player.position == 'WR')];
-    while (activeWRs.length < rosterSettings.WR && rosteredWRs.length) {
+    let rosteredWRs: Player[] = [...roster.filter(player => player.position == Position.WideReceiver.code)];
+    const numStartingWRs = startingPositions.filter(p => p == Position.WideReceiver.code).length;
+    while (activeWRs.length < numStartingWRs && rosteredWRs.length) {
       const bestWR = this.getBestPlayerAtPosition(rosteredWRs);
       rosteredWRs = rosteredWRs.filter(player => player.id != bestWR.id);
       activeWRs.push(bestWR);
@@ -37,47 +40,109 @@ export class RosterService {
 
     // TEs
     let activeTEs = [];
-    let rosteredTEs: Player[] = [...roster.filter(player => player.position == 'TE')];
-    while (activeTEs.length < rosterSettings.TE && rosteredTEs.length) {
+    let rosteredTEs: Player[] = [...roster.filter(player => player.position == Position.TightEnd.code)];
+    const numStartingTEs = startingPositions.filter(p => p == Position.TightEnd.display).length;
+    while (activeTEs.length < numStartingTEs && rosteredTEs.length) {
       const bestTE = this.getBestPlayerAtPosition(rosteredTEs);
       rosteredTEs = rosteredTEs.filter(player => player.id != bestTE.id);
       activeTEs.push(bestTE);
       activePlayerIds.push(bestTE.id);
     }
 
+    // RB/WRs
+    let activeRBWRs = [];
+    let rosteredRBWRs: Player[] = [
+      ...roster.filter(player => [Position.RunningBack.code, Position.WideReceiver.code].includes(player.position)),
+    ].filter(player => !activePlayerIds.includes(player.id));
+    const numStartingRBWRs = startingPositions.filter(p => p == Position.RunningBackWideReceiver.display).length;
+    while (activeRBWRs.length < numStartingRBWRs && rosteredRBWRs.length) {
+      const bestRBWR = this.getBestPlayerAtPosition(rosteredRBWRs);
+      rosteredRBs = rosteredRBWRs.filter(player => player.id != bestRBWR.id);
+      activeRBWRs.push(bestRBWR);
+      activePlayerIds.push(bestRBWR.id);
+    }
+
+    // WR/TEs
+    let activeWRTEs = [];
+    let rosteredWRTEs: Player[] = [
+      ...roster.filter(player => [Position.WideReceiver.code, Position.TightEnd.code].includes(player.position)),
+    ].filter(player => !activePlayerIds.includes(player.id));
+    const numStartingWRTEs = startingPositions.filter(p => p == Position.WideReceiverTightEnd.code).length;
+    while (activeWRTEs.length < numStartingWRTEs && rosteredWRTEs.length) {
+      const bestWRTE = this.getBestPlayerAtPosition(rosteredWRTEs);
+      rosteredWRTEs = rosteredWRTEs.filter(player => player.id != bestWRTE.id);
+      activeWRTEs.push(bestWRTE);
+      activePlayerIds.push(bestWRTE.id);
+    }
+
     // FLEX
     let activeFlexes = [];
-    let rosteredFlex: Player[] = [...roster.filter(player => ['RB', 'WR', 'TE'].includes(player.position))].filter(
-      player => !activePlayerIds.includes(player.id)
-    );
-    while (activeFlexes.length < rosterSettings.FLEX && rosteredFlex.length) {
-      const bestFlex = this.getBestPlayerAtPosition(rosteredFlex);
-      rosteredFlex = rosteredFlex.filter(player => player.id != bestFlex.id);
+    let rosteredFlexes: Player[] = [
+      ...roster.filter(player =>
+        [Position.RunningBack.code, Position.WideReceiver.code, Position.TightEnd.code].includes(player.position)
+      ),
+    ].filter(player => !activePlayerIds.includes(player.id));
+    const numStartingFlexes = startingPositions.filter(p => p == Position.Flex.display).length;
+    while (activeFlexes.length < numStartingFlexes && rosteredFlexes.length) {
+      const bestFlex = this.getBestPlayerAtPosition(rosteredFlexes);
+      rosteredFlexes = rosteredFlexes.filter(player => player.id != bestFlex.id);
       activeFlexes.push(bestFlex);
+      activePlayerIds.push(bestFlex.id);
     }
 
     // OP
-    let activeOPs: Player[] = [];
+    let activeOPs = [];
+    let rosteredOPs: Player[] = [
+      ...roster.filter(player =>
+        [
+          Position.Quarterback.code,
+          Position.RunningBack.code,
+          Position.WideReceiver.code,
+          Position.TightEnd.code,
+        ].includes(player.position)
+      ),
+    ].filter(player => !activePlayerIds.includes(player.id));
+    const numStartingOPs = startingPositions.filter(p => p == Position.Superflex.display).length;
+    while (activeOPs.length < numStartingOPs && rosteredOPs.length) {
+      const bestSuperflex = this.getBestPlayerAtPosition(rosteredOPs);
+      rosteredOPs = rosteredOPs.filter(player => player.id != bestSuperflex.id);
+      activeOPs.push(bestSuperflex);
+      activePlayerIds.push(bestSuperflex.id);
+    }
 
     // D/ST
     let activeDSTs = [];
-    let rosteredDSTs: Player[] = [...roster.filter(player => player.position == 'D/ST')];
-    while (activeDSTs.length < rosterSettings['D/ST'] && rosteredDSTs.length) {
+    let rosteredDSTs: Player[] = [...roster.filter(player => player.position == Position.Defense.code)];
+    const numStartingDefenses = startingPositions.filter(p => p == Position.Defense.display).length;
+    while (activeDSTs.length < numStartingDefenses && rosteredDSTs.length) {
       const bestDST = this.getBestPlayerAtPosition(rosteredDSTs);
       rosteredDSTs = rosteredDSTs.filter(player => player.id != bestDST.id);
       activeDSTs.push(bestDST);
+      activePlayerIds.push(bestDST.id);
     }
 
     // K
     let activeKs = [];
-    let rosteredKs: Player[] = [...roster.filter(player => player.position == 'K')];
-    while (activeKs.length < rosterSettings.K && rosteredKs.length) {
+    let rosteredKs: Player[] = [...roster.filter(player => player.position == Position.Kicker.code)];
+    const numStartingKickers = startingPositions.filter(p => p == Position.Kicker.display).length;
+    while (activeKs.length < numStartingKickers && rosteredKs.length) {
       const bestK = this.getBestPlayerAtPosition(rosteredKs);
       rosteredKs = rosteredKs.filter(player => player.id != bestK.id);
       activeKs.push(bestK);
+      activePlayerIds.push(bestK.id);
     }
-
-    return [...activeQBs, ...activeRBs, ...activeWRs, ...activeTEs, ...activeFlexes, ...activeDSTs, ...activeKs];
+    return [
+      ...activeQBs,
+      ...activeRBs,
+      ...activeWRs,
+      ...activeTEs,
+      ...activeRBWRs,
+      ...activeWRTEs,
+      ...activeFlexes,
+      ...activeOPs,
+      ...activeDSTs,
+      ...activeKs,
+    ];
   }
 
   getBestPlayerAtPosition(players: Player[]) {
@@ -86,74 +151,95 @@ export class RosterService {
       : null;
   }
 
-  constructStartingPositions(rosterSettings: any): string[] {
+  constructStartingPositions(unorderedPositions: string[]): string[] {
     let startingPositions: string[] = [];
 
     // QB
-    let numQBs = 0;
-    while (numQBs < rosterSettings.QB) {
-      startingPositions.push(Position.Quarterback);
-      numQBs++;
-    }
+    unorderedPositions
+      .filter(p => p == Position.Quarterback.code)
+      .forEach(() => {
+        startingPositions.push(Position.Quarterback.display);
+      });
 
     // RB
-    let numRBs = 0;
-    while (numRBs < rosterSettings.RB) {
-      startingPositions.push(Position.RunningBack);
-      numRBs++;
-    }
+    unorderedPositions
+      .filter(p => p == Position.RunningBack.code)
+      .forEach(() => {
+        startingPositions.push(Position.RunningBack.display);
+      });
 
     // WR
-    let numWRs = 0;
-    while (numWRs < rosterSettings.WR) {
-      startingPositions.push(Position.WideReceiver);
-      numWRs++;
-    }
+    unorderedPositions
+      .filter(p => p == Position.WideReceiver.code)
+      .forEach(() => {
+        startingPositions.push(Position.WideReceiver.display);
+      });
 
     // TE
-    let numTEs = 0;
-    while (numTEs < rosterSettings.TE) {
-      startingPositions.push(Position.TightEnd);
-      numTEs++;
-    }
+    unorderedPositions
+      .filter(p => p == Position.TightEnd.code)
+      .forEach(() => {
+        startingPositions.push(Position.TightEnd.display);
+      });
+
+    // RB/WR
+    unorderedPositions
+      .filter(p => p == Position.RunningBackWideReceiver.code)
+      .forEach(() => {
+        startingPositions.push(Position.RunningBackWideReceiver.display);
+      });
+
+    // WR/TE
+    unorderedPositions
+      .filter(p => p == Position.WideReceiverTightEnd.code)
+      .forEach(() => {
+        startingPositions.push(Position.WideReceiverTightEnd.display);
+      });
 
     // Flex
-    let numFlexes = 0;
-    while (numFlexes < rosterSettings.FLEX) {
-      startingPositions.push(Position.Flex);
-      numFlexes++;
-    }
+    unorderedPositions
+      .filter(p => p == Position.Flex.code)
+      .forEach(() => {
+        startingPositions.push(Position.Flex.display);
+      });
 
     // Superflex
-    let numSuperflexes = 0;
-    while (numSuperflexes < rosterSettings.OP) {
-      startingPositions.push(Position.Superflex);
-      numSuperflexes++;
-    }
+    unorderedPositions
+      .filter(p => p == Position.Superflex.code)
+      .forEach(() => {
+        startingPositions.push(Position.Superflex.display);
+      });
 
     // D/ST
-    let numDSTs = 0;
-    while (numDSTs < rosterSettings['D/ST']) {
-      startingPositions.push(Position.Defense);
-      numDSTs++;
-    }
+    unorderedPositions
+      .filter(p => p == Position.Defense.code)
+      .forEach(() => {
+        startingPositions.push(Position.Defense.display);
+      });
 
     // K
-    let numKs = 0;
-    while (numKs < rosterSettings.K) {
-      startingPositions.push(Position.Kicker);
-      numKs++;
-    }
+    unorderedPositions
+      .filter(p => p == Position.Kicker.code)
+      .forEach(() => {
+        startingPositions.push(Position.Kicker.display);
+      });
 
     return startingPositions;
   }
 
   findEligibleBenchPlayers(bench: Player[], starterSlot: string): Player[] {
-    if (starterSlot == Position.Flex) {
-      return bench.filter(p => [Position.RunningBack, Position.WideReceiver, Position.TightEnd].includes(p.position));
-    } else if (starterSlot == Position.Superflex) {
+    if (starterSlot == Position.Flex.display) {
       return bench.filter(p =>
-        [Position.Quarterback, Position.RunningBack, Position.WideReceiver, Position.TightEnd].includes(p.position)
+        [Position.RunningBack.display, Position.WideReceiver.display, Position.TightEnd.display].includes(p.position)
+      );
+    } else if (starterSlot == Position.Superflex.display) {
+      return bench.filter(p =>
+        [
+          Position.Quarterback.display,
+          Position.RunningBack.display,
+          Position.WideReceiver.display,
+          Position.TightEnd.display,
+        ].includes(p.position)
       );
     }
     return bench.filter(p => p.position == starterSlot);
@@ -162,13 +248,30 @@ export class RosterService {
   findEligibleSlots(player: Player, startingSlots: string[]): boolean[] {
     let eligibleSlots: boolean[] = [];
     let eligiblePositions = [player.position];
+    // RB/WR
     eligiblePositions.push(
-      [Position.RunningBack, Position.WideReceiver, Position.TightEnd].includes(player.position) && Position.Flex
+      [Position.RunningBack.display, Position.WideReceiver.display].includes(player.position) &&
+        Position.RunningBackWideReceiver.display
     );
+    // WR/TE
     eligiblePositions.push(
-      [Position.Quarterback, Position.RunningBack, Position.WideReceiver, Position.TightEnd].includes(
+      [Position.WideReceiver.display, Position.TightEnd.display].includes(player.position) &&
+        Position.WideReceiverTightEnd.display
+    );
+    // Flex
+    eligiblePositions.push(
+      [Position.RunningBack.display, Position.WideReceiver.display, Position.TightEnd.display].includes(
         player.position
-      ) && Position.Superflex
+      ) && Position.Flex.display
+    );
+    // OP
+    eligiblePositions.push(
+      [
+        Position.Quarterback.display,
+        Position.RunningBack.display,
+        Position.WideReceiver.display,
+        Position.TightEnd.display,
+      ].includes(player.position) && Position.Superflex.display
     );
     startingSlots.forEach(slot => {
       eligibleSlots.push(eligiblePositions.includes(slot));

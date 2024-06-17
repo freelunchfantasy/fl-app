@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // custom components
 import { ModalComponent } from './modal/modal.component';
+import { AppFooterComponent } from './app-footer/app-footer.component';
 import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { NavOptionComponent } from './nav-option/nav-option.component';
 import { RegisterFormComponent } from './register-form/register-form.component';
@@ -19,6 +20,7 @@ import { ContactFormComponent } from './contact-form/contact-form.component';
 
 const components = [
   ModalComponent,
+  AppFooterComponent,
   HeaderBarComponent,
   NavOptionComponent,
   RegisterFormComponent,

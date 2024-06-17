@@ -42,6 +42,7 @@ export const SHARE_TRADE_SIMULATION_RESULT_SUCCESS = '[League] Successfully shar
 export const SHARE_TRADE_SIMULATION_RESULT_FAILURE = '[League] Failed to share trade simulation results';
 export const SET_LEAGUE_STANDINGS = '[League] Setting league standings in league store';
 export const SET_LEAGUE_SCHEDULE = '[League] Setting league schedule in league store';
+export const SET_LEAGUE_STARTING_POSITIONS = '[League] Setting league starting positions in league store';
 export const RESET_LEAGUE_STATE = '[League] Resetting league state to initial';
 export const RESET_TRADE_RESULT = '[League] Resetting trade result';
 
@@ -203,6 +204,12 @@ export class SetLeagueSchedule implements Action {
   constructor(public schedule: number[][][]) {}
 }
 
+export class SetLeagueStartingPositions implements Action {
+  readonly type = SET_LEAGUE_STARTING_POSITIONS;
+
+  constructor(public payload: string[]) {}
+}
+
 export class ResetLeagueState implements Action {
   readonly type = RESET_LEAGUE_STATE;
 
@@ -245,5 +252,6 @@ export type All =
   | ShareTradeSimulationResultFailure
   | SetLeagueStandings
   | SetLeagueSchedule
+  | SetLeagueStartingPositions
   | ResetLeagueState
   | ResetTradeResult;

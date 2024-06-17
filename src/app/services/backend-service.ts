@@ -26,8 +26,8 @@ export class BackendService {
     return this.http.post<UserResult>(`${this.getApiUrl()}/auth/login`, payload, this.httpOptions);
   }
 
-  register(payload: RegisterPayload): Observable<User> {
-    return this.http.post<User>(`${this.getApiUrl()}/auth/register`, payload, this.httpOptions);
+  register(payload: RegisterPayload): Observable<UserResult> {
+    return this.http.post<UserResult>(`${this.getApiUrl()}/auth/register`, payload, this.httpOptions);
   }
 
   sendContactEmail(payload: ContactPayload): Observable<any> {

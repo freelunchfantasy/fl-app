@@ -18,6 +18,13 @@
       ></nav-option>
       <nav-option
         style="height: 100%"
+        *ngIf="!sessionToken"
+        [navOption]="LOGIN_NAV_OPTION"
+        [bypassNav]="true"
+        (click)="handleLogin()"
+      ></nav-option>
+      <nav-option
+        style="height: 100%"
         [navOption]="CONTACT_US_NAV_OPTION"
         [bypassNav]="true"
         (click)="handleClickContactUs()"

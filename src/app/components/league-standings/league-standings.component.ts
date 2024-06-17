@@ -24,6 +24,7 @@ export class LeagueStandingsComponent implements OnInit {
   leagueSimulationAfterTrade: TeamSimulationResult[];
 
   leagueStandingsAfterSimulation: Team[];
+  leagueStandingsAfterTrade: Team[];
 
   constructor(private standingsService: StandingsService) {}
 
@@ -33,6 +34,23 @@ export class LeagueStandingsComponent implements OnInit {
     if (this.leagueSimulation) {
       this.leagueStandingsAfterSimulation = this.standingsService.constructStandings(
         this.leagueSimulation.map(t => ({
+          id: t.id,
+          teamName: '',
+          wins: t.wins,
+          roster: [],
+          losses: t.losses,
+          ties: 0,
+          pointsFor: 0,
+          pointsAgainst: 0,
+          schedule: [],
+          scores: [],
+          outcomes: [],
+        }))
+      );
+    }
+    if (this.leagueSimulationAfterTrade) {
+      this.leagueStandingsAfterTrade = this.standingsService.constructStandings(
+        this.leagueSimulationAfterTrade.map(t => ({
           id: t.id,
           teamName: '',
           wins: t.wins,
@@ -74,6 +92,26 @@ export class LeagueStandingsComponent implements OnInit {
     return `(${rank}${suffix})`;
   }
 
+  getRankChangeAfterTrade(team: Team) {
+    const rank = this.leagueStandingsAfterTrade.findIndex(t => t.id == team.id) + 1;
+    let suffix;
+    switch (rank) {
+      case 1:
+        suffix = 'st';
+        break;
+      case 2:
+        suffix = 'nd';
+        break;
+      case 3:
+        suffix = 'rd';
+        break;
+      default:
+        suffix = 'th';
+        break;
+    }
+    return `(${rank}${suffix})`;
+  }
+
   getRankChangeClasses(team: Team) {
     const before = this.leagueStandings.findIndex(t => t.id == team.id) + 1;
     const after = this.leagueStandingsAfterSimulation.findIndex(t => t.id == team.id) + 1;
@@ -82,7 +120,21 @@ export class LeagueStandingsComponent implements OnInit {
     return before - after > 0 ? 'positive' : 'negative';
   }
 
+  getRankChangeAfterTradeClasses(team: Team) {
+    const before = this.leagueStandingsAfterSimulation.findIndex(t => t.id == team.id) + 1;
+    const after = this.leagueStandingsAfterTrade.findIndex(t => t.id == team.id) + 1;
+    if (before - after == 0) return '';
+    // before - after because lower indexes are a higher rank
+    return before - after > 0 ? 'positive' : 'negative';
+  }
+
   getSimulatedRecordAfterTrade(team: Team) {
+    const before = this.leagueSimulation.find(t => t.id == team.id);
+    const after = this.leagueSimulationAfterTrade.find(t => t.id == team.id);
+    return `${after.wins.toFixed(2)} - ${after.losses.toFixed(2)}`;
+  }
+
+  getSimulatedRecordDiffAfterTrade(team: Team) {
     const differential = (before: number, after: number) => {
       const difference = after - before;
       return `${difference >= 0 ? '+' : ''}${difference.toFixed(2)}`;
@@ -90,11 +142,7 @@ export class LeagueStandingsComponent implements OnInit {
 
     const before = this.leagueSimulation.find(t => t.id == team.id);
     const after = this.leagueSimulationAfterTrade.find(t => t.id == team.id);
-    return `${after.wins.toFixed(2)} - ${after.losses.toFixed(2)} (${differential(before.wins, after.wins)})`;
-  }
-
-  getSimulatedLossesAfterTrade(team: Team) {
-    return this.leagueSimulationAfterTrade.find(t => t.id == team.id).losses.toFixed(2);
+    return `(${differential(before.wins, after.wins)})`;
   }
 
   getTeamClasses(team: Team, i: number) {

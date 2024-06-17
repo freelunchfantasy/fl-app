@@ -2,17 +2,20 @@
 
 .trade {
   background-color: $fl-white;
-  padding: 25px;
+  min-height: 75vh;
   &-container {
     display: flex;
     justify-content: space-around;
-    min-height: 600px;
+    background-color: $fl-gray;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
 
-    &__team {
-      width: 40%;
-      padding: 10px;
+    &__team-container {
+      width: 42%;
       border-radius: 10px;
       border: 1px solid black;
+      margin: 15px;
+      padding: 5px;
 
       &__left {
         background-color: $fl-green;
@@ -22,47 +25,61 @@
         background-color: $fl-orange;
       }
 
-      &-roster {
-        display: flex;
-        align-items: flex-start;
-        margin-top: 30px;
+      &__team {
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid black;
+        background-color: $fl-brown;
 
-        ::ng-deep {
-          .player-row {
-            font-size: 10pt;
+        &-roster {
+          display: flex;
+          align-items: stretch;
+          margin-top: 10px;
 
-            .roster-pos {
-              min-width: 35px !important;
-            }
+          ::ng-deep {
+            .player-row {
+              font-size: 10pt;
+              padding: 5px;
 
-            .player {
-              min-width: 100px !important;
+              .roster-pos {
+                min-width: 35px !important;
+              }
 
-              &__profile-pic {
-                width: 25px !important;
-                height: 25px !important;
+              .player {
+                min-width: 100px !important;
+
+                &__profile-pic {
+                  width: 25px !important;
+                  height: 25px !important;
+                }
               }
             }
           }
         }
-      }
 
-      &-none-selected {
-        height: 100%;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 16pt;
-        font-weight: bold;
+        &-none-selected {
+          height: 90%;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 16pt;
+          font-weight: bold;
+        }
       }
     }
 
     &__trade-block-container {
-      width: 15%;
+      width: 20%;
       padding: 10px;
+      border-radius: 10px;
+      border: 2px solid black;
+      margin: 50px 0px;
       display: flex;
       align-items: center;
+      background-color: $fl-white;
 
       .trade-block {
         width: 100%;
@@ -75,14 +92,29 @@
 
         &__side {
           width: 100%;
-          height: 45%;
+          height: 35%;
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
           align-items: center;
 
           &-arrow {
-            width: 120px;
+            height: 30px;
+            width: 80px;
+          }
+
+          .players-container {
+            min-height: 100%;
+            max-height: 200px;
+            min-width: 100%;
+            background-color: $fl-gray;
+            border: 1px solid black;
+            overflow-y: scroll;
+            ::-webkit-scrollbar {
+              display: none;
+            }
+            -ms-overflow-style: none;
+            scrollbar-width: none;
           }
 
           .player {
@@ -90,17 +122,15 @@
             min-width: 100px;
             padding: 5px;
             font-size: 10pt;
-            border-radius: 20px;
-            border: 1px solid $fl-white;
-            color: $fl-white;
-            margin-top: 5px;
+            border-bottom: 1px solid black;
+            color: black;
+            background-color: $fl-white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: opacity 0.5s;
             &:hover {
               cursor: pointer;
-              background-image: linear-gradient(rgb(0 0 0/20%) 0 0);
+              background-image: linear-gradient(rgb(0 0 0/5%) 0 0);
             }
 
             &__profile {
@@ -115,6 +145,11 @@
                 border-radius: 50px;
                 background-color: $fl-white;
               }
+              .dst {
+                border: 0px;
+                background-color: transparent;
+                border-radius: 0px;
+              }
             }
 
             &__about {
@@ -123,27 +158,6 @@
               text-align: right;
             }
           }
-          .quarterback {
-            background-color: $fl-qb;
-          }
-          .runningback {
-            background-color: $fl-rb;
-          }
-          .widereceiver {
-            background-color: $fl-wr;
-          }
-          .tightend {
-            background-color: $fl-te;
-          }
-          .defense {
-            background-color: $fl-dst;
-          }
-          .kicker {
-            background-color: $fl-k;
-          }
-        }
-        .right {
-          justify-content: end;
         }
 
         .sim-btn-container {
@@ -154,8 +168,8 @@
             padding: 6px;
             border-radius: 8px;
             font-size: 12pt;
-            min-width: 77px;
-            min-height: 38px;
+            min-width: 85px;
+            min-height: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -175,7 +189,9 @@
           }
 
           .disabled {
+            border-color: rgb(114, 114, 114);
             background-color: $fl-gray;
+            color: rgb(114, 114, 114);
             &:hover {
               background-image: none;
             }
@@ -184,19 +200,50 @@
             }
           }
         }
+        .arrow-container {
+          position: relative;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          .clear-block-btn {
+            position: absolute;
+            right: 0;
+            padding: 0px;
+            color: $fl-red;
+            &:hover {
+              cursor: pointer;
+              text-decoration: underline;
+            }
+          }
+        }
+        .arrow-container__left {
+          align-items: flex-end;
+        }
+        .arrow-container__right {
+          align-items: flex-start;
+        }
       }
     }
   }
 
   .options {
+    width: 100%;
+    min-height: 75px;
     display: flex;
-    margin-bottom: 15px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 15px;
+
+    &__page-info {
+      font-size: 18pt;
+      font-weight: bold;
+    }
+
     &__back-btn-container {
       display: flex;
-      border-bottom: 1px solid transparent;
       &:hover {
         cursor: pointer;
-        border-bottom: 1px solid black;
+        background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
       }
 
       .back-btn {

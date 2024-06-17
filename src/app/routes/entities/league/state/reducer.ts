@@ -63,3 +63,8 @@ export const selectTradeSimulationIsLoading = createSelector(
 export const selectLeagueStandings = createSelector(getLeagueState, (state: State) => state.league.leagueStandings);
 
 export const selectLeagueSchedule = createSelector(getLeagueState, (state: State) => state.league.leagueSchedule);
+
+export const selectLeagueStartingPositions = createSelector(
+  getLeagueState,
+  (state: State) => state.league.leagueStartingPositions
+);

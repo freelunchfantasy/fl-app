@@ -1,7 +1,47 @@
 <div class="welcome-container">
-  <div class="display-4">Welcome to FreeLunch!</div>
-  <div style="margin-top: 30px; margin-bottom: 20px" class="display-5">
-    The fantasy football simulation tool designed to help your season
+  <div class="summary">
+    <div class="description">
+      <div class="header-container">
+        <div class="header">
+          Welcome to Free Lunch, the fantasy sports tool designed to help you improve your team's future outlook
+        </div>
+        <div class="subheader">
+          Simulate trades between teams in your league to identify mutually advantageous trades. Because with free
+          lunch, everybody wins!
+        </div>
+      </div>
+      <button class="btn enter-btn" (click)="goToLogin()">Get in there!</button>
+    </div>
+    <div class="display">
+      <img class="example" src="../../../../assets/trade-example.PNG" />
+    </div>
   </div>
-  <button class="btn btn-success" (click)="goToLogin()">Get in there!</button>
+  <div class="explanation">
+    <div class="image-container">
+      <img class="image" src="../../../../assets/calculator.png" />
+    </div>
+    <div class="bullets-container">
+      <div class="bullet-reason">
+        <div class="bullet"></div>
+        <div class="reason">
+          Free Lunch takes your league's rosters and matchups to run thousands of simulations of the rest of your
+          league's season. See the place your team is most likely to finish!
+        </div>
+      </div>
+      <div class="bullet-reason">
+        <div class="bullet"></div>
+        <div class="reason">
+          Simulate a trade between two teams in the league to see how it affects the league's outlook! Free Lunch will
+          identify how many wins each team in the league might gain/lose if the trade is executed.
+        </div>
+      </div>
+      <div class="bullet-reason">
+        <div class="bullet"></div>
+        <div class="reason">
+          Trades may be a zero-sum game for the league, but it doesn't have to be for the teams involved! Now you can
+          propose trades to your leaguemates with proof that the trade will help both of your teams.
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
