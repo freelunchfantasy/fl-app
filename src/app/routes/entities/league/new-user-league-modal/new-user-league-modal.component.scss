@@ -1,28 +1,144 @@
+@import '../../../../../styles.scss';
+
 .new-user-league-modal {
-  padding: 10px;
+  ::ng-deep .modal__content {
+    padding: 0px !important;
+    .modal__header {
+      border-radius: 10px 10px 0px 0px;
+      background-color: $fl-blue;
+      color: $fl-white;
+      padding: 20px;
+
+      .modal__close-button {
+        color: $fl-white;
+      }
+    }
+    .modal__body {
+      padding: 20px;
+    }
+  }
+
   .new-user-league__form {
     display: flex;
     flex-direction: column;
 
-    &-input {
+    &-item {
+      margin-bottom: 15px;
       display: flex;
-      justify-content: flex-start;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
 
-      input {
-        min-width: 150px;
-        padding: 8px;
-        border-radius: 5px;
-        border: 1px solid black;
-        margin: 5px 15px 5px 2px;
+      &__label {
+        font-size: 12pt;
+        margin-bottom: 5px;
       }
 
-      button {
-        padding: 5px 8px 5px 8px;
+      &__sublabel {
+        color: $subtext-gray;
+        font-size: 10pt;
+      }
+
+      &__input {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        input {
+          min-width: 150px;
+          padding: 3px 8px;
+          border-radius: 5px;
+          border: 1px solid $subtext-gray;
+          margin: 5px 15px 5px 2px;
+          color: $subtext-gray;
+          font-size: 12pt;
+          &:focus {
+            outline: 1px solid $fl-green;
+          }
+        }
+
+        button {
+          padding: 5px 8px 5px 8px;
+        }
+
+        .find-league-btn {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-width: 60px;
+          min-height: 32px;
+          font-size: 10pt;
+          background-color: $fl-orange;
+          border: 1px solid black;
+          &:hover {
+            background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
+          }
+          &:focus {
+            box-shadow: none;
+          }
+        }
+
+        .loading-msg {
+          margin-left: 10px;
+          font-size: 8pt;
+        }
+      }
+      &-message {
+        font-size: 8pt;
+      }
+
+      .check-user-league-msg {
+        font-size: 9pt;
+        color: red;
+        margin-top: 5px;
       }
     }
-    &-message {
-      font-size: 8pt;
+
+    .found-league-msg {
+      color: red;
+      font-size: 10pt;
+    }
+
+    ::ng-deep .dropdown__trigger {
+      color: $subtext-gray;
+      border: 1px solid $subtext-gray;
+    }
+  }
+
+  .highlighted {
+    background-color: yellow;
+    color: black;
+  }
+
+  .save-user-league-btn {
+    background-color: $fl-green;
+    border: 1px solid black;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 60px;
+    min-height: 32px;
+    font-size: 10pt;
+    &:hover {
+      cursor: pointer;
+      background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
+    }
+  }
+  .invalid {
+    background-color: $fl-dark-gray;
+    &:hover {
+      cursor: default;
+      background-image: linear-gradient(rgb(0 0 0/0%) 0 0);
+    }
+  }
+
+  button {
+    ::ng-deep mat-spinner {
+      max-width: 15px;
+      max-height: 15px;
+      circle {
+        stroke: black;
+      }
     }
   }
 }

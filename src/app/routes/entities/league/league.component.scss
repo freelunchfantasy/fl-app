@@ -2,42 +2,161 @@
 
 .league {
   background-color: $fl-white;
-  padding: 25px;
-  min-height: 75vh;
+  min-height: 95vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 
-  .user-leagues-container {
-    margin-top: 100px;
+  .user-leagues {
+    padding: 50px 100px;
     width: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 
-    .user-league {
-      min-width: 250px;
-      min-height: 250px;
-      margin: 10px;
-      padding: 10px;
-      background-color: $fl-green;
-      border-radius: 20px;
-      border: 1px solid black;
+    &__header {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .title {
+        font-size: 24pt;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        font-size: 14pt;
+      }
+    }
+
+    &__leagues-container {
+      width: 100%;
       display: flex;
       justify-content: center;
+
+      .user-league {
+        min-width: 300px;
+        min-height: 300px;
+        margin: 20px 40px;
+        background-color: $fl-brown;
+        border-radius: 5px;
+        border: 1px solid black;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &__header {
+          position: relative;
+          background-color: $fl-blue;
+          display: flex;
+          justify-content: center;
+          width: 100%;
+
+          .league-name {
+            font-weight: bold;
+            font-size: 16pt;
+            color: white;
+            padding: 40px 10px;
+          }
+
+          .options-dropdown {
+            position: absolute;
+            right: 0;
+            top: 0;
+            ::ng-deep button {
+              background-color: transparent;
+              border: 0px;
+            }
+
+            ::ng-deep .dropdown__trigger-text {
+              color: white;
+            }
+          }
+        }
+        &__body {
+          position: relative;
+          height: 100%;
+          width: 100%;
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+
+          &__team-info {
+            &__name {
+              font-size: 14pt;
+            }
+
+            &__rank {
+              font-size: 12pt;
+            }
+          }
+
+          &__options {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+            .user-league-btn {
+              padding: 10px;
+              background-color: $fl-blue;
+              color: $fl-white;
+              font-size: 10pt;
+              border-radius: 5px;
+              border: 1px solid black;
+
+              &:hover {
+                cursor: pointer;
+                background-image: linear-gradient(rgb(0 0 0/20%) 0 0);
+              }
+            }
+          }
+
+          &__league-source {
+            position: absolute;
+            right: 5px;
+            bottom: 0;
+            font-weight: bold;
+          }
+          .Demo {
+            color: $fl-blue;
+          }
+          .ESPN {
+            color: red;
+          }
+        }
+      }
+
+      .no-leagues {
+        margin-top: 50px;
+        font-size: 14pt;
+        width: 25%;
+
+        span {
+          color: blue;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+    .add-new-league {
+      min-height: 100px;
+      max-height: 100px;
+      min-width: 100px;
+      max-width: 100px;
+      justify-content: center;
       align-items: center;
+      background-color: $fl-green;
+      font-size: 32pt;
+      font-weight: bold;
 
       &:hover {
         cursor: pointer;
         background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
       }
-
-      &__league-name {
-        color: black;
-      }
-    }
-    .add-new-league {
-      background-color: $fl-orange;
     }
   }
   .user-leagues-loading {
@@ -132,7 +251,9 @@
   .league-loading {
     width: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
     margin-top: 150px;
     ::ng-deep mat-spinner {
       max-width: 75px;
@@ -140,17 +261,29 @@
         stroke: black;
       }
     }
+    .message {
+      font-size: 18pt;
+      margin-top: 20px;
+    }
   }
 
   .options {
+    position: relative;
     width: 100%;
     min-height: 75px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
-    padding-left: 15px;
+    padding: 0px 15px;
+
+    &__page-info {
+      font-size: 18pt;
+      font-weight: bold;
+    }
 
     &__back-btn-container {
+      position: absolute;
+      left: 20px;
       display: flex;
       &:hover {
         cursor: pointer;

@@ -18,6 +18,8 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   @Output()
   toggleLoginMode: EventEmitter<any> = new EventEmitter<any>();
 
+  passwordInputType: string = 'password';
+
   email: string = '';
   password: string = '';
   emailError: string = '';
@@ -39,6 +41,48 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {}
 
   ngOnDestroy(): void {}
+
+  onInputFocus(event: any) {
+    const focusEmailLabel = () => {
+      var element = document.getElementById('label__email');
+      element.classList.add('focus');
+    };
+
+    const focusPasswordLabel = () => {
+      var element = document.getElementById('label__password');
+      element.classList.add('focus');
+    };
+
+    const name = event.target.name;
+    if (name == 'email') focusEmailLabel();
+    if (name == 'password') focusPasswordLabel();
+  }
+
+  onInputFocusOut(event: any) {
+    const unfocusEmailLabel = () => {
+      var element = document.getElementById('label__email');
+      element.classList.remove('focus');
+    };
+
+    const unfocusPasswordLabel = () => {
+      var element = document.getElementById('label__password');
+      element.classList.remove('focus');
+    };
+
+    const name = event.target.name;
+    if (name == 'email') unfocusEmailLabel();
+    if (name == 'password') unfocusPasswordLabel();
+  }
+
+  getTogglePasswordIcon() {
+    return this.passwordInputType == 'password'
+      ? 'fa fa-eye-slash toggle-password-visibility'
+      : 'fa fa-eye toggle-password-visibility';
+  }
+
+  togglePasswordInputType() {
+    this.passwordInputType = this.passwordInputType == 'password' ? 'text' : 'password';
+  }
 
   handleLoginSubmit() {
     const validationResult = this.inputValidationService.validateLoginInputs({

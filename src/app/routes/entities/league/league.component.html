@@ -1,29 +1,66 @@
 <div class="league">
   <!-- List user leagues -->
-  <div *ngIf="!leagueId && !(userLeaguesAreLoading$() | async)" class="user-leagues-container">
-    <div *ngFor="let userLeague of userLeagues" class="user-league" (click)="selectUserLeague(userLeague)">
-      <div class="user-league__league-name">{{ userLeague.leagueName }}</div>
+  <div *ngIf="!leagueId && !userLeaguesLoading" class="user-leagues">
+    <div class="user-leagues__header">
+      <div class="title">Choose a league</div>
+      <div class="subtitle">Select one of your leagues or sync a new one</div>
     </div>
-    <div class="user-league add-new-league" (click)="openNewUserLeagueModal()">
-      <div class="user-league__league-name">+ Add League</div>
+    <div class="user-leagues__leagues-container" *ngIf="(userLeagues || []).length">
+      <div *ngFor="let userLeague of userLeagues" class="user-league">
+        <div class="user-league__header">
+          <dropdown
+            [id]="'user-league-dropdown-' + userLeague.id.toString()"
+            class="options-dropdown"
+            [items]="userLeagueDropdownItems"
+            triggerMarkup="&#8942;"
+            [showArrow]="false"
+            (onClick)="onSelectUserLeagueDropdownItem(userLeague, $event)"
+          ></dropdown>
+          <div class="league-name">{{ userLeague.leagueName }}</div>
+        </div>
+        <div class="user-league__body">
+          <div class="user-league__body__team-info">
+            <div class="user-league__body__team-info__name">{{ userLeague.userTeamName }}</div>
+            <div class="user-league__body__team-info__rank" *ngIf="showRank(userLeague)">
+              {{ userLeague.userTeamRank }}<sup>{{ getUserTeamRankSuffix(userLeague) }}</sup> out of
+              {{ userLeague.totalTeams }}
+            </div>
+          </div>
+          <div class="user-league__body__options">
+            <div class="user-league-btn view-league-btn" (click)="selectViewUserLeague(userLeague)">View League</div>
+            <div class="user-league-btn trade-simulator-btn" (click)="selectTradeSimulatorButton(userLeague)">
+              Trade Simulator
+            </div>
+          </div>
+          <div [class]="getUserLeagueSourceClasses(userLeague.leagueSource)">{{ userLeague.leagueSource }}</div>
+        </div>
+      </div>
+      <div class="user-league add-new-league" (click)="openNewUserLeagueModal()">+</div>
+    </div>
+    <div class="user-leagues__leagues-container" *ngIf="!(userLeagues || []).length">
+      <div class="no-leagues">
+        You have no leagues! To use the Free Lunch simulation tools,
+        <span (click)="openNewUserLeagueModal()">sync one of your leagues</span> or, if you just want to try it out,
+        <span (click)="addDemoUserLeague()">add the Free Lunch Demo League</span>.
+      </div>
     </div>
   </div>
   <!-- Loading state for loading user leagues -->
-  <div *ngIf="!leagueId && (userLeaguesAreLoading$() | async)" class="user-leagues-container user-leagues-loading">
+  <div *ngIf="!leagueId && userLeaguesLoading" class="user-leagues user-leagues-loading">
     <mat-spinner></mat-spinner>
   </div>
 
   <!-- If league has been selected -->
   <div *ngIf="leagueId">
-    <div class="options">
-      <div *ngIf="shouldShowLeague" class="options__back-btn-container btn btn-primary">
+    <div class="options" *ngIf="shouldShowLeague">
+      <div (click)="backToSelectLeague()" class="options__back-btn-container btn btn-primary">
         <span>&#x2039;</span>
-        <div class="back-btn" (click)="backToSelectLeague()">Change League</div>
+        <div class="back-btn">Change League</div>
       </div>
+      <div class="options__page-info">{{ league.settings.name }}</div>
     </div>
     <div *ngIf="shouldShowLeague" class="league-container">
       <div class="league-container__standings">
-        <div class="league-name">{{ league.settings.name }}</div>
         <league-standings
           class="league-standings"
           [leagueStandings]="leagueStandings"
@@ -53,6 +90,8 @@
 
     <div *ngIf="!shouldShowLeague" class="league-loading">
       <mat-spinner></mat-spinner>
+      <div class="message">Loading your league's data...</div>
+      <div>This may take a few seconds</div>
     </div>
   </div>
 
@@ -61,7 +100,7 @@
     *ngIf="showNewUserLeagueModal"
     [modalTitle]="'Add league'"
     [modalSubtitle]="'Import your league\'s data'"
-    [showCloseIcon]="false"
+    [showCloseIcon]="true"
     (dismissModal)="closeNewUserLeagueModal()"
   ></new-user-league-modal>
 </div>

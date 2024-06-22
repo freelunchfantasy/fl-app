@@ -1,10 +1,10 @@
 <div class="trade">
-  <div class="options">
-    <div class="options__page-info">{{ league.settings.name }}</div>
-    <div class="options__back-btn-container btn btn-primary">
+  <div class="options" *ngIf="!(leagueDataIsLoading$() | async)">
+    <div (click)="backToSelectLeague()" class="options__back-btn-container btn btn-primary">
       <span>&#x2039;</span>
-      <div class="back-btn" (click)="backToSelectLeague()">Change League</div>
+      <div class="back-btn">Change League</div>
     </div>
+    <div class="options__page-info">{{ league.settings.name }}</div>
   </div>
   <div *ngIf="!(leagueDataIsLoading$() | async)" class="trade-container">
     <div class="trade-container__team-container trade-container__team-container__left">
@@ -99,8 +99,10 @@
       </div>
     </div>
   </div>
-  <div *ngIf="leagueDataIsLoading$() | async" class="league-loading">
+  <div *ngIf="leagueDataIsLoading$() | async" class="trade-loading">
     <mat-spinner></mat-spinner>
+    <div class="message">Loading your league's data...</div>
+    <div>This may take a few seconds</div>
   </div>
 </div>
 

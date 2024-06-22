@@ -1,43 +1,96 @@
 <form class="register-form">
-  <div class="register-form__list" *ngIf="!(userIsLoading$() | async)">
-    <div class="register-form__list-message">Register</div>
+  <div class="register-form__list">
+    <div class="register-form__list-header">
+      <div class="title">Register</div>
+      <div class="subtitle">get started by creating an account</div>
+      <div class="login" (click)="switchToLogin()">Login</div>
+    </div>
     <div class="register-form__list-item register-form__list-input">
-      <input type="text" placeholder="*email address" [(ngModel)]="email" name="email" />
+      <label for="email" id="label__email">email*</label>
+      <input
+        type="text"
+        placeholder="enter email"
+        [(ngModel)]="email"
+        name="email"
+        autocomplete="off"
+        (focus)="onInputFocus($event)"
+        (focusout)="onInputFocusOut($event)"
+      />
       <span class="register-form__list-input-error">{{ emailError }}</span>
     </div>
     <div class="register-form__list-item register-form__list-input">
-      <input type="text" placeholder="first name" [(ngModel)]="firstName" name="firstName" />
+      <label for="firstName" id="label__first-name">first name</label>
+      <input
+        type="text"
+        placeholder="enter first name"
+        [(ngModel)]="firstName"
+        name="firstName"
+        autocomplete="off"
+        (focus)="onInputFocus($event)"
+        (focusout)="onInputFocusOut($event)"
+      />
       <span class="register-form__list-input-error">{{ firstNameError }}</span>
     </div>
     <div class="register-form__list-item register-form__list-input">
-      <input type="text" placeholder="last name" [(ngModel)]="lastName" name="lastName" />
+      <label for="lastName" id="label__last-name">last name</label>
+      <input
+        type="text"
+        placeholder="enter last name"
+        [(ngModel)]="lastName"
+        name="lastName"
+        autocomplete="off"
+        (focus)="onInputFocus($event)"
+        (focusout)="onInputFocusOut($event)"
+      />
       <span class="register-form__list-input-error">{{ lastNameError }}</span>
     </div>
     <div class="register-form__list-item register-form__list-input">
-      <input type="password" placeholder="*password" [(ngModel)]="password" name="password" />
+      <label for="password" id="label__password">password*</label>
+      <div class="password-container">
+        <input
+          [type]="passwordInputType"
+          placeholder="enter password"
+          [(ngModel)]="password"
+          (input)="onPasswordsChange()"
+          name="password"
+          autocomplete="off"
+          (focus)="onInputFocus($event)"
+          (focusout)="onInputFocusOut($event)"
+        />
+        <i [class]="getTogglePasswordIcon()" (click)="togglePasswordInputType()"></i>
+      </div>
       <span class="register-form__list-input-error">{{ passwordError }}</span>
     </div>
     <div class="register-form__list-item register-form__list-input">
-      <input type="password" placeholder="*confirm password" [(ngModel)]="confirmPassword" name="confirmPassword" />
+      <label for="confirmPassword" id="label__confirm-password">confirm password*</label>
+      <div class="password-container">
+        <input
+          [type]="confirmPasswordInputType"
+          placeholder="enter password"
+          [(ngModel)]="confirmPassword"
+          (input)="onPasswordsChange()"
+          name="confirmPassword"
+          autocomplete="off"
+          (focus)="onInputFocus($event)"
+          (focusout)="onInputFocusOut($event)"
+        />
+        <i [class]="getToggleConfirmPasswordIcon()" (click)="toggleConfirmPasswordInputType()"></i>
+      </div>
       <span class="register-form__list-input-error">{{ confirmPasswordError }}</span>
     </div>
     <div class="register-form__list-item register-form__list-submit">
       <button
         type="submit"
-        class="btn btn-success"
+        class="btn submit-btn"
         (keyup.enter)="handleRegisterSubmit()"
         (click)="handleRegisterSubmit()"
       >
-        Submit
+        <div *ngIf="!(userIsLoading$() | async)">Submit</div>
+        <div *ngIf="userIsLoading$() | async" class="loading-spinner-container">
+          <mat-spinner></mat-spinner>
+        </div>
       </button>
+      <div class="register-error">{{ registerErrorMessage }}</div>
     </div>
   </div>
-
-  <div *ngIf="userIsLoading$() | async" class="loading-spinner-container">
-    <mat-spinner></mat-spinner>
-    <span>Registering...</span>
-  </div>
 </form>
-<div *ngIf="!(userIsLoading$() | async)" class="switch-message">
-  Already a member? Click <span class="switch" (click)="switchToLogin()">here</span> to login!
-</div>

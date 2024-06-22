@@ -2,6 +2,7 @@ export class League {
   leagueId: number;
   settings: Settings;
   teams: Team[];
+  foundLeague?: boolean;
 }
 
 export class Settings {
@@ -46,12 +47,21 @@ export class Player {
   stats: any;
 }
 
+export class LeagueSource {
+  id: number;
+  name: string;
+}
+
 export class UserLeague {
   id: number;
   userId: number;
   leagueId: number;
   leagueName: string;
   userTeamId: number;
+  userTeamName: string;
+  userTeamRank: number;
+  totalTeams: number;
+  leagueSource: string;
 }
 
 export class LeagueSimulationResult {

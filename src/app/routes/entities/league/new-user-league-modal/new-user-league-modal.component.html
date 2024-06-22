@@ -6,12 +6,45 @@
     (dismissModal)="handleModalClose()"
     ><div body class="new-user-league">
       <form class="new-user-league__form">
-        <div class="new-user-league__form-input">
-          <input type="number" placeholder="League ID" [(ngModel)]="leagueId" name="leagueId" autocomplete="off" />
-          <button class="btn btn-primary" (click)="getUserLeagueData()">Find</button>
+        <div class="new-user-league__form-item">
+          <div class="new-user-league__form-item__label">League platform</div>
+          <dropdown
+            id="league-source-dropdown"
+            [items]="leagueSourceDropdownItems"
+            [disabled]="true"
+            (onClick)="onSelectLeagueSource($event)"
+            matTooltip="TESTING"
+          ></dropdown>
         </div>
-        <div *ngIf="foundLeague">
-          <div class="new-user-league__form-input">
+
+        <div class="new-user-league__form-item">
+          <div class="new-user-league__form-item__label">Get the league ID from the URL of your league</div>
+          <div class="new-user-league__form-item__input">
+            <input
+              type="number"
+              placeholder="League ID"
+              [(ngModel)]="leagueId"
+              (input)="onLeagueIdChange()"
+              name="leagueId"
+              autocomplete="off"
+            />
+            <button class="btn find-league-btn" (click)="getUserLeagueData()">
+              <div *ngIf="!(newUserLeagueDataIsLoading$() | async)">Find</div>
+              <div *ngIf="newUserLeagueDataIsLoading$() | async"><mat-spinner></mat-spinner></div>
+            </button>
+            <span *ngIf="newUserLeagueDataIsLoading$() | async" class="loading-msg"
+              >This may take a few seconds...</span
+            >
+          </div>
+          <div class="new-user-league__form-item__sublabel" style="word-break: break-all">
+            https://fantasy.espn.com/football/team?leagueId=<span class="highlighted">12345678</span
+            >&teamId=1&seasonId=2024
+          </div>
+        </div>
+        <div class="found-league-msg">{{ foundLeagueMessage }}</div>
+        <div *ngIf="foundLeague" class="new-user-league__form-item">
+          <div class="new-user-league__form-item__label">League name</div>
+          <div class="new-user-league__form-item__input">
             <input
               type="text"
               placeholder="League Name"
@@ -21,13 +54,22 @@
               [disabled]="!foundLeague"
             />
           </div>
+        </div>
+        <div *ngIf="foundLeague" class="new-user-league__form-item">
+          <div class="new-user-league__form-item__label">Select your team</div>
           <dropdown
-            id="left-team-dropdown"
+            id="team-dropdown"
             [items]="teamDropdownItems"
             triggerMarkup="Select Team"
             (onClick)="onSelectTeam($event)"
           ></dropdown>
-          <button class="btn btn-success" (click)="handleSaveNewUserLeague()">Save</button>
+        </div>
+        <div *ngIf="foundLeague" class="new-user-league__form-item" style="align-items: center; margin-bottom: 0px">
+          <button *ngIf="foundLeague" [class]="getSaveUserLeagueButtonClasses()" (click)="handleSaveNewUserLeague()">
+            <div *ngIf="!(checkUserLeagueIsLoading$() | async)">Save</div>
+            <div *ngIf="checkUserLeagueIsLoading$() | async"><mat-spinner></mat-spinner></div>
+          </button>
+          <div class="check-user-league-msg">{{ checkUserLeagueMessage }}</div>
         </div>
       </form>
     </div>

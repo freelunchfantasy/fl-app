@@ -21,11 +21,28 @@ export const selectUserLeaguesAreLoading = createSelector(
 
 export const selectNflTeams = createSelector(getLeagueState, (state: State) => state.league.nflTeams);
 
+export const selectLeagueSources = createSelector(getLeagueState, (state: State) => state.league.leagueSources);
+
 export const selectNewUserLeagueData = createSelector(getLeagueState, (state: State) => state.league.newUserLeagueData);
 
 export const selectNewUserLeagueDataIsLoading = createSelector(
   getLeagueState,
   (state: State) => state.league.newUserLeagueDataStatus == AsyncStatus.Processing
+);
+
+export const selectCheckUserLeagueResult = createSelector(
+  getLeagueState,
+  (state: State) => state.league.checkUserLeagueResult
+);
+
+export const selectCheckUserLeagueIsLoading = createSelector(
+  getLeagueState,
+  (state: State) => state.league.checkUserLeagueStatus == AsyncStatus.Processing
+);
+
+export const selectSaveNewUserLeagueStatus = createSelector(
+  getLeagueState,
+  (state: State) => state.league.saveNewUserLeagueStatus
 );
 
 export const selectSelectedUserLeague = createSelector(

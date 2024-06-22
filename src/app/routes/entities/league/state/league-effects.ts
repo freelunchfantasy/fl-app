@@ -35,6 +35,19 @@ export class LeagueEffects {
     )
   );
 
+  getLeagueSources$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(LeagueActions.GET_LEAGUE_SOURCES),
+      map((action: LeagueActions.GetLeagueSources) => action),
+      switchMap(() => {
+        return this.backendService.getLeagueSources().pipe(
+          map(result => new LeagueActions.GetLeagueSourcesSuccess(result)),
+          catchError(err => of(new ApplicationActions.HandleBackendError(err)))
+        );
+      })
+    )
+  );
+
   getNewUserLeagueData$ = createEffect(() =>
     this.actions$.pipe(
       ofType(LeagueActions.GET_NEW_USER_LEAGUE_DATA),
@@ -42,6 +55,19 @@ export class LeagueEffects {
       switchMap(payload => {
         return this.backendService.getLeagueData(payload).pipe(
           map(result => new LeagueActions.GetNewUserLeagueDataSuccess(result)),
+          catchError(err => of(new ApplicationActions.HandleBackendError(err)))
+        );
+      })
+    )
+  );
+
+  checkUserLeague$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(LeagueActions.CHECK_USER_LEAGUE),
+      map((action: LeagueActions.CheckUserLeague) => action.payload),
+      switchMap(payload => {
+        return this.backendService.checkUserLeague(payload).pipe(
+          map(result => new LeagueActions.CheckUserLeagueSuccess(result)),
           catchError(err => of(new ApplicationActions.HandleBackendError(err)))
         );
       })
@@ -61,12 +87,25 @@ export class LeagueEffects {
     )
   );
 
+  deleteUserLeague$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(LeagueActions.DELETE_USER_LEAGUE),
+      map((action: LeagueActions.DeleteUserLeague) => action.payload),
+      switchMap(payload => {
+        return this.backendService.deleteUserLeague(payload).pipe(
+          map(result => new LeagueActions.DeleteUserLeagueSuccess()),
+          catchError(err => of(new ApplicationActions.HandleBackendError(err)))
+        );
+      })
+    )
+  );
+
   getLeagueData$ = createEffect(() =>
     this.actions$.pipe(
       ofType(LeagueActions.GET_LEAGUE_DATA),
-      map((action: LeagueActions.GetLeagueData) => action.payload),
-      switchMap(payload => {
-        return this.backendService.getLeagueData(payload).pipe(
+      map((action: LeagueActions.GetLeagueData) => action),
+      switchMap(action => {
+        return this.backendService.getLeagueData(action.leagueId, action.userTeamId).pipe(
           map(result => new LeagueActions.GetLeagueDataSuccess(result)),
           catchError(err => of(new ApplicationActions.HandleBackendError(err)))
         );

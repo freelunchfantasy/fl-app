@@ -1,25 +1,47 @@
 <form class="login-form">
-  <div class="login-form__list" *ngIf="!(userIsLoading$() | async)">
-    <div class="login-form__list-message">Welcome back!</div>
+  <div class="login-form__list">
+    <div class="login-form__list-header">
+      <div class="title">Login</div>
+      <div class="subtitle">sign in using your email address</div>
+      <div class="register" (click)="switchToRegister()">Register</div>
+    </div>
     <div class="login-form__list-item login-form__list-input">
-      <input type="text" placeholder="email address" [(ngModel)]="email" name="email" />
+      <label for="email" id="label__email">email</label>
+      <input
+        type="text"
+        placeholder="enter email address"
+        [(ngModel)]="email"
+        name="email"
+        autocomplete="off"
+        (focus)="onInputFocus($event)"
+        (focusout)="onInputFocusOut($event)"
+      />
       <span class="login-form__list-input-error">{{ emailError }}</span>
     </div>
     <div class="login-form__list-item login-form__list-input">
-      <input type="password" placeholder="password" [(ngModel)]="password" name="password" />
+      <label for="password" id="label__password">password</label>
+      <div class="password-container">
+        <input
+          [type]="passwordInputType"
+          placeholder="enter password"
+          [(ngModel)]="password"
+          name="password"
+          autocomplete="off"
+          (focus)="onInputFocus($event)"
+          (focusout)="onInputFocusOut($event)"
+        />
+        <i [class]="getTogglePasswordIcon()" (click)="togglePasswordInputType()"></i>
+      </div>
       <span class="login-form__list-input-error">{{ passwordError }}</span>
     </div>
     <div class="login-form__list-item login-form__list-submit">
-      <button class="btn btn-success" (click)="handleLoginSubmit()">Submit</button>
+      <button class="btn submit-btn" (click)="handleLoginSubmit()">
+        <div *ngIf="!(userIsLoading$() | async)">Submit</div>
+        <div *ngIf="userIsLoading$() | async" class="loading-spinner-container">
+          <mat-spinner></mat-spinner>
+        </div>
+      </button>
+      <div class="login-error">{{ loginError }}</div>
     </div>
-    <div class="login-form__list-item login-form__list-error">{{ loginError }}</div>
-  </div>
-
-  <div *ngIf="userIsLoading$() | async" class="loading-spinner-container">
-    <mat-spinner></mat-spinner>
-    <span>Logging you in...</span>
   </div>
 </form>
-<div *ngIf="!(userIsLoading$() | async)" class="switch-message">
-  New to FreeLunch? Click <span class="switch" (click)="switchToRegister()">here</span> to register!
-</div>

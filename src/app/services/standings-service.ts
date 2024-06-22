@@ -33,4 +33,28 @@ export class StandingsService {
     // If we have another level to tiebreak on, build this out
     return teams[0];
   }
+
+  determineTeamRank(teams: Team[], targetTeamId: number) {
+    const standings = this.constructStandings(teams);
+    return standings.findIndex(team => team.id == targetTeamId) + 1;
+  }
+
+  getRankSuffix(rank: number) {
+    let suffix;
+    switch (rank) {
+      case 1:
+        suffix = 'st';
+        break;
+      case 2:
+        suffix = 'nd';
+        break;
+      case 3:
+        suffix = 'rd';
+        break;
+      default:
+        suffix = 'th';
+        break;
+    }
+    return suffix;
+  }
 }
