@@ -1,3 +1,5 @@
+@import '../../../styles.scss';
+
 .login-form {
   min-width: 425px;
   min-height: 375px;
@@ -5,29 +7,65 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 10px;
-  border: 1px solid black;
   padding: 50px;
-  background-color: white;
 
   &__list {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    align-items: center;
+    align-items: stretch;
 
-    &-message {
-      font-size: 24pt;
-      font-weight: bold;
+    &-header {
+      position: relative;
+      margin-bottom: 20px;
+      .title {
+        font-size: 24pt;
+        font-weight: bold;
+      }
+      .subtitle {
+        font-size: 12pt;
+        color: $subtext-gray;
+      }
+      .register {
+        position: absolute;
+        right: 0;
+        top: 10px;
+        color: $fl-green;
+        font-weight: bold;
+        &:hover {
+          cursor: pointer;
+        }
+      }
     }
 
     &-input {
+      position: relative;
       display: flex;
       flex-direction: column;
+
+      label {
+        color: $subtext-gray;
+        margin-bottom: 0.2rem;
+      }
+
       input {
-        min-width: 300px;
+        min-width: 500px;
         padding: 8px;
         border-radius: 10px;
+        border: 1px solid $subtext-gray;
+        color: $subtext-gray;
+        &:focus {
+          outline: 1px solid $fl-green;
+        }
+      }
+
+      .toggle-password-visibility {
+        position: absolute;
+        top: 45%;
+        right: 3%;
+        &:hover {
+          cursor: pointer;
+        }
       }
 
       &-error {
@@ -36,14 +74,36 @@
         font-size: 10pt;
         color: red;
       }
+
+      .focus {
+        color: $fl-green;
+      }
     }
 
     &-item {
       margin-top: 7px;
     }
 
-    &-error {
-      color: red;
+    &-submit {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      .submit-btn {
+        min-width: 125px;
+        min-height: 40px;
+        background-color: $fl-green;
+        color: $fl-white;
+        border: 1px solid $subtext-gray;
+
+        &:hover {
+          background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
+        }
+      }
+
+      .login-error {
+        color: red;
+        margin-left: 20px;
+      }
     }
   }
 
@@ -52,9 +112,10 @@
     flex-direction: column;
     align-items: center;
     ::ng-deep mat-spinner {
-      max-width: 30px;
+      max-width: 15px;
+      max-height: 15px;
       circle {
-        stroke: black;
+        stroke: white;
       }
     }
   }

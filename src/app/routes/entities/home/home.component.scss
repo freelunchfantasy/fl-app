@@ -1,11 +1,17 @@
 @import '../../../../styles.scss';
 
 .welcome-container {
+  .header-bar {
+    min-height: 50px;
+    width: 100%;
+    background-color: $fl-blue;
+  }
+
   .summary {
     background-image: url('../../../../assets/field.png');
     padding: 50px;
     min-height: 600px;
-    width: 100vw;
+    width: 100%;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
@@ -64,7 +70,7 @@
   }
 
   .explanation {
-    width: 100vw;
+    width: 100%;
     padding: 40px;
     display: flex;
     align-items: center;

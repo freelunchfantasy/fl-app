@@ -25,3 +25,7 @@ export function selectUserResult(state: State) {
 export function selectUserIsLoading(state: State) {
   return state.application.userStatus == AsyncStatus.Processing;
 }
+
+export function selectRegisterStatus(state: State) {
+  return state.application.registerStatus;
+}

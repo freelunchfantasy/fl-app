@@ -4,8 +4,16 @@ import { Observable, of } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 
 // Models
-import { League, UserLeague, LeagueSimulationResult, TradeSimulationResult, NflTeam } from '@app/lib/models/league';
 import {
+  League,
+  UserLeague,
+  LeagueSimulationResult,
+  TradeSimulationResult,
+  NflTeam,
+  LeagueSource,
+} from '@app/lib/models/league';
+import {
+  CheckUserLeaguePayload,
   NewUserLeaguePayload,
   ShareTradeSimulationResultPayload,
   SimulateLeaguePayload,
@@ -42,12 +50,32 @@ export class BackendService {
     return this.http.post<number>(`${this.getApiUrl()}/api/league/save-user-league`, payload, this.httpOptions);
   }
 
+  deleteUserLeague(payload: UserLeague): Observable<any> {
+    return this.http.post<any>(
+      `${this.getApiUrl()}/api/league/delete-user-league`,
+      { userLeagueId: payload.id },
+      this.httpOptions
+    );
+  }
+
   getNflTeams(): Observable<NflTeam[]> {
     return this.http.get<NflTeam[]>(`${this.getApiUrl()}/api/league/nfl-teams`, this.httpOptions);
   }
 
-  getLeagueData(leagueId: number): Observable<League> {
-    return this.http.post<League>(`${this.getApiUrl()}/api/league/get-league`, { id: leagueId }, this.httpOptions);
+  getLeagueSources(): Observable<LeagueSource[]> {
+    return this.http.get<LeagueSource[]>(`${this.getApiUrl()}/api/league/league-sources`, this.httpOptions);
+  }
+
+  getLeagueData(leagueId: number, userTeamId?: number): Observable<League> {
+    return this.http.post<League>(
+      `${this.getApiUrl()}/api/league/get-league`,
+      { leagueId, userTeamId },
+      this.httpOptions
+    );
+  }
+
+  checkUserLeague(payload: CheckUserLeaguePayload): Observable<any> {
+    return this.http.post<any>(`${this.getApiUrl()}/api/league/check-user-league`, payload, this.httpOptions);
   }
 
   simulateLeague(leaguePayload: SimulateLeaguePayload): Observable<LeagueSimulationResult> {

@@ -18,6 +18,7 @@ import { DEFAULT_STARTING_POSITIONS, Position } from '@app/lib/constants/positio
 import { SimulateLeaguePayload } from '@app/lib/models/league-payloads';
 import { User } from '@app/lib/models/user';
 import { RouterService } from '@app/services/router-service';
+import { StandingsService } from '@app/services/standings-service';
 
 @Component({
   selector: 'trade',
@@ -37,6 +38,7 @@ export class TradeComponent implements OnInit, OnDestroy {
   leagueSchedule: number[][][];
   user: User;
   userLeague: UserLeague;
+  userLeagues: UserLeague[];
 
   leftTeam: Team;
   leftStarters: Player[];
@@ -61,11 +63,16 @@ export class TradeComponent implements OnInit, OnDestroy {
     private leagueDataProcessingService: LeagueDataProcessingService,
     private rosterService: RosterService,
     private simulationPayloadService: SimulationPayloadService,
+    private standingsService: StandingsService,
     private routerService: RouterService
   ) {}
 
   user$(): Observable<User> {
     return this.appStore.select(fromApplicationRoot.selectUser);
+  }
+
+  userLeagues$(): Observable<UserLeague[]> {
+    return this.leagueStore.select(fromLeagueRoot.selectUserLeagues);
   }
 
   selectedUserLeague$(): Observable<UserLeague> {
@@ -121,7 +128,13 @@ export class TradeComponent implements OnInit, OnDestroy {
           if (leagueData) {
             this.leagueDataProcessingService.processLeagueData(leagueData);
             this.league = leagueData;
-            if (this.userTeamId) this.processLeagueDataForTrade(leagueData, this.userTeamId);
+            if (this.userTeamId) {
+              this.processLeagueDataForTrade(leagueData, this.userTeamId);
+              this.syncUserLeague(
+                this.league,
+                this.league.teams.find((t: Team) => t.id == this.userTeamId)
+              );
+            }
           }
         }
       }
@@ -133,6 +146,11 @@ export class TradeComponent implements OnInit, OnDestroy {
       this.nflTeams = nflTeams;
     });
     this.subscriptions.push(nflTeamsSubscription);
+
+    const userLeagusSubscription = this.userLeagues$().subscribe(userLeagues => {
+      this.userLeagues = userLeagues;
+    });
+    this.subscriptions.push(userLeagusSubscription);
 
     const leagueStandingsSubscription = this.leagueStandings$().subscribe(standings => {
       if ((standings || []).length) {
@@ -161,7 +179,13 @@ export class TradeComponent implements OnInit, OnDestroy {
       this.userLeague = userLeague;
       this.userTeamId = userLeague?.userTeamId;
       this.leagueId = userLeague?.leagueId;
-      if (this.userTeamId && this.league) this.processLeagueDataForTrade(this.league, this.userTeamId);
+      if (this.userTeamId && this.league) {
+        this.processLeagueDataForTrade(this.league, this.userTeamId);
+        this.syncUserLeague(
+          this.league,
+          this.league.teams.find((t: Team) => t.id == this.userTeamId)
+        );
+      }
     });
     this.subscriptions.push(selectedUserLeagueSubscription);
 
@@ -290,6 +314,19 @@ export class TradeComponent implements OnInit, OnDestroy {
     this.removePlayerFromTrade(player);
     this.tradeBlock.left = this.tradeBlock.left.filter(p => p.id != player.id);
     this.tradeBlock.right = this.tradeBlock.right.filter(p => p.id != player.id);
+  }
+
+  syncUserLeague(league: League, userTeam: Team) {
+    let thisUserLeague = { ...this.userLeagues.find(ul => ul.leagueId == league.leagueId) };
+    thisUserLeague.userTeamName = userTeam.teamName;
+    thisUserLeague.userTeamRank = this.standingsService.determineTeamRank(league.teams, userTeam.id);
+    const thisUserLeagueIndex = this.userLeagues.findIndex(ul => ul.id == thisUserLeague.id);
+    const syncedUserLeagues = [
+      ...this.userLeagues.slice(0, thisUserLeagueIndex),
+      thisUserLeague,
+      ...this.userLeagues.slice(thisUserLeagueIndex + 1),
+    ];
+    this.leagueStore.dispatch(new LeagueActions.SetUserLeagues(syncedUserLeagues));
   }
 
   simulateTrade() {

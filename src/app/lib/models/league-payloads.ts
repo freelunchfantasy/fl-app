@@ -17,10 +17,19 @@ class Team {
 
 class Player {}
 
+export class CheckUserLeaguePayload {
+  externalLeagueId: number;
+  leagueSourceId: number;
+}
+
 export class NewUserLeaguePayload {
   externalLeagueId: number;
   leagueName: string;
   userTeamId: number;
+  userTeamName?: string;
+  userTeamRank?: number;
+  totalTeams: number;
+  leagueSourceId: number;
 }
 
 export class ShareTradeSimulationResultPayload {

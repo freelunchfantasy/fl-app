@@ -1,4 +1,11 @@
 <div class="login">
-  <login-form *ngIf="loggingIn" (toggleLoginMode)="toggleLoginMode()" [loginError]="loginError"></login-form>
-  <register-form *ngIf="registering" (toggleLoginMode)="toggleLoginMode()"></register-form>
+  <div class="graphic">
+    <div class="graphic__title">Free Lunch</div>
+    <img class="graphic__image" src="../../../../assets/example-graphic-transparent.png" />
+    <div class="graphic__explanation">Transform your fantasy season with smart trades!</div>
+  </div>
+  <div class="form-container">
+    <login-form *ngIf="loggingIn" (toggleLoginMode)="toggleLoginMode()" [loginError]="loginError"></login-form>
+    <register-form *ngIf="registering" (toggleLoginMode)="toggleLoginMode()"></register-form>
+  </div>
 </div>

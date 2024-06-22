@@ -74,42 +74,12 @@ export class LeagueStandingsComponent implements OnInit {
 
   getRankChangeAfterSimulation(team: Team) {
     const rank = this.leagueStandingsAfterSimulation.findIndex(t => t.id == team.id) + 1;
-    let suffix;
-    switch (rank) {
-      case 1:
-        suffix = 'st';
-        break;
-      case 2:
-        suffix = 'nd';
-        break;
-      case 3:
-        suffix = 'rd';
-        break;
-      default:
-        suffix = 'th';
-        break;
-    }
-    return `(${rank}${suffix})`;
+    return `(${rank}${this.standingsService.getRankSuffix(rank)})`;
   }
 
   getRankChangeAfterTrade(team: Team) {
     const rank = this.leagueStandingsAfterTrade.findIndex(t => t.id == team.id) + 1;
-    let suffix;
-    switch (rank) {
-      case 1:
-        suffix = 'st';
-        break;
-      case 2:
-        suffix = 'nd';
-        break;
-      case 3:
-        suffix = 'rd';
-        break;
-      default:
-        suffix = 'th';
-        break;
-    }
-    return `(${rank}${suffix})`;
+    return `(${rank}${this.standingsService.getRankSuffix(rank)})`;
   }
 
   getRankChangeClasses(team: Team) {

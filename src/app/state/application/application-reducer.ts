@@ -6,6 +6,7 @@ export interface State {
   user: User;
   userResult: UserResult;
   userStatus: AsyncStatus;
+  registerStatus: AsyncStatus;
   backendUrl: string;
   sessionToken: string;
 }
@@ -14,6 +15,7 @@ export const initialState: State = {
   user: null,
   userResult: null,
   userStatus: AsyncStatus.Idle,
+  registerStatus: AsyncStatus.Idle,
   backendUrl: null,
   sessionToken: null,
 };
@@ -51,6 +53,7 @@ export function reducer(state = initialState, action: ApplicationActions.All): S
         ...state,
         user: null,
         userStatus: AsyncStatus.Processing,
+        registerStatus: AsyncStatus.Processing,
       };
     }
 
@@ -59,6 +62,7 @@ export function reducer(state = initialState, action: ApplicationActions.All): S
         ...state,
         userResult: action.payload,
         userStatus: AsyncStatus.Success,
+        registerStatus: AsyncStatus.Success,
       };
     }
 
@@ -67,6 +71,7 @@ export function reducer(state = initialState, action: ApplicationActions.All): S
         ...state,
         user: null,
         userStatus: AsyncStatus.Failure,
+        registerStatus: AsyncStatus.Failure,
       };
     }
 

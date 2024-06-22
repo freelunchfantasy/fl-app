@@ -2,7 +2,7 @@
   <!-- dropdown trigger -->
   <button class="btn dropdown__trigger" [id]="dropdownTriggerId" (click)="handleVisibilityEvent($event)">
     <span class="dropdown__trigger-text">{{ triggerHTML }}</span>
-    <span class="dropdown__trigger-arrow">&#9660;</span>
+    <span *ngIf="showArrow" class="dropdown__trigger-arrow">&#9660;</span>
   </button>
 
   <!-- dropdown menu -->

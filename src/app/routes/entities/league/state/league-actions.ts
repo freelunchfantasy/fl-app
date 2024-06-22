@@ -5,8 +5,10 @@ import {
   Team,
   TradeSimulationResult,
   NflTeam,
+  LeagueSource,
 } from '@app/lib/models/league';
 import {
+  CheckUserLeaguePayload,
   NewUserLeaguePayload,
   ShareTradeSimulationResultPayload,
   SimulateLeaguePayload,
@@ -19,12 +21,22 @@ export const GET_USER_LEAGUES_FAILURE = '[League] Failed to get user leagues';
 export const GET_NFL_TEAMS = '[League] Getting NFL teams';
 export const GET_NFL_TEAMS_SUCCESS = '[League] Successfully got NFL teams';
 export const GET_NFL_TEAMS_FAILURE = '[League] Failed to get NFL teams';
+export const GET_LEAGUE_SOURCES = '[League] Getting league sources';
+export const GET_LEAGUE_SOURCES_SUCCESS = '[League] Successfully got league sources';
+export const GET_LEAGUE_SOURCES_FAILURE = '[League] Failed to get league sources';
 export const GET_NEW_USER_LEAGUE_DATA = '[League] Getting new user league data';
 export const GET_NEW_USER_LEAGUE_DATA_SUCCESS = '[League] Successfully got new user league data';
 export const GET_NEW_USER_LEAGUE_DATA_FAILURE = '[League] Failed to get new user league data';
+export const CHECK_USER_LEAGUE = '[League] Checking user league';
+export const CHECK_USER_LEAGUE_SUCCESS = '[League] Successfully checked user league';
+export const CHECK_USER_LEAGUE_FAILURE = '[League] Failed to check user league';
 export const SAVE_NEW_USER_LEAGUE = '[League] Saving new user league';
 export const SAVE_NEW_USER_LEAGUE_SUCCESS = '[League] Successfully saved new user league';
 export const SAVE_NEW_USER_LEAGUE_FAILURE = '[League] Failed to save new user league';
+export const DELETE_USER_LEAGUE = '[League] Deleting user league';
+export const SET_USER_LEAGUES = '[League] Setting user leagues';
+export const DELETE_USER_LEAGUE_SUCCESS = '[League] Successfully deleted user league';
+export const DELETE_USER_LEAGUE_FAILURE = '[League] Failed to delete user league';
 export const SET_SELECTED_USER_LEAGUE = '[League] Setting selected user league';
 export const CLEAR_SELECTED_USER_LEAGUE = '[League] Clearing selected user league';
 export const CLEAR_LEAGUE_DATA = '[League] Clearing league data';
@@ -77,6 +89,21 @@ export class GetNflTeamsFailure implements Action {
   constructor() {}
 }
 
+export class GetLeagueSources implements Action {
+  readonly type = GET_LEAGUE_SOURCES;
+  constructor() {}
+}
+
+export class GetLeagueSourcesSuccess implements Action {
+  readonly type = GET_LEAGUE_SOURCES_SUCCESS;
+  constructor(public payload: LeagueSource[]) {}
+}
+
+export class GetLeagueSourcesFailure implements Action {
+  readonly type = GET_LEAGUE_SOURCES_FAILURE;
+  constructor() {}
+}
+
 export class GetNewUserLeagueData implements Action {
   readonly type = GET_NEW_USER_LEAGUE_DATA;
   constructor(public payload: number) {}
@@ -89,6 +116,21 @@ export class GetNewUserLeagueDataSuccess implements Action {
 
 export class GetNewUserLeagueDataFailure implements Action {
   readonly type = GET_NEW_USER_LEAGUE_DATA_FAILURE;
+  constructor() {}
+}
+
+export class CheckUserLeague implements Action {
+  readonly type = CHECK_USER_LEAGUE;
+  constructor(public payload: CheckUserLeaguePayload) {}
+}
+
+export class CheckUserLeagueSuccess implements Action {
+  readonly type = CHECK_USER_LEAGUE_SUCCESS;
+  constructor(public payload: any) {}
+}
+
+export class CheckUserLeagueFailure implements Action {
+  readonly type = CHECK_USER_LEAGUE_FAILURE;
   constructor() {}
 }
 
@@ -105,6 +147,26 @@ export class SaveNewUserLeagueSuccess implements Action {
 export class SaveNewUserLeagueFailure implements Action {
   readonly type = SAVE_NEW_USER_LEAGUE_FAILURE;
   constructor() {}
+}
+
+export class DeleteUserLeague implements Action {
+  readonly type = DELETE_USER_LEAGUE;
+  constructor(public payload: UserLeague) {}
+}
+
+export class DeleteUserLeagueSuccess implements Action {
+  readonly type = DELETE_USER_LEAGUE_SUCCESS;
+  constructor() {}
+}
+
+export class DeleteUserLeagueFailure implements Action {
+  readonly type = DELETE_USER_LEAGUE_FAILURE;
+  constructor() {}
+}
+
+export class SetUserLeagues implements Action {
+  readonly type = SET_USER_LEAGUES;
+  constructor(public payload: UserLeague[]) {}
 }
 
 export class SetSelectedUserLeague implements Action {
@@ -124,7 +186,7 @@ export class ClearLeagueData implements Action {
 
 export class GetLeagueData implements Action {
   readonly type = GET_LEAGUE_DATA;
-  constructor(public payload: number) {}
+  constructor(public leagueId: number, public userTeamId: number) {}
 }
 
 export class GetLeagueDataSuccess implements Action {
@@ -229,12 +291,22 @@ export type All =
   | GetNflTeams
   | GetNflTeamsSuccess
   | GetNflTeamsFailure
+  | GetLeagueSources
+  | GetLeagueSourcesSuccess
+  | GetLeagueSourcesFailure
   | GetNewUserLeagueData
   | GetNewUserLeagueDataSuccess
   | GetNewUserLeagueDataFailure
+  | CheckUserLeague
+  | CheckUserLeagueSuccess
+  | CheckUserLeagueFailure
   | SaveNewUserLeague
   | SaveNewUserLeagueSuccess
   | SaveNewUserLeagueFailure
+  | DeleteUserLeague
+  | DeleteUserLeagueSuccess
+  | DeleteUserLeagueFailure
+  | SetUserLeagues
   | SetSelectedUserLeague
   | ClearSelectedUserLeague
   | ClearLeagueData

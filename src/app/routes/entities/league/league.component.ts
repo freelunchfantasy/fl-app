@@ -9,6 +9,7 @@ import { Observable, Subscription, combineLatest } from 'rxjs';
 import {
   League,
   LeagueSimulationResult,
+  LeagueSource,
   NflTeam,
   Player,
   Team,
@@ -16,6 +17,8 @@ import {
   UserLeague,
 } from '@app/lib/models/league';
 import { RosterService } from '@app/services/roster-service';
+import { RouterService } from '@app/services/router-service';
+import { StandingsService } from '@app/services/standings-service';
 import { SimulationPayloadService } from '@app/services/simulation-payload-service';
 import { LeagueDataProcessingService } from '@app/services/league-data-processing-service';
 import { User } from '@app/lib/models/user';
@@ -23,6 +26,8 @@ import { IDropdownEvent, IDropdownItem } from '@app/components/dropdown/dropdown
 import { DropdownEvent } from '@app/components/dropdown/dropdown-constants';
 import { SimulateLeaguePayload } from '@app/lib/models/league-payloads';
 import { DEFAULT_STARTING_POSITIONS } from '@app/lib/constants/position.constants';
+import { DEMO_LEAGUE, LEAGUE_SOURCE } from '@app/lib/constants/league-sources.constants';
+import { AsyncStatus } from '@app/lib/enums/async-status';
 
 @Component({
   selector: 'league',
@@ -32,10 +37,21 @@ import { DEFAULT_STARTING_POSITIONS } from '@app/lib/constants/position.constant
 export class LeagueComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
   nflTeams: NflTeam[] = [];
+  leagueSources: LeagueSource[] = [];
 
   // User leagues
   user: User;
   userLeagues: UserLeague[];
+  userLeaguesAreLoading: boolean = false;
+  saveNewUserLeagueStatus: AsyncStatus = AsyncStatus.Idle;
+
+  userLeagueDropdownItems: IDropdownItem[] = [
+    {
+      id: 'delete',
+      value: 'delete',
+      htmlMarkup: ['Delete'],
+    },
+  ];
 
   // Selected league
   userLeague: UserLeague;
@@ -71,7 +87,9 @@ export class LeagueComponent implements OnInit, OnDestroy {
     private leagueStore: Store<fromLeagueRoot.State>,
     private leagueDataProcessingService: LeagueDataProcessingService,
     private rosterService: RosterService,
-    private simulationPayloadService: SimulationPayloadService
+    private simulationPayloadService: SimulationPayloadService,
+    private standingsService: StandingsService,
+    private routerService: RouterService
   ) {}
 
   user$(): Observable<User> {
@@ -84,6 +102,10 @@ export class LeagueComponent implements OnInit, OnDestroy {
 
   userLeaguesAreLoading$(): Observable<boolean> {
     return this.leagueStore.select(fromLeagueRoot.selectUserLeaguesAreLoading);
+  }
+
+  saveNewUserLeagueStatus$(): Observable<AsyncStatus> {
+    return this.leagueStore.select(fromLeagueRoot.selectSaveNewUserLeagueStatus);
   }
 
   nflTeams$(): Observable<NflTeam[]> {
@@ -123,30 +145,36 @@ export class LeagueComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // User sub
-    const userSubscription = this.user$().subscribe(user => {
+    // User and user leagues sub
+    const userAndUserLeaguesSubscription = combineLatest([
+      this.user$(),
+      this.userLeagues$(),
+      this.userLeaguesAreLoading$(),
+    ]).subscribe(([user, userLeagues, userLeaguesAreLoading]) => {
+      this.userLeaguesAreLoading = userLeaguesAreLoading;
       if (user) {
         this.user = user;
-        this.leagueStore.dispatch(new LeagueActions.GetUserLeagues());
       }
+      if (userLeagues && !userLeaguesAreLoading) {
+        this.userLeagues = userLeagues;
+      }
+      if (user && !userLeagues && !userLeaguesAreLoading) this.leagueStore.dispatch(new LeagueActions.GetUserLeagues());
     });
-    this.subscriptions.push(userSubscription);
-
-    // User leagues sub
-    const userLeaguesSubscription = combineLatest([this.userLeagues$(), this.userLeaguesAreLoading$()]).subscribe(
-      ([userLeagues, areLoading]) => {
-        if (userLeagues && !areLoading) {
-          this.userLeagues = userLeagues;
-        }
-      }
-    );
-    this.subscriptions.push(userLeaguesSubscription);
+    this.subscriptions.push(userAndUserLeaguesSubscription);
 
     // NFL teams sub
     const nflTeamsSubscription = this.nflTeams$().subscribe(nflTeams => {
       this.nflTeams = nflTeams;
     });
     this.subscriptions.push(nflTeamsSubscription);
+
+    const saveNewUserLeagueStatusSubscription = this.saveNewUserLeagueStatus$().subscribe(status => {
+      if (status == AsyncStatus.Success) {
+        this.leagueStore.dispatch(new LeagueActions.GetUserLeagues());
+      }
+      this.saveNewUserLeagueStatus = status;
+    });
+    this.subscriptions.push(saveNewUserLeagueStatusSubscription);
 
     // Selected user league sub
     const selectedUserLeagueSubscription = this.selectedUserLeague$().subscribe(userLeague => {
@@ -166,6 +194,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
           // League data processing specific for this component
           this.league = leagueData;
           this.userTeam = leagueData.teams.find((team: Team) => team.id == this.userTeamId);
+          this.syncUserLeague(this.league, this.userTeam);
           this.constructStartersAndBench();
           let sortedTeams = [...this.league.teams].sort(this.compareTwoTeams);
           this.teamDropdownItems = sortedTeams.map(t => ({
@@ -211,13 +240,24 @@ export class LeagueComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.push(leagueSimulationSubscription);
 
-    if (!(this.nflTeams || []).length) {
-      this.leagueStore.dispatch(new LeagueActions.GetNflTeams());
-    }
+    this.getInitData();
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  getInitData(): void {
+    if (!(this.nflTeams || []).length) {
+      this.leagueStore.dispatch(new LeagueActions.GetNflTeams());
+    }
+    if (!(this.leagueSources || []).length) {
+      this.leagueStore.dispatch(new LeagueActions.GetLeagueSources());
+    }
+  }
+
+  getUserLeagueSourceClasses(leagueSource: string) {
+    return `user-league__body__league-source ${leagueSource}`;
   }
 
   constructStartersAndBench() {
@@ -233,11 +273,32 @@ export class LeagueComponent implements OnInit, OnDestroy {
     }
   }
 
-  selectUserLeague(userLeague: UserLeague) {
+  onSelectUserLeagueDropdownItem(userLeague: UserLeague, event: IDropdownEvent) {
+    if (event.eventType == DropdownEvent.ItemClicked) {
+      const selectedItem = this.userLeagueDropdownItems.find(item => item.id == event.payload.dropdownItemValue);
+      if (selectedItem.value == 'delete') {
+        this.userLeagues = this.userLeagues.filter((ul: UserLeague) => ul.id != userLeague.id);
+        this.leagueStore.dispatch(new LeagueActions.DeleteUserLeague(userLeague));
+        this.leagueStore.dispatch(
+          new LeagueActions.SetUserLeagues(this.userLeagues.filter((ul: UserLeague) => ul.id != userLeague.id))
+        );
+      }
+    }
+  }
+
+  selectViewUserLeague(userLeague: UserLeague) {
     this.leagueId = userLeague.leagueId;
     this.userTeamId = userLeague.userTeamId;
     this.leagueStore.dispatch(new LeagueActions.SetSelectedUserLeague(userLeague));
-    this.leagueStore.dispatch(new LeagueActions.GetLeagueData(this.leagueId));
+    this.leagueStore.dispatch(new LeagueActions.GetLeagueData(this.leagueId, this.userTeamId));
+  }
+
+  selectTradeSimulatorButton(userLeague: UserLeague) {
+    this.leagueId = userLeague.leagueId;
+    this.userTeamId = userLeague.userTeamId;
+    this.leagueStore.dispatch(new LeagueActions.SetSelectedUserLeague(userLeague));
+    this.leagueStore.dispatch(new LeagueActions.GetLeagueData(this.leagueId, this.userTeamId));
+    this.routerService.redirectTo('/trade');
   }
 
   simulateSeason() {
@@ -266,12 +327,46 @@ export class LeagueComponent implements OnInit, OnDestroy {
     }
   }
 
+  showRank(userLeague: UserLeague) {
+    return userLeague.userTeamId && userLeague.userTeamId;
+  }
+
+  getUserTeamRankSuffix(userLeague: UserLeague) {
+    return this.standingsService.getRankSuffix(userLeague.userTeamRank);
+  }
+
   compareTwoTeams(a: Team, b: Team): number {
     if (a.wins > b.wins) return -1;
     else if (a.wins < b.wins) return 1;
     else {
       return a.pointsFor > b.pointsFor ? -1 : 1;
     }
+  }
+
+  syncUserLeague(league: League, userTeam: Team) {
+    let thisUserLeague = { ...this.userLeagues.find(ul => ul.leagueId == league.leagueId) };
+    const rankedTeams = this.standingsService.constructStandings(league.teams);
+    thisUserLeague.userTeamName = userTeam.teamName;
+    thisUserLeague.userTeamRank = rankedTeams.findIndex((t: Team) => t.id == userTeam.id) + 1;
+    const thisUserLeagueIndex = this.userLeagues.findIndex(ul => ul.id == thisUserLeague.id);
+    const syncedUserLeagues = [
+      ...this.userLeagues.slice(0, thisUserLeagueIndex),
+      thisUserLeague,
+      ...this.userLeagues.slice(thisUserLeagueIndex + 1),
+    ];
+    this.leagueStore.dispatch(new LeagueActions.SetUserLeagues(syncedUserLeagues));
+  }
+
+  addDemoUserLeague() {
+    this.leagueStore.dispatch(
+      new LeagueActions.SaveNewUserLeague({
+        externalLeagueId: DEMO_LEAGUE.id,
+        leagueName: DEMO_LEAGUE.name,
+        userTeamId: Math.floor(Math.random() * DEMO_LEAGUE.totalTeams + 1),
+        totalTeams: DEMO_LEAGUE.totalTeams,
+        leagueSourceId: DEMO_LEAGUE.leagueSourceId,
+      })
+    );
   }
 
   backToSelectLeague() {
@@ -286,6 +381,10 @@ export class LeagueComponent implements OnInit, OnDestroy {
   closeNewUserLeagueModal() {
     this.showNewUserLeagueModal = false;
     this.leagueStore.dispatch(new LeagueActions.GetUserLeagues());
+  }
+
+  get userLeaguesLoading() {
+    return this.userLeaguesAreLoading || this.saveNewUserLeagueStatus == AsyncStatus.Processing;
   }
 
   get shouldShowLeague() {

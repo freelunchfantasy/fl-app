@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, AfterViewInit, Output } from '@angular/core';
 import { DropdownTriggerHTMLEvents, IDropdownEvent, IDropdownItem } from './dropdown-interfaces';
 import { DropdownEvent } from './dropdown-constants';
 
@@ -7,7 +7,7 @@ import { DropdownEvent } from './dropdown-constants';
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.scss'],
 })
-export class DropdownComponent implements OnInit {
+export class DropdownComponent implements OnInit, AfterViewInit {
   @Input()
   id: string;
 
@@ -20,8 +20,16 @@ export class DropdownComponent implements OnInit {
   @Input()
   triggerMarkup?: string;
 
+  @Input()
+  showArrow?: boolean = true;
+
+  @Input()
+  disabled?: boolean = false;
+
   @Output()
   onClick: EventEmitter<IDropdownEvent> = new EventEmitter<IDropdownEvent>();
+
+  triggerElement: HTMLElement;
 
   triggerHTML: string;
   get dropdownTriggerId(): string {
@@ -32,12 +40,12 @@ export class DropdownComponent implements OnInit {
 
   @HostListener('document:click', ['$event'])
   clickout(event: any) {
-    if (!this.elRef.nativeElement.contains(event.target)) {
+    if (!this.triggerElement.contains(event.target)) {
       this.isDropdownVisible = false;
     }
   }
 
-  constructor(private elRef: ElementRef) {}
+  constructor() {}
 
   ngOnInit(): void {
     const defaultItem = this.items.length ? this.items.find(i => i.selected) || this.items[0] : { value: '' };
@@ -46,7 +54,12 @@ export class DropdownComponent implements OnInit {
       : this.getTriggerHTMLFromDropdownItem(this.activeItem, defaultItem);
   }
 
+  ngAfterViewInit(): void {
+    this.triggerElement = document.getElementById(this.dropdownTriggerId);
+  }
+
   handleVisibilityEvent(event: MouseEvent) {
+    if (this.disabled) return;
     if (event.type == DropdownTriggerHTMLEvents.Click) {
       this.isDropdownVisible = !this.isDropdownVisible;
       const visibilityEvent: IDropdownEvent = {

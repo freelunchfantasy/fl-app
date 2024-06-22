@@ -3,6 +3,7 @@ import * as LeagueActions from './league-actions';
 import {
   League,
   LeagueSimulationResult,
+  LeagueSource,
   NflTeam,
   Team,
   TradeSimulationResult,
@@ -13,8 +14,12 @@ export interface State {
   userLeagues: UserLeague[];
   userLeaguesStatus: AsyncStatus;
   nflTeams: NflTeam[];
+  leagueSources: LeagueSource[];
   newUserLeagueData: League;
   newUserLeagueDataStatus: AsyncStatus;
+  checkUserLeagueResult: any;
+  checkUserLeagueStatus: AsyncStatus;
+  saveNewUserLeagueStatus: AsyncStatus;
   selectedUserLeague: UserLeague;
   leagueData: League;
   leagueDataStatus: AsyncStatus;
@@ -32,8 +37,12 @@ const initialState: State = {
   userLeagues: null,
   userLeaguesStatus: AsyncStatus.Idle,
   nflTeams: null,
+  leagueSources: null,
   newUserLeagueData: null,
   newUserLeagueDataStatus: AsyncStatus.Idle,
+  checkUserLeagueResult: null,
+  checkUserLeagueStatus: AsyncStatus.Idle,
+  saveNewUserLeagueStatus: AsyncStatus.Idle,
   selectedUserLeague: null,
   leagueData: null,
   leagueDataStatus: AsyncStatus.Idle,
@@ -94,6 +103,27 @@ export function reducer(state = initialState, action: LeagueActions.All): State 
       };
     }
 
+    case LeagueActions.GET_LEAGUE_SOURCES: {
+      return {
+        ...state,
+        leagueSources: null,
+      };
+    }
+
+    case LeagueActions.GET_LEAGUE_SOURCES_SUCCESS: {
+      return {
+        ...state,
+        leagueSources: action.payload,
+      };
+    }
+
+    case LeagueActions.GET_LEAGUE_SOURCES_FAILURE: {
+      return {
+        ...state,
+        leagueSources: null,
+      };
+    }
+
     case LeagueActions.GET_NEW_USER_LEAGUE_DATA: {
       return {
         ...state,
@@ -115,6 +145,79 @@ export function reducer(state = initialState, action: LeagueActions.All): State 
         ...state,
         newUserLeagueData: null,
         newUserLeagueDataStatus: AsyncStatus.Failure,
+      };
+    }
+
+    case LeagueActions.CHECK_USER_LEAGUE: {
+      return {
+        ...state,
+        checkUserLeagueResult: null,
+        checkUserLeagueStatus: AsyncStatus.Processing,
+      };
+    }
+
+    case LeagueActions.CHECK_USER_LEAGUE_SUCCESS: {
+      return {
+        ...state,
+        checkUserLeagueResult: action.payload,
+        checkUserLeagueStatus: AsyncStatus.Success,
+      };
+    }
+
+    case LeagueActions.CHECK_USER_LEAGUE_FAILURE: {
+      return {
+        ...state,
+        checkUserLeagueResult: null,
+        checkUserLeagueStatus: AsyncStatus.Failure,
+      };
+    }
+
+    case LeagueActions.SAVE_NEW_USER_LEAGUE: {
+      return {
+        ...state,
+        saveNewUserLeagueStatus: AsyncStatus.Processing,
+      };
+    }
+
+    case LeagueActions.SAVE_NEW_USER_LEAGUE_SUCCESS: {
+      return {
+        ...state,
+        saveNewUserLeagueStatus: AsyncStatus.Success,
+      };
+    }
+
+    case LeagueActions.SAVE_NEW_USER_LEAGUE_FAILURE: {
+      return {
+        ...state,
+        saveNewUserLeagueStatus: AsyncStatus.Failure,
+      };
+    }
+
+    case LeagueActions.DELETE_USER_LEAGUE: {
+      return {
+        ...state,
+        userLeaguesStatus: AsyncStatus.Processing,
+      };
+    }
+
+    case LeagueActions.DELETE_USER_LEAGUE_SUCCESS: {
+      return {
+        ...state,
+        userLeaguesStatus: AsyncStatus.Success,
+      };
+    }
+
+    case LeagueActions.DELETE_USER_LEAGUE_FAILURE: {
+      return {
+        ...state,
+        userLeaguesStatus: AsyncStatus.Failure,
+      };
+    }
+
+    case LeagueActions.SET_USER_LEAGUES: {
+      return {
+        ...state,
+        userLeagues: action.payload,
       };
     }
 
