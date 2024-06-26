@@ -27,6 +27,7 @@
     "moment": "^2.29.4",
     "ngx-cookie-service": "^15.0.0",
     "ngx-skeleton-loader": "^7.0.0",
+    "pm2": "^5.4.1",
     "rxjs": "~7.8.0",
     "sass": "^1.77.1",
     "sass-loader": "^14.2.1",
