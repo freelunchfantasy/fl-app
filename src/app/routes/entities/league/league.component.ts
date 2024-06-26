@@ -1,21 +1,10 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { CookieService } from 'ngx-cookie-service';
 import * as fromApplicationRoot from '@app/state/reducers';
-import * as ApplicationActions from '@app/state/application/application-actions';
 import * as fromLeagueRoot from '@app/routes/entities/league/state/reducer';
 import * as LeagueActions from '@app/routes/entities/league/state/league-actions';
 import { Observable, Subscription, combineLatest } from 'rxjs';
-import {
-  League,
-  LeagueSimulationResult,
-  LeagueSource,
-  NflTeam,
-  Player,
-  Team,
-  TeamSimulationResult,
-  UserLeague,
-} from '@app/lib/models/league';
+import { League, LeagueSource, NflTeam, Player, Team, TeamSimulationResult, UserLeague } from '@app/lib/models/league';
 import { RosterService } from '@app/services/roster-service';
 import { RouterService } from '@app/services/router-service';
 import { StandingsService } from '@app/services/standings-service';
@@ -27,6 +16,7 @@ import { DropdownEvent } from '@app/components/dropdown/dropdown-constants';
 import { SimulateLeaguePayload } from '@app/lib/models/league-payloads';
 import { DEFAULT_STARTING_POSITIONS } from '@app/lib/constants/position.constants';
 import { DEMO_LEAGUE, LEAGUE_SOURCE } from '@app/lib/constants/league-sources.constants';
+import { MAX_IMPORTED_USER_LEAGUES } from '@app/lib/constants/max-values.constants';
 import { AsyncStatus } from '@app/lib/enums/async-status';
 
 @Component({
@@ -43,13 +33,23 @@ export class LeagueComponent implements OnInit, OnDestroy {
   user: User;
   userLeagues: UserLeague[];
   userLeaguesAreLoading: boolean = false;
+  maxUserLeagues: number = MAX_IMPORTED_USER_LEAGUES;
   saveNewUserLeagueStatus: AsyncStatus = AsyncStatus.Idle;
 
+  userLeagueDropdownOptions: any = {
+    DELETE: 'Delete',
+    EDIT: 'Edit',
+  };
   userLeagueDropdownItems: IDropdownItem[] = [
     {
-      id: 'delete',
-      value: 'delete',
-      htmlMarkup: ['Delete'],
+      id: this.userLeagueDropdownOptions.EDIT,
+      value: this.userLeagueDropdownOptions.EDIT,
+      htmlMarkup: [this.userLeagueDropdownOptions.EDIT],
+    },
+    {
+      id: this.userLeagueDropdownOptions.DELETE,
+      value: this.userLeagueDropdownOptions.DELETE,
+      htmlMarkup: [this.userLeagueDropdownOptions.DELETE],
     },
   ];
 
@@ -65,6 +65,8 @@ export class LeagueComponent implements OnInit, OnDestroy {
   teamDropdownItems: IDropdownItem[] = [];
 
   showNewUserLeagueModal: boolean = false;
+  showEditUserLeagueModal: boolean = false;
+  editingUserLeague: UserLeague;
 
   startingPositions: string[] = [];
 
@@ -110,6 +112,10 @@ export class LeagueComponent implements OnInit, OnDestroy {
 
   nflTeams$(): Observable<NflTeam[]> {
     return this.leagueStore.select(fromLeagueRoot.selectNflTeams);
+  }
+
+  leagueSources$(): Observable<LeagueSource[]> {
+    return this.leagueStore.select(fromLeagueRoot.selectLeagueSources);
   }
 
   selectedUserLeague$(): Observable<UserLeague> {
@@ -168,6 +174,13 @@ export class LeagueComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.push(nflTeamsSubscription);
 
+    // leagues ources sub
+    const leagueSourcesSubscription = this.leagueSources$().subscribe(leagueSources => {
+      this.leagueSources = leagueSources;
+    });
+    this.subscriptions.push(leagueSourcesSubscription);
+
+    // save new user league sub
     const saveNewUserLeagueStatusSubscription = this.saveNewUserLeagueStatus$().subscribe(status => {
       if (status == AsyncStatus.Success) {
         this.leagueStore.dispatch(new LeagueActions.GetUserLeagues());
@@ -208,6 +221,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
     );
     this.subscriptions.push(leagueDataSubscription);
 
+    // league standings sub
     const leagueStandingsSubscription = this.leagueStandings$().subscribe(standings => {
       if ((standings || []).length) {
         this.leagueStandings = standings;
@@ -215,6 +229,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.push(leagueStandingsSubscription);
 
+    // league schedule sub
     const leagueScheduleSubscription = this.leagueSchedule$().subscribe(schedule => {
       if ((schedule || []).length) {
         this.leagueSchedule = schedule;
@@ -222,6 +237,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.push(leagueScheduleSubscription);
 
+    // league starting positions sub
     const leagueStartingPositionsSubscription = this.leagueStartingPositions$().subscribe(startingPositions => {
       if ((startingPositions || []).length) {
         this.startingPositions = startingPositions;
@@ -230,12 +246,13 @@ export class LeagueComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.push(leagueStartingPositionsSubscription);
 
+    // league simulation sub
     const leagueSimulationSubscription = combineLatest([
       this.leagueSimulationResult$(),
       this.leagueSimulationIsLoading$(),
     ]).subscribe(([result, isLoading]) => {
-      if (!isLoading && result) {
-        this.simulationResult = result.teamResults;
+      if (!isLoading) {
+        this.simulationResult = result?.teamResults;
       }
     });
     this.subscriptions.push(leagueSimulationSubscription);
@@ -254,6 +271,12 @@ export class LeagueComponent implements OnInit, OnDestroy {
     if (!(this.leagueSources || []).length) {
       this.leagueStore.dispatch(new LeagueActions.GetLeagueSources());
     }
+  }
+
+  getUserLeagueDropdownItems(userLeague: UserLeague) {
+    return userLeague.leagueSource == LEAGUE_SOURCE.DEMO
+      ? this.userLeagueDropdownItems.filter(i => i.value != this.userLeagueDropdownOptions.EDIT)
+      : this.userLeagueDropdownItems;
   }
 
   getUserLeagueSourceClasses(leagueSource: string) {
@@ -276,7 +299,15 @@ export class LeagueComponent implements OnInit, OnDestroy {
   onSelectUserLeagueDropdownItem(userLeague: UserLeague, event: IDropdownEvent) {
     if (event.eventType == DropdownEvent.ItemClicked) {
       const selectedItem = this.userLeagueDropdownItems.find(item => item.id == event.payload.dropdownItemValue);
-      if (selectedItem.value == 'delete') {
+
+      // Edit user league
+      if (selectedItem.value == this.userLeagueDropdownOptions.EDIT) {
+        this.editingUserLeague = userLeague;
+        this.openEditUserLeagueModal();
+      }
+
+      // Delete user league
+      if (selectedItem.value == this.userLeagueDropdownOptions.DELETE) {
         this.userLeagues = this.userLeagues.filter((ul: UserLeague) => ul.id != userLeague.id);
         this.leagueStore.dispatch(new LeagueActions.DeleteUserLeague(userLeague));
         this.leagueStore.dispatch(
@@ -369,11 +400,6 @@ export class LeagueComponent implements OnInit, OnDestroy {
     );
   }
 
-  backToSelectLeague() {
-    this.leagueStore.dispatch(new LeagueActions.ClearSelectedUserLeague());
-    this.leagueStore.dispatch(new LeagueActions.ClearLeagueData());
-  }
-
   openNewUserLeagueModal() {
     this.showNewUserLeagueModal = true;
   }
@@ -383,11 +409,20 @@ export class LeagueComponent implements OnInit, OnDestroy {
     this.leagueStore.dispatch(new LeagueActions.GetUserLeagues());
   }
 
+  openEditUserLeagueModal() {
+    this.showEditUserLeagueModal = true;
+  }
+
+  closeEditUserLeagueModal() {
+    this.showEditUserLeagueModal = false;
+    this.leagueStore.dispatch(new LeagueActions.GetUserLeagues());
+  }
+
   get userLeaguesLoading() {
     return this.userLeaguesAreLoading || this.saveNewUserLeagueStatus == AsyncStatus.Processing;
   }
 
   get shouldShowLeague() {
-    return this.league && !this.leagueIsLoading;
+    return this.league && this.leagueId && !this.leagueIsLoading;
   }
 }

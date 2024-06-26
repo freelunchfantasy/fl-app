@@ -44,7 +44,7 @@ export class ApplicationEffects {
       map((action: ApplicationActions.SendContactEmail) => action.payload),
       switchMap(payload => {
         return this.backendService.sendContactEmail(payload).pipe(
-          map(result => new ApplicationActions.SendContactEmailSuccess(result)),
+          map(result => new ApplicationActions.SendContactEmailSuccess()),
           catchError(err => of(new ApplicationActions.HandleBackendError(err)))
         );
       })
@@ -92,9 +92,9 @@ export class ApplicationEffects {
     () =>
       this.actions$.pipe(
         ofType(ApplicationActions.NAVIGATE_TO_LOGIN),
-        withLatestFrom(this.store$),
-        map(([action, state]) => {
-          const loginRoute = '/login';
+        map((action: ApplicationActions.NavigateToLogin) => {
+          const isRegister = action.isRegister;
+          const loginRoute = `login/${isRegister ? isRegister : ''}`;
           this.routerService.redirectTo(loginRoute);
         })
       ),

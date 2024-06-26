@@ -29,3 +29,7 @@ export function selectUserIsLoading(state: State) {
 export function selectRegisterStatus(state: State) {
   return state.application.registerStatus;
 }
+
+export function selectContactEmailStatus(state: State) {
+  return state.application.contactEmailStatus;
+}

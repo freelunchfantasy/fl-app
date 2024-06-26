@@ -12,6 +12,7 @@ export class SimulateLeaguePayload {
 class Team {
   id: number;
   roster: Player[];
+  gamesPlayed: number;
   startingLineups?: Player[];
 }
 
@@ -30,6 +31,14 @@ export class NewUserLeaguePayload {
   userTeamRank?: number;
   totalTeams: number;
   leagueSourceId: number;
+}
+
+export class UpdateUserLeaguePayload {
+  userLeagueId: number;
+  userTeamId: number;
+  userTeamName: string;
+  userTeamRank: number;
+  leagueName: string;
 }
 
 export class ShareTradeSimulationResultPayload {

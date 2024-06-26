@@ -5,7 +5,39 @@
   min-height: 100px;
   background-color: $fl-blue;
   color: $fl-white;
+  padding: 25px 0px;
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
+
+  &__copyright {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__options {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 12pt;
+
+    &-option {
+      margin: 2px 0px;
+      &:hover {
+        cursor: pointer;
+      }
+
+      a.nostyle:link {
+        text-decoration: inherit;
+        color: inherit;
+      }
+
+      a.nostyle:visited {
+        text-decoration: inherit;
+        color: inherit;
+      }
+    }
+  }
 }

@@ -22,6 +22,10 @@ const routes: Routes = [
         component: LoginComponent,
       },
       {
+        path: 'login/:isRegister',
+        component: LoginComponent,
+      },
+      {
         path: 'league',
         component: LeagueComponent,
       },

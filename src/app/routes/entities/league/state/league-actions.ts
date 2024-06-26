@@ -12,6 +12,7 @@ import {
   NewUserLeaguePayload,
   ShareTradeSimulationResultPayload,
   SimulateLeaguePayload,
+  UpdateUserLeaguePayload,
 } from '@app/lib/models/league-payloads';
 import { Action } from '@ngrx/store';
 
@@ -27,6 +28,7 @@ export const GET_LEAGUE_SOURCES_FAILURE = '[League] Failed to get league sources
 export const GET_NEW_USER_LEAGUE_DATA = '[League] Getting new user league data';
 export const GET_NEW_USER_LEAGUE_DATA_SUCCESS = '[League] Successfully got new user league data';
 export const GET_NEW_USER_LEAGUE_DATA_FAILURE = '[League] Failed to get new user league data';
+export const CLEAR_NEW_USER_LEAGUE_DATA = '[League] Clearing new user league data';
 export const CHECK_USER_LEAGUE = '[League] Checking user league';
 export const CHECK_USER_LEAGUE_SUCCESS = '[League] Successfully checked user league';
 export const CHECK_USER_LEAGUE_FAILURE = '[League] Failed to check user league';
@@ -34,9 +36,12 @@ export const SAVE_NEW_USER_LEAGUE = '[League] Saving new user league';
 export const SAVE_NEW_USER_LEAGUE_SUCCESS = '[League] Successfully saved new user league';
 export const SAVE_NEW_USER_LEAGUE_FAILURE = '[League] Failed to save new user league';
 export const DELETE_USER_LEAGUE = '[League] Deleting user league';
-export const SET_USER_LEAGUES = '[League] Setting user leagues';
 export const DELETE_USER_LEAGUE_SUCCESS = '[League] Successfully deleted user league';
 export const DELETE_USER_LEAGUE_FAILURE = '[League] Failed to delete user league';
+export const UPDATE_USER_LEAGUE = '[League] Updating user league';
+export const UPDATE_USER_LEAGUE_SUCCESS = '[League] Successfully updated user league';
+export const UPDATE_USER_LEAGUE_FAILURE = '[League] Failed to update user league';
+export const SET_USER_LEAGUES = '[League] Setting user leagues';
 export const SET_SELECTED_USER_LEAGUE = '[League] Setting selected user league';
 export const CLEAR_SELECTED_USER_LEAGUE = '[League] Clearing selected user league';
 export const CLEAR_LEAGUE_DATA = '[League] Clearing league data';
@@ -119,6 +124,11 @@ export class GetNewUserLeagueDataFailure implements Action {
   constructor() {}
 }
 
+export class ClearNewUserLeagueData implements Action {
+  readonly type = CLEAR_NEW_USER_LEAGUE_DATA;
+  constructor() {}
+}
+
 export class CheckUserLeague implements Action {
   readonly type = CHECK_USER_LEAGUE;
   constructor(public payload: CheckUserLeaguePayload) {}
@@ -161,6 +171,21 @@ export class DeleteUserLeagueSuccess implements Action {
 
 export class DeleteUserLeagueFailure implements Action {
   readonly type = DELETE_USER_LEAGUE_FAILURE;
+  constructor() {}
+}
+
+export class UpdateUserLeague implements Action {
+  readonly type = UPDATE_USER_LEAGUE;
+  constructor(public payload: UpdateUserLeaguePayload) {}
+}
+
+export class UpdateUserLeagueSuccess implements Action {
+  readonly type = UPDATE_USER_LEAGUE_SUCCESS;
+  constructor(public payload: number) {}
+}
+
+export class UpdateUserLeagueFailure implements Action {
+  readonly type = UPDATE_USER_LEAGUE_FAILURE;
   constructor() {}
 }
 
@@ -297,6 +322,7 @@ export type All =
   | GetNewUserLeagueData
   | GetNewUserLeagueDataSuccess
   | GetNewUserLeagueDataFailure
+  | ClearNewUserLeagueData
   | CheckUserLeague
   | CheckUserLeagueSuccess
   | CheckUserLeagueFailure
@@ -306,6 +332,9 @@ export type All =
   | DeleteUserLeague
   | DeleteUserLeagueSuccess
   | DeleteUserLeagueFailure
+  | UpdateUserLeague
+  | UpdateUserLeagueSuccess
+  | UpdateUserLeagueFailure
   | SetUserLeagues
   | SetSelectedUserLeague
   | ClearSelectedUserLeague

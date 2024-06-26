@@ -1,28 +1,81 @@
-<form class="contact-form">
-  <div class="contact-form__list" *ngIf="!(userIsLoading$() | async)">
-    <div class="contact-form__list-message">Contact us!</div>
-    <div class="contact-form__list-item contact-form__list-input">
-      <input type="text" placeholder="email address" [(ngModel)]="email" name="email" />
+<form class="contact-form" *ngIf="!alreadySubmitted">
+  <div class="contact-form__list">
+    <div class="contact-form__list-header">
+      <div class="title">Contact us</div>
+      <div class="subtitle">send us a message</div>
     </div>
     <div class="contact-form__list-item contact-form__list-input">
-      <input type="text" placeholder="first name" [(ngModel)]="firstName" name="firstName" />
+      <label for="email" id="label__email">email</label>
+      <input
+        type="text"
+        placeholder="enter email address"
+        [(ngModel)]="email"
+        [disabled]="user"
+        name="email"
+        autocomplete="off"
+        (focus)="onInputFocus($event)"
+        (focusout)="onInputFocusOut($event)"
+      />
+      <span class="contact-form__list-input-error">{{ emailError }}</span>
     </div>
     <div class="contact-form__list-item contact-form__list-input">
-      <input type="text" placeholder="last name" [(ngModel)]="lastName" name="lastName" />
+      <label for="first-name" id="label__first-name">first name</label>
+      <input
+        type="text"
+        placeholder="enter first name"
+        [(ngModel)]="firstName"
+        name="first-name"
+        autocomplete="off"
+        (focus)="onInputFocus($event)"
+        (focusout)="onInputFocusOut($event)"
+      />
+      <span class="contact-form__list-input-error"></span>
     </div>
     <div class="contact-form__list-item contact-form__list-input">
-      <textarea type="text" placeholder="message (required)" [(ngModel)]="message" name="message"></textarea>
+      <label for="last-name" id="label__last-name">last name</label>
+      <input
+        type="text"
+        placeholder="enter last name"
+        [(ngModel)]="lastName"
+        name="last-name"
+        autocomplete="off"
+        (focus)="onInputFocus($event)"
+        (focusout)="onInputFocusOut($event)"
+      />
+      <span class="contact-form__list-input-error"></span>
+    </div>
+    <div class="contact-form__list-item contact-form__list-input">
+      <label for="message" id="label__message">message</label>
+      <textarea
+        type="text"
+        placeholder="message (required)"
+        [(ngModel)]="message"
+        name="message"
+        (focus)="onInputFocus($event)"
+        (focusout)="onInputFocusOut($event)"
+        rows="4"
+        [maxlength]="maxMessageLength"
+      ></textarea>
       <span class="contact-form__list-input-error">{{ messageError }}</span>
+      <span class="message-length">{{ message.length }}/{{ maxMessageLength }}</span>
     </div>
     <div class="contact-form__list-item contact-form__list-submit">
-      <button class="btn btn-success" (click)="handleContactFormSubmit()">Submit</button>
+      <button class="btn submit-btn" (click)="handleContactFormSubmit()">
+        <div *ngIf="!isLoading">Submit</div>
+        <div *ngIf="isLoading" class="loading-spinner-container">
+          <mat-spinner></mat-spinner>
+        </div>
+      </button>
     </div>
-    <div class="contact-form__list-item contact-form__list-error">{{ loginError }}</div>
-  </div>
-
-  <div *ngIf="userIsLoading$() | async" class="loading-spinner-container">
-    <mat-spinner></mat-spinner>
-    <span>Sending...</span>
   </div>
 </form>
-<div>DONATE</div>
+<div class="thank-you" *ngIf="alreadySubmitted">
+  <div class="title">Thank you for reaching out!</div>
+  <div class="subtitle">
+    If necessary, we will be in touch regarding your message once we get a chance to review it.
+  </div>
+  <div class="subtitle">
+    In the meantime, click <span (click)="navigateToLogin()" class="link">here</span> to use the Free Lunch tools, or
+    click <span (click)="navigateToHome()" class="link">here</span> to return to the home page.
+  </div>
+</div>

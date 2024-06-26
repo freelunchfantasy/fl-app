@@ -17,6 +17,7 @@ import {
   NewUserLeaguePayload,
   ShareTradeSimulationResultPayload,
   SimulateLeaguePayload,
+  UpdateUserLeaguePayload,
 } from '@app/lib/models/league-payloads';
 import { ContactPayload, LoginPayload, RegisterPayload } from '@app/lib/models/auth-payloads';
 import { User, UserResult } from '@app/lib/models/user';
@@ -56,6 +57,10 @@ export class BackendService {
       { userLeagueId: payload.id },
       this.httpOptions
     );
+  }
+
+  updateUserLeague(payload: UpdateUserLeaguePayload): Observable<number> {
+    return this.http.post<any>(`${this.getApiUrl()}/api/league/update-user-league`, payload, this.httpOptions);
   }
 
   getNflTeams(): Observable<NflTeam[]> {

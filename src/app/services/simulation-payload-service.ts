@@ -38,6 +38,7 @@ export class SimulationPayloadService {
           scoreProjections: [p.projectedAveragePoints],
         })),
         startingLineups: this.determineStartingLineups(t, nflTeams, schedule, activeRosterSettings),
+        gamesPlayed: t.wins + t.losses + t.ties,
       })),
       schedule,
     };

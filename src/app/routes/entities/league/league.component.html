@@ -2,8 +2,11 @@
   <!-- List user leagues -->
   <div *ngIf="!leagueId && !userLeaguesLoading" class="user-leagues">
     <div class="user-leagues__header">
-      <div class="title">Choose a league</div>
-      <div class="subtitle">Select one of your leagues or sync a new one</div>
+      <div class="user-leagues__header-titles">
+        <div class="title">Choose a league</div>
+        <div class="subtitle">Select one of your leagues or import a new one</div>
+      </div>
+      <button class="btn add-new-league" (click)="openNewUserLeagueModal()">+ Import new league</button>
     </div>
     <div class="user-leagues__leagues-container" *ngIf="(userLeagues || []).length">
       <div *ngFor="let userLeague of userLeagues" class="user-league">
@@ -11,9 +14,10 @@
           <dropdown
             [id]="'user-league-dropdown-' + userLeague.id.toString()"
             class="options-dropdown"
-            [items]="userLeagueDropdownItems"
+            [items]="getUserLeagueDropdownItems(userLeague)"
             triggerMarkup="&#8942;"
             [showArrow]="false"
+            [freezeTriggerMarkup]="true"
             (onClick)="onSelectUserLeagueDropdownItem(userLeague, $event)"
           ></dropdown>
           <div class="league-name">{{ userLeague.leagueName }}</div>
@@ -35,7 +39,6 @@
           <div [class]="getUserLeagueSourceClasses(userLeague.leagueSource)">{{ userLeague.leagueSource }}</div>
         </div>
       </div>
-      <div class="user-league add-new-league" (click)="openNewUserLeagueModal()">+</div>
     </div>
     <div class="user-leagues__leagues-container" *ngIf="!(userLeagues || []).length">
       <div class="no-leagues">
@@ -51,56 +54,58 @@
   </div>
 
   <!-- If league has been selected -->
-  <div *ngIf="leagueId">
-    <div class="options" *ngIf="shouldShowLeague">
-      <div (click)="backToSelectLeague()" class="options__back-btn-container btn btn-primary">
-        <span>&#x2039;</span>
-        <div class="back-btn">Change League</div>
-      </div>
-      <div class="options__page-info">{{ league.settings.name }}</div>
+  <div *ngIf="shouldShowLeague" class="league-container">
+    <div class="league-container__standings">
+      <league-standings
+        class="league-standings"
+        [leagueStandings]="leagueStandings"
+        [userTeamId]="userTeamId"
+        [leagueSimulation]="simulationResult"
+      ></league-standings>
+      <button class="btn btn-success sim-btn" (click)="simulateSeason()">
+        <div *ngIf="!(leagueSimulationIsLoading$() | async)">Simulate Season</div>
+        <div *ngIf="leagueSimulationIsLoading$() | async"><mat-spinner></mat-spinner></div>
+      </button>
     </div>
-    <div *ngIf="shouldShowLeague" class="league-container">
-      <div class="league-container__standings">
-        <league-standings
-          class="league-standings"
-          [leagueStandings]="leagueStandings"
-          [userTeamId]="userTeamId"
-          [leagueSimulation]="simulationResult"
-        ></league-standings>
-        <button class="btn btn-success sim-btn" (click)="simulateSeason()">
-          <div *ngIf="!(leagueSimulationIsLoading$() | async)">Simulate Season</div>
-          <div *ngIf="leagueSimulationIsLoading$() | async"><mat-spinner></mat-spinner></div>
-        </button>
-      </div>
-      <div class="league-container__roster-container">
-        <dropdown
-          id="team-dropdown"
-          class="league-container__roster-container__team-name"
-          [items]="teamDropdownItems"
-          (onClick)="onSelectTeam($event)"
-        ></dropdown>
-        <team-roster
-          class="league-container__roster-container__roster"
-          [starters]="starters"
-          [bench]="bench"
-          [startingPositions]="startingPositions"
-        ></team-roster>
-      </div>
+    <div class="league-container__roster-container">
+      <dropdown
+        id="team-dropdown"
+        class="league-container__roster-container__team-name"
+        [items]="teamDropdownItems"
+        [showArrow]="false"
+        (onClick)="onSelectTeam($event)"
+      ></dropdown>
+      <team-roster
+        class="league-container__roster-container__roster"
+        [starters]="starters"
+        [bench]="bench"
+        [startingPositions]="startingPositions"
+      ></team-roster>
     </div>
-
-    <div *ngIf="!shouldShowLeague" class="league-loading">
-      <mat-spinner></mat-spinner>
-      <div class="message">Loading your league's data...</div>
-      <div>This may take a few seconds</div>
-    </div>
+  </div>
+  <div *ngIf="!shouldShowLeague && leagueId" class="league-loading">
+    <mat-spinner></mat-spinner>
+    <div class="message">Loading your league's data...</div>
+    <div>This may take a few seconds</div>
   </div>
 
   <!-- New user league modal -->
   <new-user-league-modal
     *ngIf="showNewUserLeagueModal"
-    [modalTitle]="'Add league'"
-    [modalSubtitle]="'Import your league\'s data'"
+    [modalTitle]="'Add League'"
+    [modalSubtitle]="'Import your fantasy league into Free Lunch'"
     [showCloseIcon]="true"
+    [canImportNewLeague]="userLeagues.length < this.maxUserLeagues"
     (dismissModal)="closeNewUserLeagueModal()"
   ></new-user-league-modal>
+
+  <!-- Edit user league modal -->
+  <edit-user-league-modal
+    *ngIf="showEditUserLeagueModal"
+    [modalTitle]="'Edit League'"
+    [modalSubtitle]="'Change the league\'s name or your selected team'"
+    [showCloseIcon]="true"
+    [userLeague]="editingUserLeague"
+    (dismissModal)="closeEditUserLeagueModal()"
+  ></edit-user-league-modal>
 </div>

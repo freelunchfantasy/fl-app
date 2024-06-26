@@ -1,5 +1,17 @@
 <header-bar *ngIf="user"></header-bar>
+<div class="header-bar" *ngIf="!user && !isLoginPage">
+  <div><img src="../../../assets/logo.png" class="logo" (click)="goToHome()" /></div>
+  <div>
+    <button class="btn register-btn" (click)="goToLogin()">LOG IN</button>
+    <button class="btn login-btn" (click)="goToRegister()">REGISTER</button>
+  </div>
+</div>
 
-<router-outlet></router-outlet>
+<div style="min-height: 90vh; position: relative">
+  <league-side-bar *ngIf="selectedUserLeague"></league-side-bar>
+  <div [class]="getRouterOutletClasses()">
+    <router-outlet></router-outlet>
+  </div>
+</div>
 
 <app-footer *ngIf="!isLoginPage"></app-footer>

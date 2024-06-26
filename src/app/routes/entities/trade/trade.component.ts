@@ -360,12 +360,6 @@ export class TradeComponent implements OnInit, OnDestroy {
     }
   }
 
-  backToSelectLeague() {
-    this.leagueStore.dispatch(new LeagueActions.ClearSelectedUserLeague());
-    this.leagueStore.dispatch(new LeagueActions.ClearLeagueData());
-    this.routerService.redirectTo('/league');
-  }
-
   compareTwoTeams(a: Team, b: Team): number {
     if (a.wins > b.wins) return -1;
     else if (a.wins < b.wins) return 1;

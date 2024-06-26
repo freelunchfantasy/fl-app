@@ -7,6 +7,7 @@ export interface State {
   userResult: UserResult;
   userStatus: AsyncStatus;
   registerStatus: AsyncStatus;
+  contactEmailStatus: AsyncStatus;
   backendUrl: string;
   sessionToken: string;
 }
@@ -16,6 +17,7 @@ export const initialState: State = {
   userResult: null,
   userStatus: AsyncStatus.Idle,
   registerStatus: AsyncStatus.Idle,
+  contactEmailStatus: AsyncStatus.Idle,
   backendUrl: null,
   sessionToken: null,
 };
@@ -72,6 +74,34 @@ export function reducer(state = initialState, action: ApplicationActions.All): S
         user: null,
         userStatus: AsyncStatus.Failure,
         registerStatus: AsyncStatus.Failure,
+      };
+    }
+
+    case ApplicationActions.SEND_CONTACT_EMAIL: {
+      return {
+        ...state,
+        contactEmailStatus: AsyncStatus.Processing,
+      };
+    }
+
+    case ApplicationActions.SEND_CONTACT_EMAIL_SUCCESS: {
+      return {
+        ...state,
+        contactEmailStatus: AsyncStatus.Success,
+      };
+    }
+
+    case ApplicationActions.SEND_CONTACT_EMAIL_FAILURE: {
+      return {
+        ...state,
+        contactEmailStatus: AsyncStatus.Failure,
+      };
+    }
+
+    case ApplicationActions.CLEAR_CONTACT_EMAIL_STATUS: {
+      return {
+        ...state,
+        contactEmailStatus: initialState.contactEmailStatus,
       };
     }
 

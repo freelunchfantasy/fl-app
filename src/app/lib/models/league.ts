@@ -28,6 +28,7 @@ export class Team {
   wins: number;
   losses: number;
   ties: number;
+  gamesPlayed?: number;
   pointsFor: number;
   pointsAgainst: number;
   schedule: number[];

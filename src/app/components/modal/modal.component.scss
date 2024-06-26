@@ -25,20 +25,32 @@
     border-radius: 10px;
 
     .modal__header {
+      position: relative;
       padding-left: 24px;
       padding-right: 24px;
       padding-bottom: 16px;
       margin-bottom: 0;
       text-align: center;
 
-      .modal__close-button {
-        float: right;
+      &-title {
+        font-size: 16pt;
+        font-weight: bold;
+      }
+
+      &-subtitle {
+        font-size: 10pt;
+      }
+
+      &-close-button {
+        position: absolute;
+        right: 10px;
+        top: 0;
         background: none;
         border: none;
         padding: 0;
         cursor: pointer;
         outline: inherit;
-        font-size: 24pt;
+        font-size: 14pt;
       }
     }
 

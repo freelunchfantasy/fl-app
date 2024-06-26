@@ -5,7 +5,7 @@
     [showCloseIcon]="showCloseIcon"
     (dismissModal)="handleModalClose()"
     ><div body class="new-user-league">
-      <form class="new-user-league__form">
+      <form class="new-user-league__form" *ngIf="canImportNewLeague">
         <div class="new-user-league__form-item">
           <div class="new-user-league__form-item__label">League platform</div>
           <dropdown
@@ -13,7 +13,6 @@
             [items]="leagueSourceDropdownItems"
             [disabled]="true"
             (onClick)="onSelectLeagueSource($event)"
-            matTooltip="TESTING"
           ></dropdown>
         </div>
 
@@ -25,6 +24,7 @@
               placeholder="League ID"
               [(ngModel)]="leagueId"
               (input)="onLeagueIdChange()"
+              (keydown.enter)="getUserLeagueData()"
               name="leagueId"
               autocomplete="off"
             />
@@ -60,18 +60,31 @@
           <dropdown
             id="team-dropdown"
             [items]="teamDropdownItems"
-            triggerMarkup="Select Team"
+            triggerMarkup="Select your team"
             (onClick)="onSelectTeam($event)"
           ></dropdown>
         </div>
-        <div *ngIf="foundLeague" class="new-user-league__form-item" style="align-items: center; margin-bottom: 0px">
-          <button *ngIf="foundLeague" [class]="getSaveUserLeagueButtonClasses()" (click)="handleSaveNewUserLeague()">
+        <div
+          *ngIf="foundLeague"
+          class="new-user-league__form-item"
+          style="flex-direction: row; justify-content: flex-end; align-items: center; margin-bottom: 0px"
+        >
+          <div class="check-user-league-msg">{{ checkUserLeagueMessage }}</div>
+          <button
+            *ngIf="foundLeague"
+            [class]="getSaveUserLeagueButtonClasses()"
+            (click)="handleSaveNewUserLeague()"
+            style="align-items: flex-end; margin-bottom: 0px"
+          >
             <div *ngIf="!(checkUserLeagueIsLoading$() | async)">Save</div>
             <div *ngIf="checkUserLeagueIsLoading$() | async"><mat-spinner></mat-spinner></div>
           </button>
-          <div class="check-user-league-msg">{{ checkUserLeagueMessage }}</div>
         </div>
       </form>
+      <div *ngIf="!canImportNewLeague" class="limit-reached">
+        Users may only import a maximum of 5 leagues into the Free Lunch platform. We apologize for the inconvenience
+        &#8212; support for more leagues will be added soon.
+      </div>
     </div>
   </app-modal>
 </div>

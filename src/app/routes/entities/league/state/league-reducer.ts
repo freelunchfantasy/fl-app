@@ -148,6 +148,14 @@ export function reducer(state = initialState, action: LeagueActions.All): State 
       };
     }
 
+    case LeagueActions.CLEAR_NEW_USER_LEAGUE_DATA: {
+      return {
+        ...state,
+        newUserLeagueData: initialState.newUserLeagueData,
+        newUserLeagueDataStatus: initialState.newUserLeagueDataStatus,
+      };
+    }
+
     case LeagueActions.CHECK_USER_LEAGUE: {
       return {
         ...state,
@@ -214,6 +222,27 @@ export function reducer(state = initialState, action: LeagueActions.All): State 
       };
     }
 
+    case LeagueActions.UPDATE_USER_LEAGUE: {
+      return {
+        ...state,
+        userLeaguesStatus: AsyncStatus.Processing,
+      };
+    }
+
+    case LeagueActions.UPDATE_USER_LEAGUE_SUCCESS: {
+      return {
+        ...state,
+        userLeaguesStatus: AsyncStatus.Success,
+      };
+    }
+
+    case LeagueActions.UPDATE_USER_LEAGUE_FAILURE: {
+      return {
+        ...state,
+        userLeaguesStatus: AsyncStatus.Failure,
+      };
+    }
+
     case LeagueActions.SET_USER_LEAGUES: {
       return {
         ...state,
@@ -239,6 +268,9 @@ export function reducer(state = initialState, action: LeagueActions.All): State 
       return {
         ...state,
         leagueData: null,
+        selectedUserLeague: null,
+        leagueSimulationResult: null,
+        tradeSimulationResult: null,
       };
     }
 
