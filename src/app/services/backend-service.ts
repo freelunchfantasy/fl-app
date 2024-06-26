@@ -104,7 +104,7 @@ export class BackendService {
   }
 
   getApiUrl() {
-    return 'https://freelunch-api.azurewebsites.net/';
+    return 'https://freelunch-api.azurewebsites.net';
   }
 
   sessionToken() {
