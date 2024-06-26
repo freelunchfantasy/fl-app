@@ -51,4 +51,4 @@ steps:
     WebAppName: 'freelunchfantasy'
     packageForLinux: '$(Build.ArtifactStagingDirectory)/drop/dist.zip'
     RuntimeStack: 'NODE|18-lts'
-    StartupCommand: 'pm2 serve /home/site/wwwroot/fl-app'
+    StartupCommand: 'pm2 serve /home/site/wwwroot/free-lunch-app --no-daemon --spa'
