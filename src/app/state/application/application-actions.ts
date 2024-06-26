@@ -10,6 +10,8 @@ export const REGISTER_SUCCESS = '[Application] Successfully registered user';
 export const REGISTER_FAILURE = '[Application] Failed to register user';
 export const SEND_CONTACT_EMAIL = '[Application] Sending contact email';
 export const SEND_CONTACT_EMAIL_SUCCESS = '[Application] Successfully sent contact email';
+export const SEND_CONTACT_EMAIL_FAILURE = '[Application] Failed to send contact email';
+export const CLEAR_CONTACT_EMAIL_STATUS = '[Application] Clearing contact email status state';
 export const SET_USER = '[Application] Setting user to state';
 export const LOG_OUT = '[Application] Logging user out';
 export const CLEAR_USER = '[Application] Clearing user from state';
@@ -66,7 +68,17 @@ export class SendContactEmail implements Action {
 export class SendContactEmailSuccess implements Action {
   readonly type = SEND_CONTACT_EMAIL_SUCCESS;
 
-  constructor(public payload: any) {}
+  constructor() {}
+}
+
+export class SendContactEmailFailure implements Action {
+  readonly type = SEND_CONTACT_EMAIL_FAILURE;
+
+  constructor() {}
+}
+
+export class ClearContactEmailStatus implements Action {
+  readonly type = CLEAR_CONTACT_EMAIL_STATUS;
 }
 
 export class LogOut implements Action {
@@ -101,6 +113,7 @@ export class NavigateToHome implements Action {
 
 export class NavigateToLogin implements Action {
   readonly type = NAVIGATE_TO_LOGIN;
+  constructor(public isRegister?: boolean) {}
 }
 
 export class NavigateToLeague implements Action {
@@ -123,6 +136,9 @@ export type All =
   | RegisterSuccess
   | RegisterFailure
   | SendContactEmail
+  | SendContactEmailSuccess
+  | SendContactEmailFailure
+  | ClearContactEmailStatus
   | LogOut
   | ClearUser
   | SetUser

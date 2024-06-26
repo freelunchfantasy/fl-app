@@ -18,10 +18,15 @@
       margin-left: 10pt;
     }
 
-    .logo {
-      margin: 10px;
-      max-width: 50px;
-      cursor: pointer;
+    .logo-container {
+      width: 10vw;
+      text-align: center;
+
+      .logo {
+        margin: 10px;
+        max-width: 50px;
+        cursor: pointer;
+      }
     }
 
     .nav-options-container {

@@ -1,20 +1,20 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import * as fromLeagueRoot from '@app/routes/entities/league/state/reducer';
 import * as LeagueActions from '@app/routes/entities/league/state/league-actions';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 import { StandingsService } from '@app/services/standings-service';
-import { League, LeagueSource, Team } from '@app/lib/models/league';
+import { League, LeagueSource, Team, UserLeague } from '@app/lib/models/league';
 import { IDropdownEvent, IDropdownItem } from '@app/components/dropdown/dropdown-interfaces';
 import { DropdownEvent } from '@app/components/dropdown/dropdown-constants';
 import { LEAGUE_SOURCE } from '@app/lib/constants/league-sources.constants';
 
 @Component({
-  selector: 'new-user-league-modal',
-  templateUrl: './new-user-league-modal.component.html',
-  styleUrls: ['./new-user-league-modal.component.scss'],
+  selector: 'edit-user-league-modal',
+  templateUrl: './edit-user-league-modal.component.html',
+  styleUrls: ['./edit-user-league-modal.component.scss'],
 })
-export class NewUserLeagueModal implements OnInit, OnDestroy {
+export class EditUserLeagueModal implements OnInit, OnDestroy {
   @Input()
   modalTitle: string = '';
 
@@ -28,25 +28,21 @@ export class NewUserLeagueModal implements OnInit, OnDestroy {
   leagueSources: LeagueSource[] = [];
 
   @Input()
-  canImportNewLeague?: boolean = true;
+  userLeague: UserLeague;
 
   @Output()
   dismissModal: EventEmitter<any> = new EventEmitter<any>();
 
   subscriptions: Subscription[] = [];
 
-  leagueId: string = '';
-
+  leagueId: number;
   leagueSourceDropdownItems: IDropdownItem[] = [];
   selectedLeagueSourceId: number;
 
   newUserLeagueData: League;
   foundLeague: boolean = false;
-  couldNotFindLeagueMessage: string =
-    "Couldn't load league data. Please ensure you've entered the league ID correctly and that the ID corresponds to a league that has had its draft for this year's season.";
+  couldNotFindLeagueMessage: string = 'Something went wrong loading league data.';
   foundLeagueMessage: string;
-  userLeagueAlreadyExistsMessage: string = `You've already imported this league`;
-  checkUserLeagueMessage: string = '';
   leagueName: string = '';
   teamDropdownItems: IDropdownItem[] = [];
   userTeamId: number;
@@ -63,14 +59,6 @@ export class NewUserLeagueModal implements OnInit, OnDestroy {
     return this.leagueStore.select(fromLeagueRoot.selectNewUserLeagueDataIsLoading);
   }
 
-  checkUserLeague$(): Observable<any> {
-    return this.leagueStore.select(fromLeagueRoot.selectCheckUserLeagueResult);
-  }
-
-  checkUserLeagueIsLoading$(): Observable<boolean> {
-    return this.leagueStore.select(fromLeagueRoot.selectCheckUserLeagueIsLoading);
-  }
-
   constructor(private leagueStore: Store<fromLeagueRoot.State>, private standingsService: StandingsService) {}
 
   ngOnInit(): void {
@@ -84,12 +72,11 @@ export class NewUserLeagueModal implements OnInit, OnDestroy {
           this.newUserLeagueData = leagueData;
           this.foundLeagueMessage = '';
           this.foundLeague = true;
-          this.leagueName = leagueData.settings.name;
           this.teamDropdownItems = leagueData.teams.map(t => ({
             id: t.id.toString(),
             value: t.id,
             htmlMarkup: [t.teamName],
-            selected: false,
+            selected: t.id == this.userTeamId,
           }));
         } else {
           this.foundLeagueMessage = this.couldNotFindLeagueMessage;
@@ -105,32 +92,10 @@ export class NewUserLeagueModal implements OnInit, OnDestroy {
     });
     this.subscriptions.push(leagueSourcesSubscription);
 
-    // Check user league sub
-    const checkUserLeagueSubscription = combineLatest([
-      this.checkUserLeague$(),
-      this.checkUserLeagueIsLoading$(),
-    ]).subscribe(([result, isLoading]) => {
-      if (result && !isLoading) {
-        if (result.foundExistingUserLeague) {
-          this.checkUserLeagueMessage = this.userLeagueAlreadyExistsMessage;
-        } else {
-          this.checkUserLeagueMessage = '';
-          this.leagueStore.dispatch(
-            new LeagueActions.SaveNewUserLeague({
-              externalLeagueId: parseInt(this.leagueId),
-              leagueName: this.leagueName,
-              userTeamId: this.userTeamId,
-              userTeamName: this.newUserLeagueData.teams.find((t: Team) => t.id == this.userTeamId).teamName,
-              userTeamRank: this.standingsService.determineTeamRank(this.newUserLeagueData.teams, this.userTeamId),
-              totalTeams: this.newUserLeagueData.teams.length,
-              leagueSourceId: this.selectedLeagueSourceId,
-            })
-          );
-          this.handleModalClose();
-        }
-      }
-    });
-    this.subscriptions.push(checkUserLeagueSubscription);
+    this.getUserLeagueData();
+    this.leagueName = this.userLeague.leagueName;
+    this.leagueId = this.userLeague.leagueId;
+    this.userTeamId = this.userLeague.userTeamId;
   }
 
   ngOnDestroy(): void {
@@ -140,7 +105,7 @@ export class NewUserLeagueModal implements OnInit, OnDestroy {
 
   processLeagueSources(leagueSources: LeagueSource[]): IDropdownItem[] {
     if (!(leagueSources || []).length) return [];
-    this.selectedLeagueSourceId = leagueSources.find(source => source.name == LEAGUE_SOURCE.ESPN).id;
+    this.selectedLeagueSourceId = leagueSources.find(source => source.name == LEAGUE_SOURCE.ESPN).id; // Update once support for Sleeper implemented
     return leagueSources.map(source => ({
       id: source.id.toString(),
       value: source.id,
@@ -156,8 +121,8 @@ export class NewUserLeagueModal implements OnInit, OnDestroy {
   }
 
   getUserLeagueData() {
-    if (isNaN(parseInt(this.leagueId))) return;
-    this.leagueStore.dispatch(new LeagueActions.GetNewUserLeagueData(parseInt(this.leagueId)));
+    if (!this.userLeague?.leagueId) return;
+    this.leagueStore.dispatch(new LeagueActions.GetNewUserLeagueData(this.userLeague.leagueId));
   }
 
   onSelectLeagueSource(event: IDropdownEvent) {
@@ -166,29 +131,24 @@ export class NewUserLeagueModal implements OnInit, OnDestroy {
     }
   }
 
-  onLeagueIdChange() {
-    this.foundLeague = false;
-    this.leagueName = '';
-    this.userTeamId = null;
-    this.checkUserLeagueMessage = '';
-    this.foundLeagueMessage = '';
-  }
-
   onSelectTeam(event: IDropdownEvent) {
     if (event.eventType == DropdownEvent.ItemClicked) {
       this.userTeamId = event.payload.dropdownItemValue;
     }
   }
 
-  handleSaveNewUserLeague() {
+  handleUpdateUserLeague() {
     if (!this.selectedLeagueSourceId || !this.leagueName || !this.userTeamId) return;
-
     this.leagueStore.dispatch(
-      new LeagueActions.CheckUserLeague({
-        externalLeagueId: parseInt(this.leagueId),
-        leagueSourceId: this.selectedLeagueSourceId,
+      new LeagueActions.UpdateUserLeague({
+        userLeagueId: this.userLeague.id,
+        userTeamId: this.userTeamId,
+        userTeamName: this.newUserLeagueData.teams.find((t: Team) => t.id == this.userTeamId).teamName,
+        userTeamRank: this.standingsService.determineTeamRank(this.newUserLeagueData.teams, this.userTeamId),
+        leagueName: this.leagueName,
       })
     );
+    this.handleModalClose();
   }
 
   handleModalClose() {

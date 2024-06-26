@@ -24,6 +24,9 @@ export class DropdownComponent implements OnInit, AfterViewInit {
   showArrow?: boolean = true;
 
   @Input()
+  freezeTriggerMarkup?: boolean = false;
+
+  @Input()
   disabled?: boolean = false;
 
   @Output()
@@ -80,12 +83,12 @@ export class DropdownComponent implements OnInit, AfterViewInit {
       },
     };
     this.onClick.emit(selectEvent);
-    this.triggerHTML = this.getTriggerHTMLFromDropdownItem(itemId);
+    if (!this.freezeTriggerMarkup) this.triggerHTML = this.getTriggerHTMLFromDropdownItem(itemId);
     this.isDropdownVisible = false;
   }
 
   getDropdownMenuRowClasses(i: number) {
-    return i % 2 ? 'dropdown__menu-row even' : 'dropdown__menu-row odd';
+    return i == 0 ? 'dropdown__menu-row first' : 'dropdown__menu-row';
   }
 
   private getTriggerHTMLFromDropdownItem(targetDropdownId: string, defaultItem?: IDropdownItem): string {

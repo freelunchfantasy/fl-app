@@ -100,6 +100,19 @@ export class LeagueEffects {
     )
   );
 
+  updateUserLeague$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(LeagueActions.UPDATE_USER_LEAGUE),
+      map((action: LeagueActions.UpdateUserLeague) => action.payload),
+      switchMap(payload => {
+        return this.backendService.updateUserLeague(payload).pipe(
+          map(result => new LeagueActions.UpdateUserLeagueSuccess(result)),
+          catchError(err => of(new ApplicationActions.HandleBackendError(err)))
+        );
+      })
+    )
+  );
+
   getLeagueData$ = createEffect(() =>
     this.actions$.pipe(
       ofType(LeagueActions.GET_LEAGUE_DATA),

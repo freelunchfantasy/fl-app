@@ -18,6 +18,6 @@ export const InputLimits = {
   },
   contactMessage: {
     minLength: { value: 1, message: 'Please include a message' },
-    maxLength: { value: 128, message: 'Message must be fewer than 127 characters' },
+    maxLength: { value: 512, message: 'Message must be 512 characters or fewer' },
   },
 };

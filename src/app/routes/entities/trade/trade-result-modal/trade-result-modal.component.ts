@@ -99,7 +99,7 @@ export class TradeResultModalComponent implements OnInit, OnDestroy {
       userId: this.userLeague.userId,
       userLeagueId: this.userLeague.id,
       targetEmail: this.email,
-      leagueStandings: this.leagueStandings,
+      leagueStandings: this.leagueStandings.map((t: Team) => ({ ...t, gamesPlayed: t.wins + t.losses + t.ties })),
       tradeBlock: this.tradeBlock,
       tradeResult: this.tradeResult,
     };

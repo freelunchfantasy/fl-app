@@ -5,6 +5,7 @@ import * as ApplicationActions from '@app/state/application/application-actions'
 import { InputValidationService } from '@app/services/input-validation-service';
 import { Observable, Subscription } from 'rxjs';
 import { User } from '@app/lib/models/user';
+import { AsyncStatus } from '@app/lib/enums/async-status';
 
 @Component({
   selector: 'contact-form',
@@ -19,17 +20,22 @@ export class ContactFormComponent implements OnInit, OnDestroy {
 
   user: User;
   email: string = '';
+  emailError: string = '';
   firstName: string = '';
   lastName: string = '';
   message: string = '';
   messageError: string = '';
+  maxMessageLength: number = 512;
+
+  isLoading: boolean = false;
+  alreadySubmitted: boolean = false;
 
   user$(): Observable<User> {
     return this.appStore.select(fromApplicationRoot.selectUser);
   }
 
-  userIsLoading$(): Observable<boolean> {
-    return this.appStore.select(fromApplicationRoot.selectUserIsLoading);
+  contactEmailStatus$(): Observable<AsyncStatus> {
+    return this.appStore.select(fromApplicationRoot.selectContactEmailStatus);
   }
 
   constructor(
@@ -47,10 +53,75 @@ export class ContactFormComponent implements OnInit, OnDestroy {
       }
     });
     this.subscriptions.push(userSusbcription);
+
+    const contactEmailStatusSubscription = this.contactEmailStatus$().subscribe(status => {
+      this.isLoading = status == AsyncStatus.Processing;
+      if (status == AsyncStatus.Success) {
+        this.alreadySubmitted = true;
+      }
+    });
+    this.subscriptions.push(contactEmailStatusSubscription);
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.appStore.dispatch(new ApplicationActions.ClearContactEmailStatus());
+  }
+
+  onInputFocus(event: any) {
+    const focusEmailLabel = () => {
+      var element = document.getElementById('label__email');
+      element.classList.add('focus');
+    };
+
+    const focusFirstNameLabel = () => {
+      var element = document.getElementById('label__first-name');
+      element.classList.add('focus');
+    };
+
+    const focusLastNameLabel = () => {
+      var element = document.getElementById('label__last-name');
+      element.classList.add('focus');
+    };
+
+    const focusMessageLabel = () => {
+      var element = document.getElementById('label__message');
+      element.classList.add('focus');
+    };
+
+    const name = event.target.name;
+    if (name == 'email') focusEmailLabel();
+    if (name == 'first-name') focusFirstNameLabel();
+    if (name == 'last-name') focusLastNameLabel();
+    if (name == 'message') focusMessageLabel();
+  }
+
+  onInputFocusOut(event: any) {
+    const unfocusEmailLabel = () => {
+      var element = document.getElementById('label__email');
+      element.classList.remove('focus');
+    };
+
+    const unfocusFirstNameLabel = () => {
+      var element = document.getElementById('label__first-name');
+      element.classList.remove('focus');
+    };
+
+    const unfocusLastNameLabel = () => {
+      var element = document.getElementById('label__last-name');
+      element.classList.remove('focus');
+    };
+
+    const unfocusMessageLabel = () => {
+      var element = document.getElementById('label__message');
+      element.classList.remove('focus');
+    };
+
+    const name = event.target.name;
+    if (name == 'email') unfocusEmailLabel();
+    if (name == 'first-name') unfocusFirstNameLabel();
+    if (name == 'last-name') unfocusLastNameLabel();
+    if (name == 'message') unfocusMessageLabel();
   }
 
   handleContactFormSubmit() {
@@ -76,6 +147,15 @@ export class ContactFormComponent implements OnInit, OnDestroy {
   }
 
   handleInputErrors(validationResult: any) {
+    this.emailError = validationResult.email;
     this.messageError = validationResult.message;
+  }
+
+  navigateToHome() {
+    this.appStore.dispatch(new ApplicationActions.NavigateToHome());
+  }
+
+  navigateToLogin() {
+    this.appStore.dispatch(new ApplicationActions.NavigateToLogin());
   }
 }

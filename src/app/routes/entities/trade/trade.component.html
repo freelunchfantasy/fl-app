@@ -1,35 +1,32 @@
 <div class="trade">
-  <div class="options" *ngIf="!(leagueDataIsLoading$() | async)">
-    <div (click)="backToSelectLeague()" class="options__back-btn-container btn btn-primary">
-      <span>&#x2039;</span>
-      <div class="back-btn">Change League</div>
-    </div>
-    <div class="options__page-info">{{ league.settings.name }}</div>
-  </div>
   <div *ngIf="!(leagueDataIsLoading$() | async)" class="trade-container">
-    <div class="trade-container__team-container trade-container__team-container__left">
-      <div class="trade-container__team-container__team">
-        <dropdown
-          id="left-team-dropdown"
-          [items]="leftTeamDropdownItems"
-          (onClick)="onSelectLeftTeam($event)"
-        ></dropdown>
-        <team-roster
-          class="trade-container__team-container__team-roster"
-          [starters]="leftStarters"
-          [bench]="leftBench"
-          [startingPositions]="startingPositions"
-          [mode]="teamRosterMode"
-          [playersBeingTraded]="tradeBlock.left"
-          (onPlayerTradeAdd)="addPlayerToTrade($event)"
-          (onPlayerTradeRemove)="removePlayerFromTrade($event)"
-        ></team-roster>
+    <div class="trade-container__team-container">
+      <dropdown
+        id="left-team-dropdown"
+        class="trade-container__team-container__team-name"
+        [items]="leftTeamDropdownItems"
+        [showArrow]="false"
+        (onClick)="onSelectLeftTeam($event)"
+      ></dropdown>
+      <div class="trade-container__team-container__left">
+        <div class="trade-container__team-container__team">
+          <team-roster
+            class="trade-container__team-container__team-roster"
+            [starters]="leftStarters"
+            [bench]="leftBench"
+            [startingPositions]="startingPositions"
+            [mode]="teamRosterMode"
+            [playersBeingTraded]="tradeBlock.left"
+            (onPlayerTradeAdd)="addPlayerToTrade($event)"
+            (onPlayerTradeRemove)="removePlayerFromTrade($event)"
+          ></team-roster>
+        </div>
       </div>
     </div>
     <div class="trade-container__trade-block-container">
       <div class="trade-block">
-        <div class="arrow-container arrow-container__left">
-          <img src="../../../../assets/arrow-right.png" class="trade-block__side-arrow" />
+        <div class="trade-block__title trade-block__title__left">
+          <span>{{ leftTeam.teamName }} trading...</span>
           <span class="clear-block-btn" (click)="clearTradeBlock(true)">Clear</span>
         </div>
         <div class="trade-block__side left">
@@ -68,33 +65,35 @@
             </div>
           </div>
         </div>
-        <div class="arrow-container arrow-container__right">
-          <img src="../../../../assets/arrow-left.png" class="trade-block__side-arrow" />
+        <div class="trade-block__title trade-block__title__right">
+          <span *ngIf="rightTeam">{{ rightTeam.teamName }} trading...</span>
+          <span *ngIf="!rightTeam"></span>
           <span class="clear-block-btn" (click)="clearTradeBlock(false)">Clear</span>
         </div>
       </div>
     </div>
-    <div class="trade-container__team-container trade-container__team-container__right">
-      <div class="trade-container__team-container__team">
-        <dropdown
-          id="right-team-dropdown"
-          [items]="rightTeamDropdownItems"
-          (onClick)="onSelectRightTeam($event)"
-          [triggerMarkup]="rightTeamDropdownTriggerMarkup"
-        ></dropdown>
-        <team-roster
-          *ngIf="rightTeam"
-          class="trade-container__team-container__team-roster"
-          [starters]="rightStarters"
-          [bench]="rightBench"
-          [startingPositions]="startingPositions"
-          [mode]="teamRosterMode"
-          [playersBeingTraded]="tradeBlock.right"
-          (onPlayerTradeAdd)="addPlayerToTrade($event)"
-          (onPlayerTradeRemove)="removePlayerFromTrade($event)"
-        ></team-roster>
-        <div *ngIf="!rightTeam" class="trade-container__team-container__team-none-selected">
-          Please select a team to trade with
+    <div class="trade-container__team-container">
+      <dropdown
+        id="right-team-dropdown"
+        class="trade-container__team-container__team-name"
+        [items]="rightTeamDropdownItems"
+        [showArrow]="false"
+        (onClick)="onSelectRightTeam($event)"
+        [triggerMarkup]="rightTeamDropdownTriggerMarkup"
+      ></dropdown>
+      <div class="trade-container__team-container__right">
+        <div class="trade-container__team-container__team">
+          <team-roster
+            *ngIf="rightTeam"
+            class="trade-container__team-container__team-roster"
+            [starters]="rightStarters"
+            [bench]="rightBench"
+            [startingPositions]="startingPositions"
+            [mode]="teamRosterMode"
+            [playersBeingTraded]="tradeBlock.right"
+            (onPlayerTradeAdd)="addPlayerToTrade($event)"
+            (onPlayerTradeRemove)="removePlayerFromTrade($event)"
+          ></team-roster>
         </div>
       </div>
     </div>

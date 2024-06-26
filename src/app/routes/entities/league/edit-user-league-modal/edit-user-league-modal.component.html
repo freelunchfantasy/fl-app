@@ -1,0 +1,57 @@
+<div class="edit-user-league-modal">
+  <app-modal
+    [modalTitle]="modalTitle"
+    [modalSubtitle]="modalSubtitle"
+    [showCloseIcon]="showCloseIcon"
+    (dismissModal)="handleModalClose()"
+    ><div body class="edit-user-league">
+      <form class="edit-user-league__form">
+        <div class="edit-user-league__form-loading" *ngIf="newUserLeagueDataIsLoading$() | async">
+          <div><mat-spinner></mat-spinner></div>
+          <div style="font-size: 11pt; margin-top: 5px">Loading league data...</div>
+          <div style="font-size: 9pt">This may take a few seconds</div>
+        </div>
+        <div class="edit-user-league__form-item" *ngIf="!(newUserLeagueDataIsLoading$() | async)">
+          <div class="edit-user-league__form-item__label">League platform</div>
+          <dropdown
+            id="league-source-dropdown"
+            [items]="leagueSourceDropdownItems"
+            [disabled]="true"
+            (onClick)="onSelectLeagueSource($event)"
+          ></dropdown>
+        </div>
+
+        <div class="edit-user-league__form-item" *ngIf="!(newUserLeagueDataIsLoading$() | async)">
+          <div class="edit-user-league__form-item__label">League ID</div>
+          <div class="edit-user-league__form-item__input">
+            <input type="number" [(ngModel)]="leagueId" name="leagueId" disabled="true" />
+          </div>
+        </div>
+        <div class="found-league-msg">{{ foundLeagueMessage }}</div>
+        <div *ngIf="foundLeague" class="edit-user-league__form-item">
+          <div class="edit-user-league__form-item__label">League name</div>
+          <div class="edit-user-league__form-item__input" style="width: 100%">
+            <input
+              type="text"
+              placeholder="League Name"
+              [(ngModel)]="leagueName"
+              name="leagueName"
+              autocomplete="off"
+              [disabled]="!foundLeague"
+              style="width: 100%"
+            />
+          </div>
+        </div>
+        <div *ngIf="foundLeague" class="edit-user-league__form-item">
+          <div class="edit-user-league__form-item__label">Select your team</div>
+          <dropdown id="team-dropdown" [items]="teamDropdownItems" (onClick)="onSelectTeam($event)"></dropdown>
+        </div>
+        <div *ngIf="foundLeague" class="edit-user-league__form-item" style="align-items: flex-end; margin-bottom: 0px">
+          <button *ngIf="foundLeague" [class]="getSaveUserLeagueButtonClasses()" (click)="handleUpdateUserLeague()">
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </app-modal>
+</div>

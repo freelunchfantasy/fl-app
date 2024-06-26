@@ -22,13 +22,12 @@ export class InputValidationService {
 
   validateContactInputs(payload: ContactPayload) {
     return {
+      email: this.validateEmailForContact(payload.e),
       message: this.validateMessageForContact(payload.message),
     };
   }
 
   validateEmailForRegister(email: string): string {
-    if (email.length < InputLimits.email.minLength.value) return InputLimits.email.minLength.message;
-    if (email.length > InputLimits.email.maxLength.value) return InputLimits.email.maxLength.message;
     if (!EmailValidator.validate(email)) return InputLimits.email.notValidEmail.message;
     return '';
   }
@@ -54,20 +53,26 @@ export class InputValidationService {
   validateLastNameForRegister(lastName: string): string {
     if ((lastName || '').length == 0) return '';
     if (lastName.length > InputLimits.lastName.maxLength.value) return InputLimits.lastName.maxLength.message;
-    if (!InputLimits.firstName.validChars.value.test(lastName)) return InputLimits.firstName.validChars.message;
+    if (!InputLimits.lastName.validChars.value.test(lastName)) return InputLimits.lastName.validChars.message;
     return '';
   }
 
   validateEmailForLogin(email: string): string {
-    return email.length ? '' : 'Email address is required';
+    if (!EmailValidator.validate(email)) return InputLimits.email.notValidEmail.message;
+    return '';
   }
 
   validatePasswordForLogin(password: string): string {
     return password.length ? '' : 'Password is required';
   }
 
+  validateEmailForContact(email: string) {
+    if (!EmailValidator.validate(email)) return InputLimits.email.notValidEmail.message;
+    return '';
+  }
+
   validateMessageForContact(message: string): string {
-    if (message.length < InputLimits.contactMessage.minLength.value)
+    if (message.length <= InputLimits.contactMessage.minLength.value)
       return InputLimits.contactMessage.minLength.message;
     if (message.length > InputLimits.contactMessage.maxLength.value)
       return InputLimits.contactMessage.maxLength.message;

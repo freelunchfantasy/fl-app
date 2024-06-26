@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { CookieService } from 'ngx-cookie-service';
 import * as fromApplicationRoot from '@app/state/reducers';
@@ -19,7 +20,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginMode: LOGIN_MODE = LOGIN_MODE.LOGIN;
   loginError: string = '';
 
-  constructor(public appStore: Store<fromApplicationRoot.State>, private cookieService: CookieService) {}
+  constructor(
+    public appStore: Store<fromApplicationRoot.State>,
+    private cookieService: CookieService,
+    private route: ActivatedRoute
+  ) {}
 
   sessionToken(): string {
     return this.cookieService.get('session');
@@ -50,6 +55,12 @@ export class LoginComponent implements OnInit, OnDestroy {
       }
     );
     this.subscriptions.push(userSubscription);
+
+    // query param sub
+    const queryParamSub = this.route.params.subscribe(params => {
+      if (params['isRegister']) this.loginMode = LOGIN_MODE.REGISTER;
+    });
+    this.subscriptions.push(queryParamSub);
 
     if ((this.sessionToken() || '').length) {
       this.appStore.dispatch(new ApplicationActions.Login({ sessionToken: this.sessionToken() }));

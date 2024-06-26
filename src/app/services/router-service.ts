@@ -5,10 +5,7 @@ import { APP_BASE_HREF } from '@angular/common';
 
 @Injectable()
 export class RouterService {
-  constructor(
-    private router: Router,
-    @Inject(APP_BASE_HREF) private baseHref: string
-  ) {}
+  constructor(private router: Router, @Inject(APP_BASE_HREF) private baseHref: string) {}
 
   getCurrentUrl(): string {
     return this.router.url;
@@ -25,10 +22,7 @@ export class RouterService {
   createFullUrlWithBaseUrlAndBasePath(path: string): string {
     const urlPath = path || '/';
     const [protocol, host] = this.getBaseUrl().split('//');
-    const hostWithPath = `${host}/${this.getBasePath()}/${urlPath}`.replace(
-      /\/+/g,
-      '/'
-    );
+    const hostWithPath = `${host}/${this.getBasePath()}/${urlPath}`.replace(/\/+/g, '/');
     return `${protocol}//${hostWithPath}`;
   }
 

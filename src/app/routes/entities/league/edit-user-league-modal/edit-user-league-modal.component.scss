@@ -1,6 +1,6 @@
 @import '../../../../../styles.scss';
 
-.new-user-league-modal {
+.edit-user-league-modal {
   ::ng-deep .modal__content {
     padding: 0px !important;
     .modal__header {
@@ -18,9 +18,24 @@
     }
   }
 
-  .new-user-league__form {
+  .edit-user-league__form {
     display: flex;
     flex-direction: column;
+
+    &-loading {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 200px;
+      ::ng-deep mat-spinner {
+        max-width: 40px;
+        max-height: 40px;
+        circle {
+          stroke: black;
+        }
+      }
+    }
 
     &-item {
       margin-bottom: 15px;
@@ -89,7 +104,7 @@
       .check-user-league-msg {
         font-size: 9pt;
         color: red;
-        margin-right: 10px;
+        margin-top: 5px;
       }
     }
 
@@ -107,21 +122,13 @@
 
       .dropdown__menu {
         border-bottom: 1px solid $subtext-gray;
-        color: $subtext-gray;
         &-row {
+          color: $subtext-gray;
           border: 1px solid $subtext-gray;
           border-bottom: 0px;
         }
       }
     }
-  }
-
-  .limit-reached {
-    padding: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
   }
 
   .highlighted {
@@ -137,14 +144,11 @@
     justify-content: center;
     align-items: center;
     min-width: 60px;
-    min-height: 35px;
+    min-height: 32px;
     font-size: 10pt;
     &:hover {
       cursor: pointer;
       background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
-    }
-    &:focus {
-      box-shadow: none;
     }
   }
   .invalid {

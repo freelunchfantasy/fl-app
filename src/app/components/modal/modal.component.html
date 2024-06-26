@@ -1,19 +1,9 @@
-<div
-  class="modal__overlay--visible"
-  id="modal"
-  (click)="handleOverlayClicked($event)"
->
+<div class="modal__overlay--visible" id="modal" (mousedown)="handleOverlayClicked($event)">
   <div class="modal__content">
     <div class="modal__header">
-      <button
-        *ngIf="showCloseIcon"
-        class="modal__close-button"
-        (click)="handleModalClose()"
-      >
-        &times;
-      </button>
-      <h3 class="modal__title">{{ modalTitle }}</h3>
-      <h4 class="modal__subtitle">{{ modalSubtitle }}</h4>
+      <button *ngIf="showCloseIcon" class="modal__header-close-button" (click)="handleModalClose()">&times;</button>
+      <div class="modal__header-title">{{ modalTitle }}</div>
+      <div class="modal__header-subtitle">{{ modalSubtitle }}</div>
       <ng-content select="[header]"></ng-content>
     </div>
     <div class="modal__body">

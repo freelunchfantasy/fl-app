@@ -1,12 +1,8 @@
 export const AppNavOptions = {
   navBarOptions: [
     {
-      title: 'League',
+      title: 'FOOTBALL',
       path: '/league',
-    },
-    {
-      title: 'Trade',
-      path: '/trade',
     },
   ],
 };

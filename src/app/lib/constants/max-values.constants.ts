@@ -1,0 +1,1 @@
+export const MAX_IMPORTED_USER_LEAGUES = 5;

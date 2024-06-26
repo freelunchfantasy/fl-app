@@ -1,0 +1,10 @@
+<div class="league-side-bar">
+  <div class="league-info" *ngIf="selectedUserLeague && leagueData">
+    <div class="league-info__league-name">{{ selectedUserLeague.leagueName }}</div>
+  </div>
+  <div class="league-actions" *ngIf="selectedUserLeague && leagueData">
+    <div class="league-actions__action" (click)="backToSelectLeague()">Change League</div>
+    <div class="league-actions__action" (click)="handleLeagueNavigationClicked('/league')">Team Roster</div>
+    <div class="league-actions__action" (click)="handleLeagueNavigationClicked('/trade')">Trade Simulator</div>
+  </div>
+</div>

@@ -10,6 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ModalComponent } from './modal/modal.component';
 import { AppFooterComponent } from './app-footer/app-footer.component';
 import { HeaderBarComponent } from './header-bar/header-bar.component';
+import { LeagueSideBarComponent } from './league-side-bar/league-side-bar.component';
 import { NavOptionComponent } from './nav-option/nav-option.component';
 import { RegisterFormComponent } from './register-form/register-form.component';
 import { LoginFormComponent } from './login-form/login-form.component';
@@ -22,6 +23,7 @@ const components = [
   ModalComponent,
   AppFooterComponent,
   HeaderBarComponent,
+  LeagueSideBarComponent,
   NavOptionComponent,
   RegisterFormComponent,
   LoginFormComponent,

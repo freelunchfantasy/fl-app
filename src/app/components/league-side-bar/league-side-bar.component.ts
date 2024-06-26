@@ -1,38 +1,24 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription, combineLatest } from 'rxjs';
-import { AppNavOptions } from '@app/lib/constants/nav-bar-options.constants';
-import { AppNavOption } from '@app/lib/models/navigation';
+
 import * as fromApplicationRoot from '@app/state/reducers';
 import * as ApplicationActions from '@app/state/application/application-actions';
 import * as fromLeagueRoot from '@app/routes/entities/league/state/reducer';
 import * as LeagueActions from '@app/routes/entities/league/state/league-actions';
-import { User } from '@app/lib/models/user';
+import { RouterService } from '@app/services/router-service';
 import { UserLeague } from '@app/lib/models/league';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'header-bar',
-  templateUrl: './header-bar.component.html',
-  styleUrls: ['./header-bar.component.scss'],
+  selector: 'league-side-bar',
+  templateUrl: './league-side-bar.component.html',
+  styleUrls: ['./league-side-bar.component.scss'],
 })
-export class HeaderBarComponent implements OnInit, OnDestroy {
-  sessionToken: string;
+export class LeagueSideBarComponent implements OnInit, OnDestroy {
   leagueData: any;
-  navOptions: AppNavOption[] = [];
+  selectedUserLeague: UserLeague;
   subscriptions: Subscription[] = [];
-
-  LOGOUT_NAV_OPTION: AppNavOption = {
-    title: 'LOG OUT',
-    path: '',
-  };
-  CONTACT_US_NAV_OPTION: AppNavOption = {
-    title: 'CONTACT US',
-    path: '',
-  };
-
-  selectUser$(): Observable<User> {
-    return this.appStore.select(fromApplicationRoot.selectUser);
-  }
 
   leagueData$(): Observable<any> {
     return this.leagueStore.select(fromLeagueRoot.selectLeagueData);
@@ -42,19 +28,19 @@ export class HeaderBarComponent implements OnInit, OnDestroy {
     return this.leagueStore.select(fromLeagueRoot.selectLeagueDataIsLoading);
   }
 
-  constructor(public appStore: Store<fromApplicationRoot.State>, public leagueStore: Store<fromLeagueRoot.State>) {}
+  selectedUserLeague$(): Observable<UserLeague> {
+    return this.leagueStore.select(fromLeagueRoot.selectSelectedUserLeague);
+  }
+
+  constructor(
+    public appStore: Store<fromApplicationRoot.State>,
+    public leagueStore: Store<fromLeagueRoot.State>,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private routerService: RouterService
+  ) {}
 
   ngOnInit(): void {
-    this.navOptions = AppNavOptions.navBarOptions;
-
-    const userSubscription = this.selectUser$().subscribe(user => {
-      if (user) {
-        this.sessionToken = user.sessionToken;
-      } else {
-        this.sessionToken = null;
-      }
-    });
-    this.subscriptions.push(userSubscription);
     const leagueDataSubscription = combineLatest([this.leagueData$(), this.leagueDataIsLoading$()]).subscribe(
       ([leagueData, isLoading]) => {
         if (!isLoading) {
@@ -63,6 +49,11 @@ export class HeaderBarComponent implements OnInit, OnDestroy {
       }
     );
     this.subscriptions.push(leagueDataSubscription);
+
+    const selectedUserLeagueSubscription = this.selectedUserLeague$().subscribe(userLeague => {
+      this.selectedUserLeague = userLeague;
+    });
+    this.subscriptions.push(selectedUserLeagueSubscription);
   }
 
   ngOnDestroy(): void {
@@ -70,7 +61,6 @@ export class HeaderBarComponent implements OnInit, OnDestroy {
   }
 
   redirectToHome() {
-    this.leagueStore.dispatch(new LeagueActions.ClearLeagueData());
     this.appStore.dispatch(new ApplicationActions.NavigateToHome());
   }
 
@@ -84,7 +74,17 @@ export class HeaderBarComponent implements OnInit, OnDestroy {
     this.appStore.dispatch(new ApplicationActions.NavigateToLogin());
   }
 
+  backToSelectLeague() {
+    this.leagueStore.dispatch(new LeagueActions.ClearSelectedUserLeague());
+    this.leagueStore.dispatch(new LeagueActions.ClearLeagueData());
+    this.routerService.redirectTo('/league');
+  }
+
   handleClickContactUs() {
     this.appStore.dispatch(new ApplicationActions.NavigateToContactUs());
+  }
+
+  handleLeagueNavigationClicked(path: string) {
+    this.router.navigate([path], { relativeTo: this.activatedRoute });
   }
 }
