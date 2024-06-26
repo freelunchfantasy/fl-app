@@ -104,7 +104,7 @@ export class BackendService {
   }
 
   getApiUrl() {
-    return 'http://localhost:1234'; // TODO: Put into env var
+    return 'freelunch-api.azurewebsites.net';
   }
 
   sessionToken() {
