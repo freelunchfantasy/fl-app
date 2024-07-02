@@ -1,7 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
+import { Store } from '@ngrx/store';
 import { CookieService } from 'ngx-cookie-service';
+import * as fromApplicationRoot from '@app/state/reducers';
 
 // Models
 import {
@@ -37,7 +39,17 @@ export class BackendService {
     withCredentials: true,
   };
 
-  constructor(private http: HttpClient, private cookieService: CookieService) {}
+  token: string;
+
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService,
+    private appStore: Store<fromApplicationRoot.State>
+  ) {
+    this.appStore.select(fromApplicationRoot.selectSessionToken).subscribe(token => {
+      this.token = token;
+    });
+  }
 
   login(payload: LoginPayload): Observable<UserResult> {
     return this.http.post<UserResult>(`${this.getApiUrl()}/auth/login`, payload, this.httpOptions);
@@ -135,6 +147,6 @@ export class BackendService {
   }
 
   sessionToken() {
-    return this.cookieService.get('session');
+    return this.token;
   }
 }

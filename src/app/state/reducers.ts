@@ -18,6 +18,10 @@ export function selectUser(state: State) {
   return state.application.user;
 }
 
+export function selectSessionToken(state: State) {
+  return state.application.sessionToken;
+}
+
 export function selectUserResult(state: State) {
   return state.application.userResult;
 }
