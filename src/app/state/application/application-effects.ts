@@ -56,7 +56,7 @@ export class ApplicationEffects {
       this.actions$.pipe(
         ofType(ApplicationActions.LOG_OUT),
         map((action: ApplicationActions.LogOut) => {
-          //this.cookieService.delete('session');
+          this.cookieService.delete('session');
           this.routerService.redirectTo('/');
         })
       ),
@@ -69,7 +69,7 @@ export class ApplicationEffects {
         ofType(ApplicationActions.SET_SESSION_TOKEN),
         map((action: ApplicationActions.SetSessionToken) => {
           const now = new Date();
-          //this.cookieService.set('session', action.payload, now.setDate(now.getDate() + 1));
+          this.cookieService.set('session', action.payload, now.setDate(now.getDate() + 1));
         })
       ),
     { dispatch: false }
