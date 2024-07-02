@@ -29,6 +29,14 @@ export class BackendService {
     withCredentials: true,
   };
 
+  private authenticatedHttpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.sessionToken()}`,
+    }),
+    withCredentials: true,
+  };
+
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
   login(payload: LoginPayload): Observable<UserResult> {
@@ -44,50 +52,65 @@ export class BackendService {
   }
 
   getUserLeagues(): Observable<UserLeague[]> {
-    return this.http.get<UserLeague[]>(`${this.getApiUrl()}/api/league/user-leagues`, this.httpOptions);
+    return this.http.get<UserLeague[]>(`${this.getApiUrl()}/api/league/user-leagues`, this.authenticatedHttpOptions);
   }
 
   saveNewUserLeague(payload: NewUserLeaguePayload): Observable<number> {
-    return this.http.post<number>(`${this.getApiUrl()}/api/league/save-user-league`, payload, this.httpOptions);
+    return this.http.post<number>(
+      `${this.getApiUrl()}/api/league/save-user-league`,
+      payload,
+      this.authenticatedHttpOptions
+    );
   }
 
   deleteUserLeague(payload: UserLeague): Observable<any> {
     return this.http.post<any>(
       `${this.getApiUrl()}/api/league/delete-user-league`,
       { userLeagueId: payload.id },
-      this.httpOptions
+      this.authenticatedHttpOptions
     );
   }
 
   updateUserLeague(payload: UpdateUserLeaguePayload): Observable<number> {
-    return this.http.post<any>(`${this.getApiUrl()}/api/league/update-user-league`, payload, this.httpOptions);
+    return this.http.post<any>(
+      `${this.getApiUrl()}/api/league/update-user-league`,
+      payload,
+      this.authenticatedHttpOptions
+    );
   }
 
   getNflTeams(): Observable<NflTeam[]> {
-    return this.http.get<NflTeam[]>(`${this.getApiUrl()}/api/league/nfl-teams`, this.httpOptions);
+    return this.http.get<NflTeam[]>(`${this.getApiUrl()}/api/league/nfl-teams`, this.authenticatedHttpOptions);
   }
 
   getLeagueSources(): Observable<LeagueSource[]> {
-    return this.http.get<LeagueSource[]>(`${this.getApiUrl()}/api/league/league-sources`, this.httpOptions);
+    return this.http.get<LeagueSource[]>(
+      `${this.getApiUrl()}/api/league/league-sources`,
+      this.authenticatedHttpOptions
+    );
   }
 
   getLeagueData(leagueId: number, userTeamId?: number): Observable<League> {
     return this.http.post<League>(
       `${this.getApiUrl()}/api/league/get-league`,
       { leagueId, userTeamId },
-      this.httpOptions
+      this.authenticatedHttpOptions
     );
   }
 
   checkUserLeague(payload: CheckUserLeaguePayload): Observable<any> {
-    return this.http.post<any>(`${this.getApiUrl()}/api/league/check-user-league`, payload, this.httpOptions);
+    return this.http.post<any>(
+      `${this.getApiUrl()}/api/league/check-user-league`,
+      payload,
+      this.authenticatedHttpOptions
+    );
   }
 
   simulateLeague(leaguePayload: SimulateLeaguePayload): Observable<LeagueSimulationResult> {
     return this.http.post<LeagueSimulationResult>(
       `${this.getApiUrl()}/api/league/simulate`,
       leaguePayload,
-      this.httpOptions
+      this.authenticatedHttpOptions
     );
   }
 
@@ -95,12 +118,16 @@ export class BackendService {
     return this.http.post<TradeSimulationResult>(
       `${this.getApiUrl()}/api/league/simulate-trade`,
       tradePayload,
-      this.httpOptions
+      this.authenticatedHttpOptions
     );
   }
 
   shareTradeSimulationResult(payload: ShareTradeSimulationResultPayload): Observable<any> {
-    return this.http.post<any>(`${this.getApiUrl()}/api/league/share-trade-simulation`, payload, this.httpOptions);
+    return this.http.post<any>(
+      `${this.getApiUrl()}/api/league/share-trade-simulation`,
+      payload,
+      this.authenticatedHttpOptions
+    );
   }
 
   getApiUrl() {
