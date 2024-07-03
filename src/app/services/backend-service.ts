@@ -147,6 +147,6 @@ export class BackendService {
   }
 
   sessionToken() {
-    return this.user.sessionToken;
+    return this.user?.sessionToken;
   }
 }
