@@ -39,15 +39,15 @@ export class BackendService {
     withCredentials: true,
   };
 
-  token: string;
+  user: User;
 
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
     private appStore: Store<fromApplicationRoot.State>
   ) {
-    this.appStore.select(fromApplicationRoot.selectSessionToken).subscribe(token => {
-      this.token = token;
+    this.appStore.select(fromApplicationRoot.selectUser).subscribe(user => {
+      this.user = user;
     });
   }
 
@@ -147,6 +147,6 @@ export class BackendService {
   }
 
   sessionToken() {
-    return this.token;
+    return this.user.sessionToken;
   }
 }
