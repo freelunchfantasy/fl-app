@@ -45,7 +45,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         if (!isLoading && result) {
           if (result.success) {
             const user = result.user;
-            console.log(user);
             this.appStore.dispatch(new ApplicationActions.SetUser(user));
             this.appStore.dispatch(new ApplicationActions.SetSessionToken(user.sessionToken));
             this.appStore.dispatch(new ApplicationActions.NavigateToLeague());

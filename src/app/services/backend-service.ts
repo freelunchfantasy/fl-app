@@ -25,44 +25,32 @@ import { User, UserResult } from '@app/lib/models/user';
 
 @Injectable()
 export class BackendService {
-  private httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-    withCredentials: true,
-  };
-
-  private authenticatedHttpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.sessionToken()}`,
-    }),
-    withCredentials: true,
-  };
-
-  token: string;
-
   constructor(private http: HttpClient, private cookieService: CookieService) {}
 
   login(payload: LoginPayload): Observable<UserResult> {
-    return this.http.post<UserResult>(`${this.getApiUrl()}/auth/login`, payload, this.httpOptions);
+    return this.http.post<UserResult>(`${this.getApiUrl()}/auth/login`, payload, this.getHttpOptions());
   }
 
   register(payload: RegisterPayload): Observable<UserResult> {
-    return this.http.post<UserResult>(`${this.getApiUrl()}/auth/register`, payload, this.httpOptions);
+    return this.http.post<UserResult>(`${this.getApiUrl()}/auth/register`, payload, this.getHttpOptions());
   }
 
   sendContactEmail(payload: ContactPayload): Observable<any> {
-    return this.http.post<any>(`${this.getApiUrl()}/auth/send-contact-email`, payload, this.httpOptions);
+    return this.http.post<any>(`${this.getApiUrl()}/auth/send-contact-email`, payload, this.getHttpOptions());
   }
 
   getUserLeagues(): Observable<UserLeague[]> {
-    return this.http.get<UserLeague[]>(`${this.getApiUrl()}/api/league/user-leagues`, this.authenticatedHttpOptions);
+    return this.http.get<UserLeague[]>(
+      `${this.getApiUrl()}/api/league/user-leagues`,
+      this.getAuthenticatedHttpOptions()
+    );
   }
 
   saveNewUserLeague(payload: NewUserLeaguePayload): Observable<number> {
     return this.http.post<number>(
       `${this.getApiUrl()}/api/league/save-user-league`,
       payload,
-      this.authenticatedHttpOptions
+      this.getAuthenticatedHttpOptions()
     );
   }
 
@@ -70,7 +58,7 @@ export class BackendService {
     return this.http.post<any>(
       `${this.getApiUrl()}/api/league/delete-user-league`,
       { userLeagueId: payload.id },
-      this.authenticatedHttpOptions
+      this.getAuthenticatedHttpOptions()
     );
   }
 
@@ -78,18 +66,18 @@ export class BackendService {
     return this.http.post<any>(
       `${this.getApiUrl()}/api/league/update-user-league`,
       payload,
-      this.authenticatedHttpOptions
+      this.getAuthenticatedHttpOptions()
     );
   }
 
   getNflTeams(): Observable<NflTeam[]> {
-    return this.http.get<NflTeam[]>(`${this.getApiUrl()}/api/league/nfl-teams`, this.authenticatedHttpOptions);
+    return this.http.get<NflTeam[]>(`${this.getApiUrl()}/api/league/nfl-teams`, this.getAuthenticatedHttpOptions());
   }
 
   getLeagueSources(): Observable<LeagueSource[]> {
     return this.http.get<LeagueSource[]>(
       `${this.getApiUrl()}/api/league/league-sources`,
-      this.authenticatedHttpOptions
+      this.getAuthenticatedHttpOptions()
     );
   }
 
@@ -97,7 +85,7 @@ export class BackendService {
     return this.http.post<League>(
       `${this.getApiUrl()}/api/league/get-league`,
       { leagueId, userTeamId },
-      this.authenticatedHttpOptions
+      this.getAuthenticatedHttpOptions()
     );
   }
 
@@ -105,7 +93,7 @@ export class BackendService {
     return this.http.post<any>(
       `${this.getApiUrl()}/api/league/check-user-league`,
       payload,
-      this.authenticatedHttpOptions
+      this.getAuthenticatedHttpOptions()
     );
   }
 
@@ -113,7 +101,7 @@ export class BackendService {
     return this.http.post<LeagueSimulationResult>(
       `${this.getApiUrl()}/api/league/simulate`,
       leaguePayload,
-      this.authenticatedHttpOptions
+      this.getAuthenticatedHttpOptions()
     );
   }
 
@@ -121,7 +109,7 @@ export class BackendService {
     return this.http.post<TradeSimulationResult>(
       `${this.getApiUrl()}/api/league/simulate-trade`,
       tradePayload,
-      this.authenticatedHttpOptions
+      this.getAuthenticatedHttpOptions()
     );
   }
 
@@ -129,15 +117,33 @@ export class BackendService {
     return this.http.post<any>(
       `${this.getApiUrl()}/api/league/share-trade-simulation`,
       payload,
-      this.authenticatedHttpOptions
+      this.getAuthenticatedHttpOptions()
     );
   }
 
   getApiUrl() {
+    //return 'http://localhost:1234';
     return 'https://freelunch-api.azurewebsites.net';
   }
 
   sessionToken() {
     return localStorage.getItem('session');
+  }
+
+  getHttpOptions() {
+    return {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+      withCredentials: true,
+    };
+  }
+
+  getAuthenticatedHttpOptions() {
+    return {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.sessionToken()}`,
+      }),
+      withCredentials: true,
+    };
   }
 }
