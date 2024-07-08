@@ -8,7 +8,6 @@ import { State } from '@app/state/reducers';
 import { RouterService } from '@app/services/router-service';
 import { BackendService } from '@app/services/backend-service';
 import * as ApplicationActions from './application-actions';
-import { CookieService } from 'ngx-cookie-service';
 
 @Injectable()
 export class ApplicationEffects {
@@ -56,21 +55,19 @@ export class ApplicationEffects {
       this.actions$.pipe(
         ofType(ApplicationActions.LOG_OUT),
         map((action: ApplicationActions.LogOut) => {
-          this.cookieService.delete('session');
+          localStorage.removeItem('session');
           this.routerService.redirectTo('/');
         })
       ),
     { dispatch: false }
   );
 
-  setSessionTokenCookie$ = createEffect(
+  setSessionToken$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(ApplicationActions.SET_SESSION_TOKEN),
         map((action: ApplicationActions.SetSessionToken) => {
-          const now = new Date();
           localStorage.setItem('session', action.payload);
-          //this.cookieService.set('session', action.payload, now.setDate(now.getDate() + 1));
         })
       ),
     { dispatch: false }
@@ -132,7 +129,6 @@ export class ApplicationEffects {
     private actions$: Actions,
     private backendService: BackendService,
     private store$: Store<State>,
-    private routerService: RouterService,
-    private cookieService: CookieService
+    private routerService: RouterService
   ) {}
 }
