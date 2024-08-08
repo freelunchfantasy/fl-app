@@ -1,7 +1,6 @@
 @import '../../../styles.scss';
 
 .login-form {
-  min-width: 425px;
   min-height: 375px;
   display: flex;
   flex-direction: column;
@@ -49,7 +48,13 @@
       }
 
       input {
-        min-width: 500px;
+        @media (min-width: 100px) {
+          min-width: 250px;
+        }
+
+        @media (min-width: 700px) {
+          min-width: 450px;
+        }
         padding: 8px;
         border-radius: 10px;
         border: 1px solid $subtext-gray;
